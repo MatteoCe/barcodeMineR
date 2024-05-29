@@ -53,3 +53,5 @@ Imports:
     XVector
 RoxygenNote: 7.2.3
 VignetteBuilder: knitr
+URL: https://github.com/MatteoCe/barcodeMineR
+BugReports: https://github.com/MatteoCe/barcodeMineR/issues
