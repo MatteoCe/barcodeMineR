@@ -8,3 +8,4 @@ inst/doc
 .DS_Store
 .quarto
 man/logo/python38_barcodeMineR_logo.py
+barcodeMineR.Rproj
