@@ -56,6 +56,8 @@ mergeBarcodeOres <- function(..., resolve.conflicts = TRUE) {
 
     } else {
 
+      procs_BOLD_remove <- procs_NCBI_remove <- NULL
+
       if (nrow(refdbs %>% dplyr::filter(.data$note == "Mined from GenBank, NCBI")) > 0) {
 
         procs_BOLD_remove <- boldDuplicateCheck(refdbs)

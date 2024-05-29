@@ -26,22 +26,22 @@ limits. It outputs a [refdb](https://github.com/fkeck/refdb?tab=readme-ov-file#r
 
 ## Installation
 
-As the package is still in development, you can install this version of barcodeMineR using the
-[remotes](https://github.com/r-lib/remotes?tab=readme-ov-file#remotes) package:
+As the package is still in development, you can install this version of barcodeMineR,
+directly from the GitHub repository, using the [Bioconductor](https://www.bioconductor.org/install/) package:
 
 ``` r
-install_github("MatteoCe/barcodeMineR")
+BiocManager::install("MatteoCe/barcodeMineR")
 ```
 
-Following the installation, the package must be 
+The installation might require the update of various packages, which may fail.
+It is not necessarily an issue, thus you an proceed nonetheless.
 
 ## Example
 
-This is a basic example which shows you how to solve a common problem:
+The first step consists in loading the package:
 
 ```{r example}
 library(barcodeMineR)
-## basic example code
 ```
 
 What is special about using `README.Rmd` instead of just `README.md`? You can include R chunks like so:
