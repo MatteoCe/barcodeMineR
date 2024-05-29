@@ -14,6 +14,60 @@ knitr::opts_chunk$set(
 )
 ```
 
-```{r setup}
+**NOTE: This is a temporary GitHub repository created for testing purposes.**
+
+## The barcodeMineR package <img src='../man/logo/barcodeMineR_logo.png' align="right" height="220" />
+
+This package allows to query multiple taxonomic names on the NCBI and BOLD repositories and retrieve DNA barcodes and associated metadata for any wanted marker. It heavily relies on the [bold](https://github.com/ropensci/bold) and [rentrez](https://github.com/ropensci) packages from the rOpenSci, and takes advantages of the asynchronous framework from the [future](https://github.com/HenrikBengtsson/future) package to speed up the retrieval of data from the NCBI, respecting their API requests limit. The final output is a data.frame object modified following the formatting requirements of the [refdb](https://github.com/fkeck/refdb) package, and it is cleaned from mining duplicates, differences in formats of BOLD and NCBI metadata (*e.g.* geographic coordinates, dates) and commonly occurring issues that derive from downloading data from those repositories.
+
+In synthesis, it provides a unified framework for mining DNA Barcodes from the main online genomic repositories, providing clean, metadata-rich sequences in a programmatic way or interactively, depending on the wanted usage.
+
+## Basic usage
+
+The barcodeMineR package allows to recover DNA barcodes from a vector of taxonomic names.
+The most basic usage we can imagine includes the recovery of the taxonomic information first, followed by the
+download of DNA sequences:
+
+```{r}
 library(barcodeMineR)
+
+# search taxonomic information for a species on the NCBI
+t_tax <- get_ncbi_taxonomy("Thouarella variabilis")
+t_tax
 ```
+
+Taxonomic information for the species Thouarella variabilis is available at the NCBI taxonomy database, and 
+we obtained a data.frame class object with basic information regarding it.
+
+This object can be used for the next command, which will retrieve all DNA barcodes available corresponding to
+this species at the NCBI nucleotide database (for now, let's assume you know what the "ask" argument stands for):
+
+```{r}
+t_rec <- download_ncbi(t_tax, ask = FALSE)
+
+```
+
+Now we have the final refdb-formatted object including all DNA barcodes available at the NCBI for the 
+species "Thouarella variabilis".
+
+```{r, echo = FALSE, eval=TRUE}
+t_rec
+```
+
+
+*But, mifter barcodeMineR, I looked into the NCBI and there are only 24 acceffion numberf for Thouarella variabilif, [look](https://www.ncbi.nlm.nih.gov/nuccore/?term=txid1593383[Organism:noexp])* 
+`r emo::ji("nerd")`
+
+
+Yes, the package recovered each single DNA barcode/gene/product available for the accession numbers corresponding
+to each accession numbers, thus for the accession number 'KP677944.1' we obtained both coxI and coxII markers as separate records in the refdb tibble. 
+
+In case you want to choose which marker to keep in the final tibble, set the ask argument to TRUE (default), and, when asked, choose which marker to download data for:
+
+```{r, echo = T, eval=FALSE}
+t_rec <- download_ncbi(t_tax)
+```
+
+The DNA barcodes will be in their 5'-to-3' direction and of the correct length defined by the NCBI, as they've been extracted from the entire fasta sequence of the accesison number.
+
+
