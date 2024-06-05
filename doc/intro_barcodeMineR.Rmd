@@ -7,13 +7,6 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
-```{r, include = FALSE}
-knitr::opts_chunk$set(
-  collapse = TRUE,
-  comment = "#>"
-)
-```
-
 **NOTE: This is a temporary GitHub repository created for testing purposes.**
 
 ## The barcodeMineR package <img src='../man/logo/barcodeMineR_logo.png' align="right" height="220" />
@@ -25,49 +18,87 @@ In synthesis, it provides a unified framework for mining DNA Barcodes from the m
 ## Basic usage
 
 The barcodeMineR package allows to recover DNA barcodes from a vector of taxonomic names.
-The most basic usage we can imagine includes the recovery of the taxonomic information first, followed by the
-download of DNA sequences:
+The most basic usage we can imagine includes the recovery of the taxonomic information first, followed by the download of DNA sequences:
 
 ```{r}
 library(barcodeMineR)
 
 # search taxonomic information for a species on the NCBI
-t_tax <- get_ncbi_taxonomy("Thouarella variabilis")
-t_tax
+tax <- get_ncbi_taxonomy("Dissostichus mawsoni")
+tax
 ```
 
-Taxonomic information for the species Thouarella variabilis is available at the NCBI taxonomy database, and 
-we obtained a data.frame class object with basic information regarding it.
+Taxonomic information for the species _Dissostichus mawsoni_ is available at the NCBI taxonomy database, and we obtained a data.frame class object with basic information regarding it.
 
-This object can be used for the next command, which will retrieve all DNA barcodes available corresponding to
-this species at the NCBI nucleotide database (for now, let's assume you know what the "ask" argument stands for):
+This object can be used for the next command, which will retrieve all DNA barcodes available corresponding to this species at the NCBI nucleotide database. One of the main features of the next function consists in separating the different CDS/rRNA products of each accession number. You can leave the argument _ask_ to default (TRUE) and wait to be asked to choose which CDS/rRNA to select. For now, we leave this to FALSE, so we retain automatically all CDS/rRNA features:
 
 ```{r}
-t_rec <- download_ncbi(t_tax, ask = FALSE)
+rec_NCBI <- download_ncbi(tax, ask = FALSE)
 
 ```
 
-Now we have the final refdb-formatted object including all DNA barcodes available at the NCBI for the 
-species "Thouarella variabilis".
+Now we have the final refdb-formatted object including all DNA barcodes available at the NCBI for the species _Dissostichus mawsoni_.
 
-```{r, echo = FALSE, eval=TRUE}
-t_rec
+```{r, echo = FALSE, eval = TRUE}
+rec_NCBI
 ```
 
+A _refdb_ object was obtained corresponding to `r nrow(rec_NCBI)` records (rows). However, if we were to search for all _Dissostichus mawsoni_ records on the NCBI nucleotide database, using the same default filters called inside the barcodeMineR functions, we will notice that there are less accession numbers than the number of records obtained by the download_ncbi function:
 
-*But, mifter barcodeMineR, I looked into the NCBI and there are only 24 acceffion numberf for Thouarella variabilif, [look](https://www.ncbi.nlm.nih.gov/nuccore/?term=txid1593383[Organism:noexp])* 
-`r emo::ji("nerd")`
+```{r, eval = TRUE}
+# the default filters exclude whole genome shotgun sequences and transcribed shotgun assembly products
+rentrez::entrez_search(db="nucleotide", term="(((txid36200[ORGN] NOT wgs[Keyword]) NOT tsa[Keyword]) AND biomol_genomic[PROP]) AND (cds[Feature key] OR rrna[Feature key])")
+```
 
-
-Yes, the package recovered each single DNA barcode/gene/product available for the accession numbers corresponding
-to each accession numbers, thus for the accession number 'KP677944.1' we obtained both coxI and coxII markers as separate records in the refdb tibble. 
+The package recovered each single DNA barcode/gene/product available for the accession numbers corresponding
+to _Dissostichus mawsoni_, thus, for example, for the accession number 'LC138011.1' we obtained both ND1 and ND2 markers as separate records in the refdb object.
 
 In case you want to choose which marker to keep in the final tibble, set the ask argument to TRUE (default), and, when asked, choose which marker to download data for:
 
-```{r, echo = T, eval=FALSE}
-t_rec <- download_ncbi(t_tax)
+```{r, echo = TRUE, eval = FALSE}
+rec_NCBI <- download_ncbi(tax)
 ```
 
-The DNA barcodes will be in their 5'-to-3' direction and of the correct length defined by the NCBI, as they've been extracted from the entire fasta sequence of the accesison number.
+The DNA barcodes will be in their 5'-to-3' direction and of the correct length defined by the NCBI, as they've been extracted from the single fasta sequence of the same accession number.
+
+The same procedure can be applied using the *bold* functions, which have the same naming style. Here, we're retrieving the taxonomy information from the BOLD database for the same species:
+
+```{r}
+# search taxonomic information for a species on the BOLD
+tax <- get_bold_taxonomy("Dissostichus mawsoni")
+tax
+
+```
+
+The output is slightly different from the *ncbi* version of the function, however, it serves the same role. In fact, it can then be used to download all _Dissostichus mawsoni_ records from the BOLD database.
+
+```{r}
+rec_BOLD <- download_bold(tax, ask = FALSE)
+rec_BOLD
+```
+
+We have retrieved `r nrow(rec_BOLD)` records from the BOLD database, corresponding to `r length(unique(rec_BOLD$recordID))` different process-IDs (BOLD hosts other markers, but the vast majority of records correspond to COI sequences).
+
+We can now merge both refdb objects to obtain a single data.frame. The default behaviour of the next function will check which records have been mined from the other repository and return only the original record. If needed, this behaviour can be switched off by setting the argument _resolve.conflicts_ to FALSE:
+
+```{r}
+total <- mergeBarcodeOres(rec_NCBI, rec_BOLD)
+total
+```
+
+As we can see from the printed messages, 8 records were actually mined versions of other records obtained from the other repositories.
+
+This is it, now we have all barcodes available on the major online repositories. Having a pre-formatted refdb data.frame allows to leverage the functions of that package, including cleaning operations on taxonomic conflicts or plotting functions. For example, if we were to search for taxonomic conflicts, we could use the appropriate function from the refdb package:
+
+```{r}
+refdb::refdb_check_tax_conflict(total)
+```
+
+We can also map those records with available geographical coordinates:
+
+```{r}
+refdb::refdb_plot_map(total)
+```
+
 
 
