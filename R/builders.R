@@ -269,7 +269,7 @@ buildSequences <- function(accn, DNAString, selection_tab) {
     # if the final sequence, originated from multiple "copies" of duplicate sequences)
     # correspond to one sequence only, confirm original name as accession/gene_name
     if (all(length(versions) > 1 & length(seqs) == 1)) {
-      seq@ranges@NAMES <- accn
+      seqs@ranges@NAMES <- accn
     }
 
     return(seqs)

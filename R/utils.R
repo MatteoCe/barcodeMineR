@@ -110,8 +110,18 @@ select_accessions <- function(selection_tab, ask = TRUE) {
 
     # set no accession number as output
     names_gene <- NULL
+
+    # moreover, the original filt_tab will be kept as a data.frame with no rows
+    # this will allow to keep the information on how many nomenclatures for the gene
+    # (gene/product qualifier) are available
+
+    filt_tab <- selection_tab[NULL,]
+
   }
 
+  # Are there other nomenclatures to filter from? If filt_tab has only 2, then
+  # it means there is only one nomenclature to choose from (the "gene" qualifier
+  # but not the "product", for example)
   if (ncol(filt_tab) > 2) {
 
     # filter out the gene names previously selected from the tax_tab and count
