@@ -9,7 +9,7 @@ vignette: >
 
 **NOTE: This is a temporary GitHub repository created for testing purposes.**
 
-## The barcodeMineR package <img src='../man/logo/barcodeMineR_logo.png' align="right" height="220" />
+## The barcodeMineR package <img src='../man/figures/barcodeMineR_logo.png' align="right" height="220" />
 
 This package allows to query multiple taxonomic names on the NCBI and BOLD repositories and retrieve DNA barcodes and associated metadata for any wanted marker. It heavily relies on the [bold](https://github.com/ropensci/bold) and [rentrez](https://github.com/ropensci) packages from the rOpenSci, and takes advantages of the asynchronous framework from the [future](https://github.com/HenrikBengtsson/future) package to speed up the retrieval of data from the NCBI, respecting their API requests limit. The final output is a data.frame object modified following the formatting requirements of the [refdb](https://github.com/fkeck/refdb) package, and it is cleaned from mining duplicates, differences in formats of BOLD and NCBI metadata (*e.g.* geographic coordinates, dates) and commonly occurring issues that derive from downloading data from those repositories.
 
