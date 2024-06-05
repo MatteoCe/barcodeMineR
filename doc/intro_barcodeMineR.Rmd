@@ -94,11 +94,17 @@ This is it, now we have all barcodes available on the major online repositories.
 refdb::refdb_check_tax_conflict(total)
 ```
 
-We can also map those records with available geographical coordinates:
+As observed from the output, it appears that the nomenclature for ray-finned fishes is different in the BOLD and NCBI taxonomies (Actinopteri vs Actinopterygii).
 
-```{r}
+We can also map the records with available geographical coordinates:
+
+```{r, message = FALSE, warning = FALSE}
 refdb::refdb_plot_map(total)
 ```
+
+
+
+
 
 
 
