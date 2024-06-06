@@ -7,7 +7,7 @@ inst/doc
 .httr-oauth
 .DS_Store
 .quarto
-man/logo/python38_barcodeMineR_logo.py
+man/logo/*
 barcodeMineR.Rproj
 /Meta/
 /doc/

@@ -34,8 +34,13 @@ total <- mergeBarcodeOres(rec_NCBI, rec_BOLD)
 total
 
 ## -----------------------------------------------------------------------------
-refdb::refdb_check_tax_conflict(total)
+library(refdb)
+
+refdb_check_tax_conflict(total)
 
 ## ----message = FALSE, warning = FALSE-----------------------------------------
-refdb::refdb_plot_map(total)
+refdb_plot_map(total)
+
+## -----------------------------------------------------------------------------
+
 
