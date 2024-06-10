@@ -9,7 +9,7 @@ vignette: >
 
 **NOTE: This is a temporary GitHub repository created for testing purposes.**
 
-## The barcodeMineR package <img src="man/figures/logo.png" align="right" height="139" alt="" />
+## The barcodeMineR package
 
 This package allows to query multiple taxonomic names on the NCBI and BOLD repositories and retrieve DNA barcodes and associated metadata for any wanted marker. It heavily relies on the [bold](https://github.com/ropensci/bold) and [rentrez](https://github.com/ropensci) packages from the [rOpenSci](https://ropensci.org/), and takes advantages of the asynchronous framework from the [future](https://github.com/HenrikBengtsson/future) package to speed up the retrieval of data from the NCBI, respecting their API requests limit. The final output is a data.frame object modified following the formatting requirements of the [refdb](https://github.com/fkeck/refdb) package, and it is cleaned from mining duplicates, differences in formats of BOLD and NCBI metadata (*e.g.* geographic coordinates, dates) and commonly occurring issues that derive from downloading and merging data from those repositories.
 
@@ -18,7 +18,7 @@ In synthesis, it provides a unified framework for mining DNA Barcodes from the m
 ## Basic usage
 
 The __barcodeMineR__ package allows to recover DNA barcodes from a vector of taxonomic names.
-The most basic usage we can imagine includes the recovery of the taxonomic information first, followed by the download of DNA sequences:
+The most basic usage consists in the recovery of the taxonomic information first, followed by the download of all records available:
 
 ```{r}
 library(barcodeMineR)
@@ -64,7 +64,7 @@ The DNA barcodes will be in their 5'-to-3' direction and of the correct length d
 The same procedure can be applied using the *bold* functions, which have the same naming style. Here, we're retrieving the taxonomy information from the BOLD database for the same species:
 
 ```{r}
-# search taxonomic information for a species on the BOLD
+# search taxonomic information for a species on BOLD
 tax <- get_bold_taxonomy("Dissostichus mawsoni")
 tax
 
@@ -78,6 +78,8 @@ rec_BOLD
 ```
 
 We have retrieved `r nrow(rec_BOLD)` records from the BOLD database, corresponding to `r length(unique(rec_BOLD$recordID))` different process-IDs. BOLD hosts other markers, but the vast majority of records correspond to Cytochrome c oxidase I sequences.
+
+## Merging data from different repositories
 
 We can now merge both refdb objects to obtain a single data.frame. The default behaviour of the next function will check which records have been mined from the other repository and return only the original record. If needed, this behaviour can be switched off by setting the argument _resolve.conflicts_ to FALSE:
 
@@ -106,7 +108,7 @@ refdb_plot_map(total)
 
 Only a few records have geographical coordinates in the final merged table.
 
-Finally, we can also load private sequences into R, provided that they are included using the correct format, and merge them with the retrieved data:
+Finally, we can also load private sequences into R, provided that they are included using the correct format, and merge them with the retrieved data. In order to do this, we can use both
 
 ```{r}
 

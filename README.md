@@ -27,7 +27,7 @@ BiocManager::install("MatteoCe/barcodeMineR")
 ```
 
 The installation might require the update of various packages, which may
-fail. It is not necessarily an issue, thus you an proceed nonetheless.
+fail. It is not necessarily an issue, thus you can proceed nonetheless.
 
 ## Example
 

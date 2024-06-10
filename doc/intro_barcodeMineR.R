@@ -20,7 +20,7 @@ rentrez::entrez_search(db="nucleotide", term="(((txid36200[ORGN] NOT wgs[Keyword
 #  rec_NCBI <- download_ncbi(tax)
 
 ## -----------------------------------------------------------------------------
-# search taxonomic information for a species on the BOLD
+# search taxonomic information for a species on BOLD
 tax <- get_bold_taxonomy("Dissostichus mawsoni")
 tax
 

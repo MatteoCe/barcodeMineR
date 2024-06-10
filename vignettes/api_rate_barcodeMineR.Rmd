@@ -1,0 +1,101 @@
+---
+title: "Speeding up the recovery of DNA barcodes"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Speeding up the recovery of NCBI records}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+**NOTE: This is a temporary GitHub repository created for testing purposes.**
+
+## Rate limit and parallelization
+
+```{r, echo = FALSE, eval = TRUE}
+library(barcodeMineR)
+t0 <- Sys.time()
+tax <- get_ncbi_taxonomy("Promachocrinus kerguelensis")
+recs <- download_ncbi(tax, ask = FALSE)
+t1 <- Sys.time()
+```
+One of the main advantages of the __barcodeMineR__ package consists in leveraging the asynchronous parallelizing framework of the [future](https://github.com/HenrikBengtsson/future) package to speed up the download of sequences from the NCBI repository. 
+
+The following commands will retrieve `r nrow(recs)` records, corresponding to the species _Promachocrinus kerguelensis_, taking approximately `r x <- difftime(t1, t0); paste(as.numeric(x), if (units(x) == "mins") {"minutes"} else {"seconds"})`.
+
+```{r, echo = TRUE, eval = FALSE}
+library(barcodeMineR)
+
+tax <- get_ncbi_taxonomy("Promachocrinus kerguelensis")
+
+recs <- download_ncbi(tax, ask = FALSE)
+
+```
+
+The NCBI servers allows up to only three requests per second from a single user. If this limit is not respected, the NCBI will block further requests for some time. "Classic" parallelization is not a viable option, considering that different requests may take significantly different time (we may send a request for DNA barcodes with only one CDS or rRNA, while other will download whole genomes). For the same reason, running sequentially (like in a lapply or for loop with a waiting time of 1/3 seconds) is highly subjected to the execution time of each request.
+
+In this context, the asynchronous parallelizing framework of the __future__ package comes in handy. In synthesis, each request is sent as a background process, which will not block the current R session to send another request at a specified time, provided that there are enough "workers" (cores) available. This means that, using the __future__ framework, we can send a request every 1/3 of a second, independently from the completion of the previous request.
+
+We can setup the __future__ framework using its [functions](https://future.futureverse.org/articles/future-1-overview.html). Here, we're setting up the "multisession" plan using all available cores from our machine:
+
+```{r, echo = TRUE, eval = FALSE}
+future::plan("multisession")
+
+```
+
+You can specify the number of cores using the _workers_ argument, and check how many cores are available using the following command:
+
+```{r, echo = TRUE, eval = TRUE}
+parallelly::availableWorkers()
+
+```
+
+We can revert to the "normal", sequential framework when we're done with our work using the __barcodeMineR__ package, supplying "sequential" to the same command. Remember to do this before proceeding with other, unrelated work, in case you're not interested in using the same asynchronous framework. If you're unsure of which plan the current R session is set to, use the same command without arguments.
+
+This plan ("multisession") works on all OSes, on both Rstudio or the command line. It will significantly speed up the recovery of records from the NCBI, especially for the `{r, echo = TRUE, eval = FALSE}download_ncbi` function.
+
+However, before proceeding with an example, when downloading large numbers of records from BOLD or the NCBI databases, it is suggested to include a progress bar. Again, here we're relying on another beautiful package, the [progressr](https://github.com/HenrikBengtsson/progressr) package. As before, we don't need to supply specific arguments to the __barcodeMineR__ functions to activate it, but we can do it "externally":
+
+```{r, echo = TRUE, eval = FALSE}
+progressr::handlers(global=TRUE)
+progressr::handlers("progress")
+
+```
+
+Now, a progress bar will appear while downloading records, and different messages will occasionally be printed to inform the user of the current status of the operation. The progress bar can be modified, according to the user's preferences, as reported in the [progressr documentation](https://cran.r-project.org/web/packages/progressr/vignettes/progressr-intro.html).
+
+```{r, echo = FALSE, eval = TRUE}
+future::plan("multisession")
+t0 <- Sys.time()
+tax <- get_ncbi_taxonomy("Promachocrinus kerguelensis")
+recs <- download_ncbi(tax, ask = FALSE)
+t1 <- Sys.time()
+future::plan("sequential")
+```
+
+Now, the entire process of downloading _Promachocrinus kerguelensis_  will take  sensibly less time than in "sequential" __future__ plan, providing the final results after `r x <- difftime(t1, t0); if (units(x) == "mins") {paste(round(as.numeric(x), 2), "minutes")} else {paste(round(as.numeric(x), 0), "seconds")}`.
+
+## Stay safe and fast with the NCBI API key
+
+An additional parameter can be supplied "externally", allowing to increase the speed of the `{r, echo = TRUE, eval = FALSE}get_ncbi_taxonomy` function and avoid blocking from the NCBI servers for both functions. As mentioned above, the NCBI allows a maximum of three requests per second, a limit that is respected by the default settings of the __barcodeMineR__ package. However, a higher download rate can be adopted if the user decides to register a [NCBI account](https://account.ncbi.nlm.nih.gov/). Using an API key, the user can send up to 10 requests per second to the NCBI. This can be done following the [rentrez documentation](https://cran.r-project.org/web/packages/rentrez/vignettes/rentrez_tutorial.html#rate-limiting-and-api-keys), specifically with the following function:
+
+```{r, echo = TRUE, eval = FALSE}
+set_entrez_key("ABCD123")
+
+```
+
+By setting an NCBI account, the user assures that requests that don't take much time can be executed even faster, and avoid excessive blocking when the internet connection is particularly unreliable. Including an NCBI API key halves the execution time of the `{r, echo = TRUE, eval = FALSE}get_ncbi_taxonomy`, when querying multiple species at once.
+
+## Tuning the functions' arguments
+
+Different arguments can be tuned to improve speed and/or reliability of requests to the NCBI servers. These include the __rate__ of xml or fasta downloads and the __API rate__. The first one is 
+
+
+
+

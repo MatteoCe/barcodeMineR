@@ -235,6 +235,8 @@ web_history_splitter <- function(counts, rate) {
 #'
 #' @return A number, defining the correct api rate.
 #'
+#' @keywords internal
+#'
 set_ncbi_rate <- function(api_rate) {
 
   # define default values if api_rate has not been manually set
