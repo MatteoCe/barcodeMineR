@@ -21,7 +21,7 @@
 #'   \item{directionPrimers}{Gives the type of primers that are shown in the foeld "PCR_primers": "F|R" indicates that the primers' names in the "PCR_primers" separated by a pipe correspond to the forward and revers primers in this order}
 #'   \item{PCR_primers}{Names of the primers used to amplify the sequence of the record}
 #'   \item{note}{Additional notes}
-#'
+#'   ...
 #' }
 #' @source generated manually, consult data_raw directory for details
 "example_record"
