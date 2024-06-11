@@ -37,8 +37,7 @@ The first step consists in loading the package:
 library(barcodeMineR)
 ```
 
-Take a look at the
-`vignette("Introduction to the barcodeMineR package")` for more
+Take a look at the [vignette](intro_barcodeMineR.html) for more
 information on the details!
 
 ## TO DO

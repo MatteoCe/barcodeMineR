@@ -20,7 +20,7 @@ In synthesis, it provides a unified framework for mining DNA Barcodes from the m
 ## Basic usage
 
 The __barcodeMineR__ package allows to recover DNA barcodes from a vector of taxonomic names.
-The most basic usage consists in the recovery of the taxonomic information first, followed by the download of all records available. The function `r get_ncbi_taxonomy()` does exactly that:
+The most basic usage consists in the recovery of the taxonomic information first, followed by the download of all records available. The function get_ncbi_taxonomy() does exactly that:
 
 ```{r}
 library(barcodeMineR)
@@ -45,7 +45,7 @@ Now we have the final _refdb_ formatted data frame including all DNA barcodes av
 rec_NCBI
 ```
 
-This data frame includes `r nrow(rec_NCBI)` records (rows). However, if we were to search for all _Dissostichus mawsoni_ records on the NCBI nucleotide database, using the same default filters called inside the _barcodeMineR_ functions, we will notice that there are less accession numbers than the number of records obtained by the `r download_ncbi()` function:
+This data frame includes `r nrow(rec_NCBI)` records (rows). However, if we were to search for all _Dissostichus mawsoni_ records on the NCBI nucleotide database, using the same default filters called inside the _barcodeMineR_ functions, we will notice that there are less accession numbers than the number of records obtained by the download_ncbi() function:
 
 ```{r, eval = TRUE}
 # the default filters exclude whole genome shotgun sequences and transcribed shotgun assembly products
@@ -72,7 +72,7 @@ tax
 
 ```
 
-The output is slightly different from the output of `r get_ncbi_taxonomy()`, however, it serves the same role. In fact, it can then be used to download all _Dissostichus mawsoni_ records from the BOLD database.
+The output is slightly different from the output of get_ncbi_taxonomy(), however, it serves the same role. In fact, it can then be used to download all _Dissostichus mawsoni_ records from the BOLD database.
 
 ```{r}
 rec_BOLD <- download_bold(tax, ask = FALSE)
@@ -95,7 +95,7 @@ As we can see from the printed messages, some records were actually mined versio
 total
 ```
 
-This is it, now we have all barcodes available on the major online repositories for the species _Dissostichus mawsoni_. In case we want to add additional, private sequences to the mined results, we can use the function `r loadBarcodeOre()` and specify either the paths to a tsv file and a fasta file including our new sequences, or to a data frame and a _DNAStringSet_ object with the same, to output a _refdb_ data frame formatted as those we merged earlier. In order to do that, the tsv file must include the same fields (*i.e.* column names) included in the `r barcodeMineR::example_record` object.
+This is it, now we have all barcodes available on the major online repositories for the species _Dissostichus mawsoni_. In case we want to add additional, private sequences to the mined results, we can use the function loadBarcodeOre() and specify either the paths to a tsv file and a fasta file including our new sequences, or to a data frame and a _DNAStringSet_ object with the same, to output a _refdb_ data frame formatted as those we merged earlier. In order to do that, the tsv file must include the same fields (*i.e.* column names) included in the `r barcodeMineR::example_record` object.
 
 ```{r}
 rec <- barcodeMineR::example_record
@@ -124,13 +124,13 @@ refdb_check_tax_conflict(total)
 
 As observed from the output, it appears that the nomenclature for ray-finned fishes is different in the BOLD and NCBI taxonomies (Actinopteri vs Actinopterygii).
 
-We can also filter records based on the length of the sequences. Although we retain this information in the lengthGene field, the _refdb_ package directly calculates it using the  `r refdb_filter_seq_length()` function. Let's say we want to know how many records correspond to a maximum of 658 base pairs (bp) in length:
+We can also filter records based on the length of the sequences. Although we retain this information in the lengthGene field, the _refdb_ package directly calculates it using the refdb_filter_seq_length() function. Let's say we want to know how many records correspond to a maximum of 658 base pairs (bp) in length:
 
 ```{r}
 total_filt <- refdb_filter_seq_length(total, max_len = 658)
 ```
 
-A total of `r nrow(total_folmer)` records include sequences up to 658 bp in length. However, many records results much shorter than this length:
+A total of `r nrow(total_filt)` records include sequences up to 658 bp in length. However, many records results much shorter than this length:
 
 ```{r, echo = TRUE, eval = TRUE}
 refdb_plot_seqlen_hist(total_filt)
