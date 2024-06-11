@@ -37,8 +37,9 @@ The first step consists in loading the package:
 library(barcodeMineR)
 ```
 
-Take a look at the [vignette](doc/intro_barcodeMineR.html) for more
-information!
+Take a look at the
+`vignette("Introduction to the barcodeMineR package")` for more
+information on the details!
 
 ## TO DO
 
@@ -52,11 +53,18 @@ information!
   arising, try downloading all CDS of the records corresponding to
   *Ophthalmolycus amberensis* (specifically the acc num ON417737.1 and
   the CDS CYTB), or the acc num KX362346.1 for the muts CDS of the
-  species *Notisis elongata*.
+  species *Notisis elongata*. Another issue related to this problem can
+  be seen with the accession number “JN034583.1” of the species
+  *Dissostichus mawsoni*, where different portions of “immunoglobulin M
+  heavy chain” are separated by exons.
 
-Another issue related to this problem can be seen with the accession
-number “JN034583.1” of the species *Dissostichus mawsoni*, where
-different portions of “immunoglobulin M heavy chain” are separated by
-exons.
+- Remove field *lengthGene*? It might have no purpose, considering the
+  sequence itself is in the refdb object and can be modified using the
+  refdb package functions.
 
-- 
+- Change default *api_rate* in ncbi functions from 3 to 2.8, to slow
+  down requests that might build up to 4 per seconds with slow internet
+  connections.
+
+- Change default *ask* argument from TRUE to FALSE in both bold and ncbi
+  functions?
