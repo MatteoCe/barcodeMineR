@@ -1,14 +1,9 @@
 #' Load sequences and corresponding records as a refdb object
 #'
-#' @param records character string with path (or file name if in the working
-#' directory) leading to strictly "tsv file" with records information. It can also
-#' correspond to a data.frame, provided that it has the fields included in the
-#' example data 'barcodeMineR::example_record'.
-#' @param sequences character string with path (or file name if in the working
+#' @param pathToRecords character string with path (or file name if in the working
+#' directory) leading to strictly "tsv file" with records information.
+#' @param pathToSequences character string with path (or file name if in the working
 #' directory) leading to fasta file with sequences corresponding to each record.
-#' It can also correspond to a "DNAStringSet" object, as the one in the example data
-#' 'barcodeMineR::example_sequences'. The name of each sequence from the DNAStringSet
-#' object must correspond to the corresponding "sourceID|markerCode".
 #' @param prefix defaults to NULL. Character string that will be used to create
 #' numbered custom ids for each record in ascending order.
 #'
@@ -18,44 +13,23 @@
 #'
 #' @examples \dontrun{
 #' myBO <- loadBarcodeOre("path/to/table.tsv", "path/to/sequences.fasta")
-#'
-#' myBO <- loadBarcodeOre(example_record, example_sequence)
 #' }
 #'
-loadBarcodeOre <- function(records, sequences, prefix = NULL) {
+loadBarcodeOre <- function(pathToRecords, pathToSequences, prefix = NULL) {
 
-  # check which type of data has been supplied to the function
-  if (all(c(class(records), class(sequences)) %in% "character")) {
+  # set error messages in case paths are incorrect and quit
+  if (!(file.exists(pathToRecords))) {
 
-    # set error messages in case paths are incorrect and quit
-    if (!(file.exists(records))) {
+    stop(paste(pathToRecords,"does not exists, is the file in another path?"))
 
-      stop(paste(records,"does not exists, is the file in another path?"))
+  } else if (!(file.exists(pathToSequences))) {
 
-    } else if (!(file.exists(sequences))) {
+    stop(paste(pathToSequences,"does not exists, is the file in another path?"))
 
-      stop(paste(sequences,"does not exists, is the file in another path?"))
+  }
 
-    } else {
-
-      # get sequences: simple command to load the sequences using Biostrings method
-      sequences <- Biostrings::readDNAStringSet(sequences, format = "fasta")
-
-      # get records: simple command to load the records table
-      records <- utils::read.delim(records, na.strings = c("NA", ""))
-
-    }
-
-  } else if (all("data.frame" %in% class(records) & class(sequences) == "DNAStringSet")) {
-
-    sequences <- sequences
-    records <- records
-
-  } else {
-
-    stop("The function does not support object types other than 'character' or 'data.frame' and 'DNAStringSet' as inputs")
-
-    }
+  # get sequences: simple command to load the sequences using Biostrings method
+  sequences <- Biostrings::readDNAStringSet(pathToSequences, format = "fasta")
 
   # check that all headers have the correct format "recordID|markercode"
   badHeaders <- purrr::discard(sequences@ranges@NAMES, ~ stringr::str_detect(.x, "^[:graph:]+\\|[:graph:]+$"))
@@ -66,7 +40,9 @@ loadBarcodeOre <- function(records, sequences, prefix = NULL) {
 
   }
 
-  # set correct fields
+  # get records: simple command to load the records table
+  records <- utils::read.delim(pathToRecords, na.strings = c("NA", ""))
+
   accepted_fields <- c(
     "sourceID",
     "source",
