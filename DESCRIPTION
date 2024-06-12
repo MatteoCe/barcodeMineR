@@ -3,6 +3,11 @@ Type: Package
 Title: Fast and reliable mining of DNA Barcodes from the NCBI and BOLD
 Version: 0.1.0
 Author: Matteo Cecchetto
+Authors@R: c(
+    person("Matteo", "Cecchetto", , "matteocecchetto@gmail.com", role = c("aut", "cre"),
+      comment = c(ORCID = "0000-0002-4505-4104")
+    )
+  )
 Maintainer: The package maintainer <matteocecchetto@gmail.com>
 Description: This package allows to query multiple taxonomic names on the NCBI 
     and BOLD repositories and retrieve DNA barcodes and associated metadata for

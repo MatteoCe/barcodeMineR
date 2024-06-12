@@ -16,33 +16,82 @@ knitr::opts_chunk$set(
 
 **NOTE: This is a temporary GitHub repository created for testing purposes.**
 
-## Rate limit and parallelization
+The time required to mine DNA barcodes from the NCBI nucleotide database depends on how many species/taxa are searched and how many records correspond to each taxa. Due to the structure of the __barcodeMineR__ functions, and its consequent usage, different approaches can be adopted to speed up the procedures, with varying effects.
+
+Although the rationale and functioning behind each method is described below, including the [fine tuning](https://matteoce.github.io/barcodeMineR/articles/api_rate_barcodeMineR.html#tuning-the-functions-arguments) of the functions' arguments, it is suggested to follow the functions' default parameters, and, at the same time, adopt all of the approaches here described, which do not only speed up the recovery of DNA barcodes, but also reduce excessive blocking from the servers.
+
+## API rate limit
+
+The NCBI servers allows up to only three requests per second from a single user. If this limit is not respected, the NCBI will block further requests for some time. If a request takes less than 1/3 of a second to finish, then this represents the maximum rate that can be adopted for these analyses.
+
+For example, if we have a vector of 100 species, we can expect an execution time for the [get_ncbi_taxonomy](https://matteoce.github.io/barcodeMineR/reference/get_ncbi_taxonomy.html) function to be approximately `r paste(round((1/3)*200, 2), "seconds")`:
 
 ```{r, echo = FALSE, eval = TRUE}
 library(barcodeMineR)
 t0 <- Sys.time()
-tax <- get_ncbi_taxonomy("Promachocrinus kerguelensis")
-recs <- download_ncbi(tax, ask = FALSE)
+tax <- get_ncbi_taxonomy(species200[1:100], ask = FALSE)
 t1 <- Sys.time()
 ```
-One of the main advantages of the __barcodeMineR__ package consists in leveraging the asynchronous parallelizing framework of the [future](https://github.com/HenrikBengtsson/future) package to speed up the download of sequences from the NCBI repository. 
-
-The following commands will retrieve `r nrow(recs)` records, corresponding to the species _Promachocrinus kerguelensis_, taking approximately `r x <- difftime(t1, t0); paste(as.numeric(x), if (units(x) == "mins") {"minutes"} else {"seconds"})`.
-
 ```{r, echo = TRUE, eval = FALSE}
 library(barcodeMineR)
 
-tax <- get_ncbi_taxonomy("Promachocrinus kerguelensis")
+# extract example dataset with 200 species from the Ross Sea (Antarctica, Southern Ocean)
+specs <- barcodeMineR::species200
 
-recs <- download_ncbi(tax, ask = FALSE)
+tax <- get_ncbi_taxonomy(specs[1:100], ask = FALSE)
+```
+
+And, during the rendering of this vignettes, it executed in `r x <- difftime(t1, t0); if (units(x) == "mins") {paste(round(as.numeric(x), 2), "minutes")} else {paste(round(as.numeric(x), 0), "seconds")}`.
+
+This api rate, which is the default for the _ncbi_ functions of the _barcodeMineR_ package, is, however, highly subjected to changes in the speed of the internet connections, and might delay some requests at certain times, leading to an accumulation of four requests in a window of one second of time. 
+
+In order to avoid this, a higher download rate can be adopted if the user decides to register a [NCBI account](https://account.ncbi.nlm.nih.gov/). Using an API key, the user can send up to 10 requests per second to the NCBI. 
+
+This can be done "externally", in respect to the _barcodeMineR_ functions, following the [rentrez documentation](https://cran.r-project.org/web/packages/rentrez/vignettes/rentrez_tutorial.html#rate-limiting-and-api-keys), specifically with this function:
+
+```{r, echo = TRUE, eval = FALSE}
+set_entrez_key("ABCD123")
 
 ```
 
-The NCBI servers allows up to only three requests per second from a single user. If this limit is not respected, the NCBI will block further requests for some time. "Classic" parallelization is not a viable option, considering that different requests may take significantly different time (we may send a request for DNA barcodes with only one CDS or rRNA, while other will download whole genomes). For the same reason, running sequentially (like in a lapply or for loop with a waiting time of 1/3 seconds) is highly subjected to the execution time of each request.
+By setting an NCBI account, the user assures that requests that don't take much time can be executed even faster, and avoid excessive blocking when the internet connection is particularly unreliable. Including an NCBI API key approximately halves the execution time of the [get_ncbi_taxonomy](https://matteoce.github.io/barcodeMineR/reference/get_ncbi_taxonomy.html), when querying multiple species at once.
+```{r, echo = FALSE, eval = TRUE}
+library(barcodeMineR)
+# please its my api rate key, don't use it, I'll find a way to hide it, I swear, but in the meantime, have some frigging heart
+rentrez::set_entrez_key("411436812fa3336220505547704885e63f07")
+t0 <- Sys.time()
+tax <- get_ncbi_taxonomy(species200[1:100], ask = FALSE)
+t1 <- Sys.time()
+```
 
-In this context, the asynchronous parallelizing framework of the __future__ package comes in handy. In synthesis, each request is sent as a background process, which will not block the current R session to send another request at a specified time, provided that there are enough "workers" (cores) available. This means that, using the __future__ framework, we can send a request every 1/3 of a second, independently from the completion of the previous request.
+The above command is executed, during the rendering of this vignette, in `r x <- difftime(t1, t0); if (units(x) == "mins") {paste(round(as.numeric(x), 2), "minutes")} else {paste(round(as.numeric(x), 0), "seconds")}`.
 
-We can setup the __future__ framework using its [functions](https://future.futureverse.org/articles/future-1-overview.html). Here, we're setting up the "multisession" plan using all available cores from our machine:
+All ncbi functions of the _barcodeMineR_ package would benefit from the inclusion of an API key, which increases speed of fast requests and reliability at long execution times.
+
+## Adopting an asynchronous framework and leveraging your machine computation power
+
+One of the main advantages of the __barcodeMineR__ package consists in the capacity to adopt the asynchronous parallelizing framework of the [future](https://github.com/HenrikBengtsson/future) package to speed up the download of records from the NCBI repository.
+
+The execution time of the [download_ncbi](https://matteoce.github.io/barcodeMineR/reference/download_ncbi.html) function depends on how many records correspond to each single species/taxa on the NCBI nucleotide database.
+```{r, echo = FALSE, eval = TRUE}
+tax <- get_ncbi_taxonomy("Euphausia superba")
+
+t0 <- Sys.time()
+recs <- download_ncbi(tax, ask = FALSE)
+t1 <- Sys.time()
+```
+
+For example, if we wanted to search for all records corresponding to the Antarctic krill species _Euphausia superba_, we could expect to download `r nrow(recs)` records, after an execution time of approximately `r x <- difftime(t1, t0); if (units(x) == "mins") {paste(round(as.numeric(x), 2), "minutes")} else {paste(round(as.numeric(x), 0), "seconds")}`, for the function _download_ncbi_.
+```{r, echo = TRUE, eval = FALSE}
+tax <- get_ncbi_taxonomy("Euphausia superba")
+
+# the execution time refers to the function below only
+recs <- download_ncbi(tax, ask = FALSE)
+```
+
+In this context, the asynchronous parallelizing framework of the [future](https://future.futureverse.org/) package comes in handy. In synthesis, each request is sent as a background process, which will not block the current R session to send another request at a specified time, provided that there are enough "workers" (cores) available. This means that, using the _future_ framework, we can send a request every 1/3 of a second (or 1/10, if we set the NCBI API key), independently from the completion of the previous request.
+
+We can setup the _future_ framework using its [functions](https://future.futureverse.org/articles/future-1-overview.html). Here, we're setting up the "multisession" plan using all available cores from our machine:
 
 ```{r, echo = TRUE, eval = FALSE}
 future::plan("multisession")
@@ -52,15 +101,30 @@ future::plan("multisession")
 You can specify the number of cores using the _workers_ argument, and check how many cores are available using the following command:
 
 ```{r, echo = TRUE, eval = TRUE}
-parallelly::availableWorkers()
+parallelly::availableCores()
 
 ```
 
-We can revert to the "normal", sequential framework when we're done with our work using the __barcodeMineR__ package, supplying "sequential" to the same command. Remember to do this before proceeding with other, unrelated work, in case you're not interested in using the same asynchronous framework. If you're unsure of which plan the current R session is set to, use the same command without arguments.
+We can revert to the "normal", sequential framework when we're done with our work using the _barcodeMineR_ package, supplying "sequential" to the same command. Remember to do this before proceeding with other, unrelated work, in case you're not interested in using the same asynchronous framework. If you're unsure of which plan the current R session is set to, use the same command without arguments.
 
-This plan ("multisession") works on all OSes, on both Rstudio or the command line. It will significantly speed up the recovery of records from the NCBI, especially for the `{r, echo = TRUE, eval = FALSE}download_ncbi` function.
+This plan ("multisession") works on all OSes, on both Rstudio or the command line. It will significantly speed up the recovery of records from the NCBI, especially for the _download_ncbi_ function, but can also improve the speed of _get_ncbi_taxonomy_ (see [this section](https://matteoce.github.io/barcodeMineR/articles/api_rate_barcodeMineR.html#tuning-the-functions-arguments) for more details).
+```{r, echo = FALSE, eval = TRUE}
+future::plan("multisession")
+tax <- get_ncbi_taxonomy("Euphausia superba")
 
-However, before proceeding with an example, when downloading large numbers of records from BOLD or the NCBI databases, it is suggested to include a progress bar. Again, here we're relying on another beautiful package, the [progressr](https://github.com/HenrikBengtsson/progressr) package. As before, we don't need to supply specific arguments to the __barcodeMineR__ functions to activate it, but we can do it "externally":
+t0 <- Sys.time()
+recs <- download_ncbi(tax, ask = FALSE)
+t1 <- Sys.time()
+future::plan("sequential")
+```
+
+Now, the entire process of downloading _Euphausia superba_ records will take sensibly less time than in "sequential" _future_ plan, providing the final results after `r x <- difftime(t1, t0); if (units(x) == "mins") {paste(round(as.numeric(x), 2), "minutes")} else {paste(round(as.numeric(x), 0), "seconds")}`.
+
+### Tips
+
+* Progress bar
+
+When downloading large numbers of records from BOLD or the NCBI databases, it is suggested to include a progress bar. Again, here we're relying on another beautiful package, the [progressr](https://github.com/HenrikBengtsson/progressr) package. As for the _future_ package, we don't need to supply specific arguments to the _barcodeMineR_ functions to activate it, but we can do it "externally":
 
 ```{r, echo = TRUE, eval = FALSE}
 progressr::handlers(global=TRUE)
@@ -70,31 +134,42 @@ progressr::handlers("progress")
 
 Now, a progress bar will appear while downloading records, and different messages will occasionally be printed to inform the user of the current status of the operation. The progress bar can be modified, according to the user's preferences, as reported in the [progressr documentation](https://cran.r-project.org/web/packages/progressr/vignettes/progressr-intro.html).
 
-```{r, echo = FALSE, eval = TRUE}
-future::plan("multisession")
-t0 <- Sys.time()
-tax <- get_ncbi_taxonomy("Promachocrinus kerguelensis")
-recs <- download_ncbi(tax, ask = FALSE)
-t1 <- Sys.time()
-future::plan("sequential")
+* Multisession and _get_ncbi_taxonomy_:
+
+Adopting the future asynchronous framework can significantly improve the execution of the _download_ncbi_ function, but can also improve the speed of _get_ncbi_taxonomy_, when the "multisession" plan is set with two to four workers (cores). In fact, setting up a "future", a background process, takes the _future_ package some time, and, for requests that do not take much time it is suggested to not include too many workers in a "multisession" plan, as they would not significantly improve the speed.
+
+Below, the execution time of the function _get_ncbi_taxonomy_, at different _future_ plans is shown, revealing how most of the improvement is observed after including the NCBI API key:
+```{r, echo = FALSE, eval = TRUE, message = FALSE}
+library(devtools)
+devtools::load_all()
+
+test <- test_getTaxonomy[test_getTaxonomy$rate == 200, ]
+test$lines <- paste(test$session, 
+                    test$API_key, 
+                    sep = "|")
+
+ggplot2::ggplot(test, ggplot2::aes(x = as.factor(number), 
+                                   y = length, 
+                                   group = lines, 
+                                   color = session)) +
+  ggplot2::geom_line(ggplot2::aes(linetype = API_key, 
+                                  alpha = API_key), 
+                     linewidth = 1.1) + 
+  ggplot2::scale_linetype_manual(values = c("dashed", "solid")) + 
+  ggplot2::scale_color_manual(values = c("#0055A4", "#FFD700", "#E66B00", "#CD0000", "#660000")) +
+  ggplot2::scale_alpha_manual(values = c(.4, 1)) + 
+  ggplot2::xlab("Number of Species searched") + ggplot2::ylab("Execution time (seconds)") + 
+  ggplot2::theme_minimal()
+
 ```
-
-Now, the entire process of downloading _Promachocrinus kerguelensis_  will take  sensibly less time than in "sequential" __future__ plan, providing the final results after `r x <- difftime(t1, t0); if (units(x) == "mins") {paste(round(as.numeric(x), 2), "minutes")} else {paste(round(as.numeric(x), 0), "seconds")}`.
-
-## Stay safe and fast with the NCBI API key
-
-An additional parameter can be supplied "externally", allowing to increase the speed of the `{r, echo = TRUE, eval = FALSE}get_ncbi_taxonomy` function and avoid blocking from the NCBI servers for both functions. As mentioned above, the NCBI allows a maximum of three requests per second, a limit that is respected by the default settings of the __barcodeMineR__ package. However, a higher download rate can be adopted if the user decides to register a [NCBI account](https://account.ncbi.nlm.nih.gov/). Using an API key, the user can send up to 10 requests per second to the NCBI. This can be done following the [rentrez documentation](https://cran.r-project.org/web/packages/rentrez/vignettes/rentrez_tutorial.html#rate-limiting-and-api-keys), specifically with the following function:
-
-```{r, echo = TRUE, eval = FALSE}
-set_entrez_key("ABCD123")
-
-```
-
-By setting an NCBI account, the user assures that requests that don't take much time can be executed even faster, and avoid excessive blocking when the internet connection is particularly unreliable. Including an NCBI API key halves the execution time of the `{r, echo = TRUE, eval = FALSE}get_ncbi_taxonomy`, when querying multiple species at once.
 
 ## Tuning the functions' arguments
 
-Different arguments can be tuned to improve speed and/or reliability of requests to the NCBI servers. These include the __rate__ of xml or fasta downloads and the __API rate__. The first one is 
+Different arguments can be tuned to improve speed and/or reliability of requests to the NCBI servers. These include the _rate_ of xml or fasta downloads and the _API rate_:
+
+* The __api_rate__ argument allows to override the default settings of the NCBI requests rate. The future plan framework allows to send requests every 1 / __api_rate__ seconds, thus ensuring that no more that 'api_rate' requests will be sent in a window framework of 1 second. However, due to fluctuations in the internet connection, still more than __api_rate__ number of requests might arrive to the NCBI servers, causing errors. The function can handle up to 5 consecutive errors per request, but too many errors might block the whole process. The __api_rate__ parameter can be modified in order to slow down the requests sent per second. It overrides the automatic selection of the optimal parameter (either 3 or 10) and accepts one decimal degree number between 1.0 and 10.0, so if the internet connection is particularly bad, it can be set between 2.5 and 2.0, for example, in order to slow the number of requests per second and reduce the possibility of errors.
+
+* The __rate__ argument of the [get_ncbi_taxonomy](https://matteoce.github.io/barcodeMineR/reference/get_ncbi_taxonomy.html) and [download_bold](https://matteoce.github.io/barcodeMineR/reference/download_bold.html) and the arguments __rate_xml__ and __rate_fasta__ for the [download_ncbi](https://matteoce.github.io/barcodeMineR/reference/download_ncbi.html) function allow to set the number of taxa/species that will be queried with each request and has impacts on the memory usage of the package. CONTINUE...
 
 
 

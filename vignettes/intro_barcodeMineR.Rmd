@@ -9,18 +9,10 @@ vignette: >
 
 **NOTE: This is a temporary GitHub repository created for testing purposes.**
 
-## The barcodeMineR package
+## Getting started
 
-This package allows to query multiple taxonomic names on the NCBI and BOLD repositories and retrieve DNA barcodes and associated metadata for any wanted marker. It heavily relies on the [bold](https://github.com/ropensci/bold) and [rentrez](https://github.com/ropensci) packages from the [rOpenSci](https://ropensci.org/), and takes advantage of the asynchronous framework from the [future](https://github.com/HenrikBengtsson/future) package to speed up the retrieval of data from the NCBI, respecting its API requests rate limit.
-
-The final output is a data frame object modified following the formatting requirements of the [refdb](https://github.com/fkeck/refdb) package, and it is cleaned from mining duplicates, differences in formats of BOLD and NCBI metadata (*e.g.* geographic coordinates, dates) and commonly occurring issues that derive from downloading and merging data from those two repositories.
-
-In synthesis, it provides a unified framework for mining DNA Barcodes from the main online genomic repositories, providing clean, metadata-rich sequences in a programmatic way or interactively, depending on the wanted usage.
-
-## Basic usage
-
-The __barcodeMineR__ package allows to recover DNA barcodes from a vector of taxonomic names.
-The most basic usage consists in the recovery of the taxonomic information first, followed by the download of all records available. The function get_ncbi_taxonomy() does exactly that:
+The _barcodeMineR_ package allows to recover DNA barcodes from a vector of taxonomic names.
+The most basic usage consists in the recovery of the taxonomic information first, followed by the download of all records available. The function [get_ncbi_taxonomy](https://matteoce.github.io/barcodeMineR/reference/get_ncbi_taxonomy.html) does exactly that:
 
 ```{r}
 library(barcodeMineR)
@@ -45,17 +37,18 @@ Now we have the final _refdb_ formatted data frame including all DNA barcodes av
 rec_NCBI
 ```
 
-This data frame includes `r nrow(rec_NCBI)` records (rows). However, if we were to search for all _Dissostichus mawsoni_ records on the NCBI nucleotide database, using the same default filters called inside the _barcodeMineR_ functions, we will notice that there are less accession numbers than the number of records obtained by the download_ncbi() function:
+This data frame includes `r nrow(rec_NCBI)` records (rows). However, if we were to search for all _Dissostichus mawsoni_ records on the NCBI nucleotide database, using the same default filters called inside the _barcodeMineR_ functions, we will notice that there are less accession numbers than the number of records obtained by the [download_ncbi](https://matteoce.github.io/barcodeMineR/reference/download_ncbi.html) function:
 
 ```{r, eval = TRUE}
-# the default filters exclude whole genome shotgun sequences and transcribed shotgun assembly products
+# the default filters exclude whole genome shotgun sequences and transcribed 
+# shotgun assembly products
 rentrez::entrez_search(db="nucleotide", term="(((txid36200[ORGN] NOT wgs[Keyword]) NOT tsa[Keyword]) AND biomol_genomic[PROP]) AND (cds[Feature key] OR rrna[Feature key])")
 ```
 
 The package recovered every single DNA barcode/gene/product available for the accession numbers corresponding
 to _Dissostichus mawsoni_, thus, for example, for the accession number 'LC138011.1' we obtained both ND1 and ND2 markers as separate records in the _refdb_ data frame.
 
-In case you want to choose which marker to keep in the final tibble, set the ask argument to TRUE (default), and, when asked, choose which marker to download data for:
+In case you want to choose which marker to keep in the final tibble, set the _ask_ argument to TRUE (default), and, when asked, choose which marker to download data for:
 
 ```{r, echo = TRUE, eval = FALSE}
 rec_NCBI <- download_ncbi(tax)
@@ -72,7 +65,7 @@ tax
 
 ```
 
-The output is slightly different from the output of get_ncbi_taxonomy(), however, it serves the same role. In fact, it can then be used to download all _Dissostichus mawsoni_ records from the BOLD database.
+The output is slightly different from the output of [get_ncbi_taxonomy](https://matteoce.github.io/barcodeMineR/reference/get_ncbi_taxonomy.html), however, it serves the same role. In fact, it can then be used to download all _Dissostichus mawsoni_ records from the BOLD database.
 
 ```{r}
 rec_BOLD <- download_bold(tax, ask = FALSE)
@@ -95,12 +88,27 @@ As we can see from the printed messages, some records were actually mined versio
 total
 ```
 
-This is it, now we have all barcodes available on the major online repositories for the species _Dissostichus mawsoni_. In case we want to add additional, private sequences to the mined results, we can use the function loadBarcodeOre() and specify either the paths to a tsv file and a fasta file including our new sequences, or to a data frame and a _DNAStringSet_ object with the same, to output a _refdb_ data frame formatted as those we merged earlier. In order to do that, the tsv file must include the same fields (*i.e.* column names) included in the `r barcodeMineR::example_record` object.
+This is it, now we have all barcodes available on the major online repositories for the species _Dissostichus mawsoni_. 
 
-```{r}
+In case we want to add additional, private sequences to the mined results, we can use the function [loadBarcodeOre](https://matteoce.github.io/barcodeMineR/reference/loadBarcodeOre.html) and specify either the paths to a tsv file and a fasta file including our new sequences, or to a data frame and a _DNAStringSet_ object with the same, to output a _refdb_ data frame formatted as those we merged earlier. 
+
+In order to do that, the tsv file must include the same fields (*i.e.* column names) included in the example dataset object _example_record_.
+
+```{r, echo = TRUE, eval = FALSE}
+# load example datasets from barcodeMineR...
 rec <- barcodeMineR::example_record
 seq <- barcodeMineR::example_sequence
 
+#... or include the path to your files
+rec <- "~/home/my/path/data.tsv"
+seq <- "~/home/my/path/data.fasta"
+
+new_records <- loadBarcodeOre(rec, seq)
+new_records
+```
+```{r, echo = FALSE, eval = TRUE}
+rec <- barcodeMineR::example_record
+seq <- barcodeMineR::example_sequence
 new_records <- loadBarcodeOre(rec, seq)
 new_records
 ```
@@ -114,7 +122,7 @@ total
 
 ## Analyzing the database
 
-Having a pre-formatted _refdb_ data frame allows to use the functions of that package, including filtering operations, quality checks, examination of taxonomic conflicts and plotting functions. For example, if we were to search for taxonomic conflicts, we could use the appropriate function from the _refdb_ package:
+Having a pre-formatted [refdb](https://fkeck.github.io/refdb/index.html) data frame allows to use the functions of that package, including filtering operations, quality checks, examination of taxonomic conflicts and plotting functions. For example, if we were to search for taxonomic conflicts, we could use the appropriate function from the _refdb_ package:
 
 ```{r}
 library(refdb)
@@ -124,7 +132,7 @@ refdb_check_tax_conflict(total)
 
 As observed from the output, it appears that the nomenclature for ray-finned fishes is different in the BOLD and NCBI taxonomies (Actinopteri vs Actinopterygii).
 
-We can also filter records based on the length of the sequences. Although we retain this information in the lengthGene field, the _refdb_ package directly calculates it using the refdb_filter_seq_length() function. Let's say we want to know how many records correspond to a maximum of 658 base pairs (bp) in length:
+We can also filter records based on the length of the sequences. Although we retain this information in the lengthGene field, the _refdb_ package directly calculates it using the [refdb_filter_seq_length](https://fkeck.github.io/refdb/reference/refdb_filter_seq_length.html) function. Let's say we want to know how many records correspond to a maximum of 658 base pairs (bp) in length:
 
 ```{r}
 total_filt <- refdb_filter_seq_length(total, max_len = 658)
@@ -132,7 +140,7 @@ total_filt <- refdb_filter_seq_length(total, max_len = 658)
 
 A total of `r nrow(total_filt)` records include sequences up to 658 bp in length. However, many records results much shorter than this length:
 
-```{r, echo = TRUE, eval = TRUE}
+```{r, echo = TRUE, eval = TRUE, message = FALSE}
 refdb_plot_seqlen_hist(total_filt)
 ```
 
@@ -144,7 +152,7 @@ plot_length(total_filt)
 
 As shown, the original length of the fasta sequence of some records is much longer than the final result obtained with the _barcodeMineR_ package.
 
-Few information was retrieved from each record, but we can see how many records include the primers used to amplify their sequence with another plotting function of the _barcodeMineR_ package:
+Not much information was retrieved from each record, but we can see how many records include the primers used to amplify their sequence with another plotting function of the _barcodeMineR_ package, credit by [Gwiazdowski et al. (2015)](https://journals.plos.org/plosone/article/file?id=10.1371/journal.pone.0125635&type=printable):
 
 ```{r, echo = TRUE, eval = TRUE}
 plot_primers(total_filt)
@@ -158,6 +166,6 @@ refdb_plot_map(total)
 
 Only a few records have geographical coordinates in the final merged table.
 
-This is the basic usage of the __barcodeMineR__ package. Now you can check how to speed up the recovery of records from the NCBI database by looking at the `vignette("Speeding up the recovery of NCBI records")` vignette.
+This is the basic usage of the __barcodeMineR__ package. Now you can check how to speed up the recovery of records from the NCBI database by looking at the next [vignette](https://matteoce.github.io/barcodeMineR/articles/api_rate_barcodeMineR.html).
 
 

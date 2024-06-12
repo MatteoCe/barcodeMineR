@@ -27,20 +27,14 @@ BiocManager::install("MatteoCe/barcodeMineR")
 ```
 
 The installation might require the update of various packages, which may
-fail. It is not necessarily an issue, thus you can proceed nonetheless.
+fail. It is not necessarily an issue, thus you may proceed nonetheless.
 
-## Example
+## Getting started
 
-The first step consists in loading the package:
+Take a look at the [barcodeMineR
+website](https://matteoce.github.io/barcodeMineR/) for more information!
 
-``` r
-library(barcodeMineR)
-```
-
-Take a look at the [vignette](intro_barcodeMineR.html) for more
-information on the details!
-
-## TO DO
+## Issues and ‘to dos’
 
 - Check sequence extract method in buildSequences. If a [location
   descriptor](https://www.insdc.org/submitting-standards/feature-table/#3.4.3)
