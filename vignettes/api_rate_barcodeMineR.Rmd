@@ -140,10 +140,47 @@ Adopting the future asynchronous framework can significantly improve the executi
 
 Below, the execution time of the function _get_ncbi_taxonomy_, at different _future_ plans is shown, revealing how most of the improvement is observed after including the NCBI API key:
 ```{r, echo = FALSE, eval = TRUE, message = FALSE}
-library(devtools)
-devtools::load_all()
-
-test <- test_getTaxonomy[test_getTaxonomy$rate == 200, ]
+test <- structure(list(number = c(5, 10, 50, 100, 200, 5, 10, 50, 100, 
+200, 5, 10, 50, 100, 200, 5, 10, 50, 100, 200, 5, 10, 50, 100, 
+200, 5, 10, 50, 100, 200, 5, 10, 50, 100, 200, 5, 10, 50, 100, 
+200, 5, 10, 50, 100, 200, 5, 10, 50, 100, 200), session = structure(c(1L, 
+1L, 1L, 1L, 1L, 2L, 2L, 2L, 2L, 2L, 3L, 3L, 3L, 3L, 3L, 4L, 4L, 
+4L, 4L, 4L, 5L, 5L, 5L, 5L, 5L, 1L, 1L, 1L, 1L, 1L, 2L, 2L, 2L, 
+2L, 2L, 3L, 3L, 3L, 3L, 3L, 4L, 4L, 4L, 4L, 4L, 5L, 5L, 5L, 5L, 
+5L), levels = c("sequential", "multisession_2", "multisession_4", 
+"multisession_6", "multisession_8"), class = "factor"), rate = structure(c(5L, 
+5L, 5L, 5L, 5L, 5L, 5L, 5L, 5L, 5L, 5L, 5L, 5L, 5L, 5L, 5L, 5L, 
+5L, 5L, 5L, 5L, 5L, 5L, 5L, 5L, 5L, 5L, 5L, 5L, 5L, 5L, 5L, 5L, 
+5L, 5L, 5L, 5L, 5L, 5L, 5L, 5L, 5L, 5L, 5L, 5L, 5L, 5L, 5L, 5L, 
+5L), levels = c("5", "10", "50", "100", "200"), class = "factor"), 
+    API_key = structure(c(1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 
+    1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 
+    1L, 2L, 2L, 2L, 2L, 2L, 2L, 2L, 2L, 2L, 2L, 2L, 2L, 2L, 2L, 
+    2L, 2L, 2L, 2L, 2L, 2L, 2L, 2L, 2L, 2L, 2L), levels = c("absent", 
+    "key"), class = "factor"), length = c(6.90572428703308, 11.3270616531372, 
+    51.8980412483215, 103.073389291763, 228.362795829773, 8.77880430221558, 
+    11.6389873027802, 35.3095800876617, 67.3851478099823, 144.550149202347, 
+    11.3645048141479, 13.7719042301178, 38.3179087638855, 68.7132506370544, 
+    140.703586101532, 13.2560513019562, 17.5183765888214, 41.5160908699036, 
+    74.2123701572418, 148.970484018326, 17.0115077495575, 22.675710439682, 
+    47.2714693546295, 78.0974299907684, 161.878559589386, 3.84595537185669, 
+    6.18053650856018, 28.0679321289062, 56.2724962234497, 127.2626080513, 
+    6.65229249000549, 8.45009899139404, 22.1173448562622, 43.1897728443146, 
+    94.7267608642578, 9.08848404884338, 10.3188478946686, 24.1055819988251, 
+    43.0855164527893, 96.8246493339539, 15.0305166244507, 12.706152677536, 
+    26.9809739589691, 47.7412116527557, 99.992445230484, 10.8381679058075, 
+    15.4687428474426, 29.2386045455933, 51.2804937362671, 101.575941562653
+    )), out.attrs = list(dim = c(number = 5L, session = 5L, rate = 5L, 
+API_key = 2L), dimnames = list(number = c("number=  5", "number= 10", 
+"number= 50", "number=100", "number=200"), session = c("session=sequential", 
+"session=multisession_2", "session=multisession_4", "session=multisession_6", 
+"session=multisession_8"), rate = c("rate=  5", "rate= 10", "rate= 50", 
+"rate=100", "rate=200"), API_key = c("API_key=absent", "API_key=key"
+))), row.names = c(101L, 102L, 103L, 104L, 105L, 106L, 107L, 
+108L, 109L, 110L, 111L, 112L, 113L, 114L, 115L, 116L, 117L, 118L, 
+119L, 120L, 121L, 122L, 123L, 124L, 125L, 226L, 227L, 228L, 229L, 
+230L, 231L, 232L, 233L, 234L, 235L, 236L, 237L, 238L, 239L, 240L, 
+241L, 242L, 243L, 244L, 245L, 246L, 247L, 248L, 249L, 250L), class = "data.frame")
 test$lines <- paste(test$session, 
                     test$API_key, 
                     sep = "|")
