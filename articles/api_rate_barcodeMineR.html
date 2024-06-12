@@ -117,7 +117,7 @@ function to be approximately 66.67 seconds:</p>
 <span><span class="va">specs</span> <span class="op">&lt;-</span> <span class="fu">barcodeMineR</span><span class="fu">::</span><span class="va">species200</span></span>
 <span></span>
 <span><span class="va">tax</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_ncbi_taxonomy.html">get_ncbi_taxonomy</a></span><span class="op">(</span><span class="va">specs</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">100</span><span class="op">]</span>, ask <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
-<p>And, during the rendering of this vignettes, it executed in 1.48
+<p>And, during the rendering of this vignettes, it executed in 1.36
 minutes.</p>
 <p>This api rate, which is the default for the <em>ncbi</em> functions
 of the <em>barcodeMineR</em> package, is, however, highly subjected to
@@ -138,7 +138,7 @@ when the internet connection is particularly unreliable. Including an
 NCBI API key approximately halves the execution time of the <a href="https://matteoce.github.io/barcodeMineR/reference/get_ncbi_taxonomy.html">get_ncbi_taxonomy</a>,
 when querying multiple species at once.</p>
 <p>The above command is executed, during the rendering of this vignette,
-in 43 seconds.</p>
+in 37 seconds.</p>
 <p>All ncbi functions of the <em>barcodeMineR</em> package would benefit
 from the inclusion of an API key, which increases speed of fast requests
 and reliability at long execution times.</p>
@@ -156,7 +156,7 @@ function depends on how many records correspond to each single
 species/taxa on the NCBI nucleotide database.</p>
 <p>For example, if we wanted to search for all records corresponding to
 the Antarctic krill species <em>Euphausia superba</em>, we could expect
-to download 1584 records, after an execution time of approximately 2.27
+to download 1584 records, after an execution time of approximately 1.97
 minutes, for the function <em>download_ncbi</em>.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">tax</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_ncbi_taxonomy.html">get_ncbi_taxonomy</a></span><span class="op">(</span><span class="st">"Euphausia superba"</span><span class="op">)</span></span>
@@ -195,7 +195,8 @@ can also improve the speed of <em>get_ncbi_taxonomy</em> (see <a href="https://m
 section</a> for more details).</p>
 <p>Now, the entire process of downloading <em>Euphausia superba</em>
 records will take sensibly less time than in “sequential”
-<em>future</em> plan, providing the final results after 59 seconds.</p>
+<em>future</em> plan, providing the final results after 1.03
+minutes.</p>
 <div class="section level3">
 <h3 id="tips">Tips<a class="anchor" aria-label="anchor" href="#tips"></a>
 </h3>
