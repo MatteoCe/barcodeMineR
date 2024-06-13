@@ -9,9 +9,9 @@ bold_fetcher(taxon_group, bold_count, bold_tax)
 \arguments{
 \item{taxon_group}{taxonomic names}
 
-\item{bold_tax}{data.frame output of get_bold_taxonomy}
+\item{bold_count}{data.frame output of bold_record_grouper}
 
-\item{bold_counts}{data.frame output of bold_record_grouper}
+\item{bold_tax}{data.frame output of get_bold_taxonomy}
 }
 \value{
 a data.frame

@@ -90,7 +90,7 @@ bold_record_grouper <- function(bold_count, bold_tax, rate) {
 #' Download records from the BOLD database
 #'
 #' @param taxon_group taxonomic names
-#' @param bold_counts data.frame output of bold_record_grouper
+#' @param bold_count data.frame output of bold_record_grouper
 #' @param bold_tax data.frame output of get_bold_taxonomy
 #'
 #' @return a data.frame

@@ -7,7 +7,7 @@
 postAndCheck_OLD(names)
 }
 \arguments{
-\item{listAccn}{a vector of accession numbers.}
+\item{names}{a vector of accession numbers.}
 }
 \value{
 a list with a web_history object as first element and the corresponding accessions as second element.

@@ -14,8 +14,6 @@ ncbi_fasta_fetcher(searchWebHist = NULL, ids = NULL, retstart, rate)
 \item{retstart}{The initial numeric position of the ids included in the web_history object and that will be fetched. For web_history objects with 1 ids only, 'NULL' is preferable to 0.}
 
 \item{rate}{The final numeric position of the ids included in the web_history object and that will be fetched.}
-
-\item{key}{The user NCBI API key. It allows to run up to 10 requests per second.}
 }
 \value{
 A character string as fasta sequence/s.

@@ -11,7 +11,7 @@ cleanMinedFromGenBankRecords(records, sequences, accn)
 
 \item{sequences}{DNAStringSet the sequences corresponding to the records table, but in DNAStringSet format}
 
-\item{names}{character a vector of processID and corresponding marker codes as selected prevously by the user}
+\item{accn}{character a vector of processID and corresponding marker codes as selected prevously by the user}
 }
 \value{
 character the same as parameter name, but including the correct mined record

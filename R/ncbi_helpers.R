@@ -219,7 +219,6 @@ ncbi_xml_fetcher <- function(searchWebHist = NULL, ids = NULL, db = "taxonomy", 
 #' @param ids a character vector of accession/GI ids.
 #' @param retstart The initial numeric position of the ids included in the web_history object and that will be fetched. For web_history objects with 1 ids only, 'NULL' is preferable to 0.
 #' @param rate The final numeric position of the ids included in the web_history object and that will be fetched.
-#' @param key The user NCBI API key. It allows to run up to 10 requests per second.
 #'
 #' @keywords internal
 #'
@@ -255,7 +254,7 @@ ncbi_fasta_fetcher <- function(searchWebHist = NULL, ids = NULL, retstart, rate)
 
 #' Get a web_history object from a vector of accession numbers.
 #'
-#' @param listAccn a vector of accession numbers.
+#' @param names a vector of accession numbers.
 #'
 #' @return a list with a web_history object as first element and the corresponding accessions as second element.
 #'

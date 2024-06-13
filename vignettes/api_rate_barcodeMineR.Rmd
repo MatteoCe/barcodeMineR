@@ -101,7 +101,7 @@ future::plan("multisession")
 You can specify the number of cores using the _workers_ argument, and check how many cores are available using the following command:
 
 ```{r, echo = TRUE, eval = TRUE}
-parallelly::availableCores()
+future::availableCores()
 
 ```
 

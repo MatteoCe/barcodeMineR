@@ -4,14 +4,19 @@
 \alias{loadBarcodeOre}
 \title{Load sequences and corresponding records as a refdb object}
 \usage{
-loadBarcodeOre(pathToRecords, pathToSequences, prefix = NULL)
+loadBarcodeOre(records, sequences, prefix = NULL)
 }
 \arguments{
-\item{pathToRecords}{character string with path (or file name if in the working
-directory) leading to strictly "tsv file" with records information.}
+\item{records}{character string with path (or file name if in the working
+directory) leading to strictly "tsv file" with records information. It can also
+correspond to a data.frame, provided that it has the fields included in the
+example data 'barcodeMineR::example_record'.}
 
-\item{pathToSequences}{character string with path (or file name if in the working
-directory) leading to fasta file with sequences corresponding to each record.}
+\item{sequences}{character string with path (or file name if in the working
+directory) leading to fasta file with sequences corresponding to each record.
+It can also correspond to a "DNAStringSet" object, as the one in the example data
+'barcodeMineR::example_sequences'. The name of each sequence from the DNAStringSet
+object must correspond to the corresponding "sourceID|markerCode".}
 
 \item{prefix}{defaults to NULL. Character string that will be used to create
 numbered custom ids for each record in ascending order.}
@@ -26,6 +31,8 @@ Load sequences and corresponding records as a refdb object
 \examples{
 \dontrun{
 myBO <- loadBarcodeOre("path/to/table.tsv", "path/to/sequences.fasta")
+
+myBO <- loadBarcodeOre(example_record, example_sequence)
 }
 
 }

@@ -15,3 +15,4 @@ A number, defining the correct api rate.
 \description{
 Choose the optimal http requests limit based on the presence or absence of an NCBI API key.
 }
+\keyword{internal}
