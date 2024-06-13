@@ -55,19 +55,24 @@
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">loadBarcodeOre</span><span class="op">(</span><span class="va">pathToRecords</span>, <span class="va">pathToSequences</span>, prefix <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">loadBarcodeOre</span><span class="op">(</span><span class="va">records</span>, <span class="va">sequences</span>, prefix <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
-    <dl><dt>pathToRecords</dt>
+    <dl><dt>records</dt>
 <dd><p>character string with path (or file name if in the working
-directory) leading to strictly "tsv file" with records information.</p></dd>
+directory) leading to strictly "tsv file" with records information. It can also
+correspond to a data.frame, provided that it has the fields included in the
+example data 'barcodeMineR::example_record'.</p></dd>
 
 
-<dt>pathToSequences</dt>
+<dt>sequences</dt>
 <dd><p>character string with path (or file name if in the working
-directory) leading to fasta file with sequences corresponding to each record.</p></dd>
+directory) leading to fasta file with sequences corresponding to each record.
+It can also correspond to a "DNAStringSet" object, as the one in the example data
+'barcodeMineR::example_sequences'. The name of each sequence from the DNAStringSet
+object must correspond to the corresponding "sourceID|markerCode".</p></dd>
 
 
 <dt>prefix</dt>
@@ -87,6 +92,8 @@ functions.</p>
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span></span>
 <span class="r-in"><span><span class="va">myBO</span> <span class="op">&lt;-</span> <span class="fu">loadBarcodeOre</span><span class="op">(</span><span class="st">"path/to/table.tsv"</span>, <span class="st">"path/to/sequences.fasta"</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">myBO</span> <span class="op">&lt;-</span> <span class="fu">loadBarcodeOre</span><span class="op">(</span><span class="va">example_record</span>, <span class="va">example_sequence</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">}</span></span></span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
