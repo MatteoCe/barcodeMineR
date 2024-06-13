@@ -4,7 +4,7 @@ pkgdown_sha: ~
 articles:
   api_rate_barcodeMineR: api_rate_barcodeMineR.html
   intro_barcodeMineR: intro_barcodeMineR.html
-last_built: 2024-06-13T08:01Z
+last_built: 2024-06-13T13:33Z
 urls:
   reference: https://matteoce.github.io/barcodeMineR/reference
   article: https://matteoce.github.io/barcodeMineR/articles
