@@ -64,3 +64,7 @@ website](https://matteoce.github.io/barcodeMineR/) for more information!
 
 - Change default *ask* argument from TRUE to FALSE in both bold and ncbi
   functions?
+
+- Add stringr code in taxonomy functions to search for both genus and
+  species names in the output in order to get also those records
+  identified as *genus* cf. *species*, for example.

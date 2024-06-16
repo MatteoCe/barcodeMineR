@@ -50,3 +50,5 @@ Take a look at the [barcodeMineR website](https://matteoce.github.io/barcodeMine
 * Change default _api_rate_ in ncbi functions from 3 to 2.8, to slow down requests that might build up to 4 per seconds with slow internet connections.
 
 * Change default _ask_ argument from TRUE to FALSE in both bold and ncbi functions?
+
+* Add stringr code in taxonomy functions to search for both genus and species names in the output in order to get also those records identified as _genus_ cf. _species_, for example. 

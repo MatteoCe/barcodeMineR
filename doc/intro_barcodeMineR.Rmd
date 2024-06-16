@@ -1,6 +1,8 @@
 ---
 title: "Introduction to the barcodeMineR package"
 output: rmarkdown::html_vignette
+description: >
+  Learn how to use the barcodeMineR package
 vignette: >
   %\VignetteIndexEntry{Introduction to the barcodeMineR package}
   %\VignetteEngine{knitr::rmarkdown}
@@ -8,8 +10,6 @@ vignette: >
 ---
 
 **NOTE: This is a temporary GitHub repository created for testing purposes.**
-
-## Getting started
 
 The _barcodeMineR_ package allows to recover DNA barcodes from a vector of taxonomic names.
 The most basic usage consists in the recovery of the taxonomic information first, followed by the download of all records available. The function [get_ncbi_taxonomy](https://matteoce.github.io/barcodeMineR/reference/get_ncbi_taxonomy.html) does exactly that:
@@ -73,6 +73,8 @@ rec_BOLD
 ```
 
 We have retrieved `r nrow(rec_BOLD)` records from the BOLD database, corresponding to `r length(unique(rec_BOLD$recordID))` different process-IDs. BOLD hosts other markers, but the vast majority of records correspond to Cytochrome c oxidase I sequences.
+
+Searching species names, or taxa in general, using the [taxonomy functions](https://matteoce.github.io/barcodeMineR/reference/index.html#taxonomy) follows a set of rules and rational that is described in the vignette [Searching taxonomy](https://matteoce.github.io/barcodeMineR/articles/taxonomy_barcodeMineR.html)
 
 ## Merging data from different repositories
 
@@ -166,6 +168,6 @@ refdb_plot_map(total)
 
 Only a few records have geographical coordinates in the final merged table.
 
-This is the basic usage of the __barcodeMineR__ package. Now you can check how to speed up the recovery of records from the NCBI database by looking at the next [vignette](https://matteoce.github.io/barcodeMineR/articles/api_rate_barcodeMineR.html).
+This is the basic usage of the __barcodeMineR__ package. Now you can check how to speed up the recovery of records from the NCBI database by reading this [vignette](https://matteoce.github.io/barcodeMineR/articles/api_rate_barcodeMineR.html).
 
 

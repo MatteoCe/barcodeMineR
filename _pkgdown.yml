@@ -2,3 +2,41 @@ url: https://matteoce.github.io/barcodeMineR/
 template:
   bootstrap: 5
 
+articles:
+- title: Introduction
+  contents:
+  - intro_barcodeMineR
+
+- title: Searching Taxonomy
+  contents:
+  - taxonomy_barcodeMineR
+
+- title: Speed up the recovery of DNA barcodes
+  contents:
+  - api_rate_barcodeMineR
+
+reference:
+- title: Taxonomy
+  desc: Search taxa on DNA repository
+- contents:
+  - starts_with("get_")
+- title: Download
+  desc: Download records from DNA repository
+- contents:
+  - starts_with("download_")
+- title: Others
+  desc: Additional functions
+- contents:
+  - mergeBarcodeOres
+  - loadBarcodeOre
+- title: Plots
+  desc: Functions using ggplot2 and ggridges to visualize a barcodeOre
+- contents:
+  - plot_length
+  - plot_primers
+- title: Example Datasets
+  desc: Example datasets used to describe the required formats
+- contents:
+  - example_record
+  - example_sequence
+  - species200
