@@ -21,12 +21,8 @@
       <ul class="navbar-nav me-auto"><li class="active nav-item">
   <a class="nav-link" href="../reference/index.html">Reference</a>
 </li>
-<li class="nav-item dropdown">
-  <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-articles">Articles</a>
-  <div class="dropdown-menu" aria-labelledby="dropdown-articles">
-    <a class="dropdown-item" href="../articles/api_rate_barcodeMineR.html">Speeding up the recovery of DNA barcodes</a>
-    <a class="dropdown-item" href="../articles/intro_barcodeMineR.html">Introduction to the barcodeMineR package</a>
-  </div>
+<li class="nav-item">
+  <a class="nav-link" href="../articles/index.html">Articles</a>
 </li>
       </ul><form class="form-inline my-2 my-lg-0" role="search">
         <input type="search" class="form-control me-sm-2" aria-label="Toggle navigation" name="search-input" data-search-index="../search.json" id="search-input" placeholder="Search for" autocomplete="off"></form>
@@ -48,9 +44,30 @@
     </div>
 
     <div class="section level2">
-      <h2 id="all-functions">All functions<a class="anchor" aria-label="anchor" href="#all-functions"></a></h2>
+      <h2 id="taxonomy">Taxonomy<a class="anchor" aria-label="anchor" href="#taxonomy"></a></h2>
+      
+      <div class="section-desc"><p>Search taxa on DNA repository</p></div>
+
+      
+    </div><div id="" class="section level2">
       
       
+      
+
+      <dl><dt>
+          
+          <code><a href="get_bold_taxonomy.html">get_bold_taxonomy()</a></code> 
+        </dt>
+        <dd>Get taxonomic classification of the BOLD taxonomy database for a list of taxa.</dd>
+      </dl><dl><dt>
+          
+          <code><a href="get_ncbi_taxonomy.html">get_ncbi_taxonomy()</a></code> 
+        </dt>
+        <dd>Get taxonomic classification of the NCBI taxonomy database for a list of taxa or taxid.</dd>
+      </dl></div><div class="section level2">
+      <h2 id="download">Download<a class="anchor" aria-label="anchor" href="#download"></a></h2>
+      
+      <div class="section-desc"><p>Download records from DNA repository</p></div>
 
       
     </div><div id="" class="section level2">
@@ -68,7 +85,60 @@
           <code><a href="download_ncbi.html">download_ncbi()</a></code> 
         </dt>
         <dd>Download records from the NCBI</dd>
+      </dl></div><div class="section level2">
+      <h2 id="others">Others<a class="anchor" aria-label="anchor" href="#others"></a></h2>
+      
+      <div class="section-desc"><p>Additional functions</p></div>
+
+      
+    </div><div id="" class="section level2">
+      
+      
+      
+
+      <dl><dt>
+          
+          <code><a href="mergeBarcodeOres.html">mergeBarcodeOres()</a></code> 
+        </dt>
+        <dd>Merge multiple refdb objects to create a single one.</dd>
       </dl><dl><dt>
+          
+          <code><a href="loadBarcodeOre.html">loadBarcodeOre()</a></code> 
+        </dt>
+        <dd>Load sequences and corresponding records as a refdb object</dd>
+      </dl></div><div class="section level2">
+      <h2 id="plots">Plots<a class="anchor" aria-label="anchor" href="#plots"></a></h2>
+      
+      <div class="section-desc"><p>Functions using ggplot2 and ggridges to visualize a barcodeOre</p></div>
+
+      
+    </div><div id="" class="section level2">
+      
+      
+      
+
+      <dl><dt>
+          
+          <code><a href="plot_length.html">plot_length()</a></code> 
+        </dt>
+        <dd>Create a barplot using the function geom_density_ridges from ggplot2, to compare the final length of the sequences (field lengthGene) with the original length of sequences (field lengthSource).</dd>
+      </dl><dl><dt>
+          
+          <code><a href="plot_primers.html">plot_primers()</a></code> 
+        </dt>
+        <dd>Create a Bubble Plot showing number of sequences and average/range length for each primer</dd>
+      </dl></div><div class="section level2">
+      <h2 id="example-datasets">Example Datasets<a class="anchor" aria-label="anchor" href="#example-datasets"></a></h2>
+      
+      <div class="section-desc"><p>Example datasets used to describe the required formats</p></div>
+
+      
+    </div><div id="" class="section level2">
+      
+      
+      
+
+      <dl><dt>
           
           <code><a href="example_record.html">example_record</a></code> 
         </dt>
@@ -80,41 +150,12 @@
         <dd>Example DNAStringSet sequence</dd>
       </dl><dl><dt>
           
-          <code><a href="get_bold_taxonomy.html">get_bold_taxonomy()</a></code> 
-        </dt>
-        <dd>Get taxonomic classification of the BOLD taxonomy database for a list of taxa.</dd>
-      </dl><dl><dt>
-          
-          <code><a href="get_ncbi_taxonomy.html">get_ncbi_taxonomy()</a></code> 
-        </dt>
-        <dd>Get taxonomic classification of the NCBI taxonomy database for a list of taxa or taxid.</dd>
-      </dl><dl><dt>
-          
-          <code><a href="loadBarcodeOre.html">loadBarcodeOre()</a></code> 
-        </dt>
-        <dd>Load sequences and corresponding records as a refdb object</dd>
-      </dl><dl><dt>
-          
-          <code><a href="mergeBarcodeOres.html">mergeBarcodeOres()</a></code> 
-        </dt>
-        <dd>Merge multiple refdb objects to create a single one.</dd>
-      </dl><dl><dt>
-          
-          <code><a href="plot_length.html">plot_length()</a></code> 
-        </dt>
-        <dd>Create a barplot using the function geom_density_ridges from ggplot2, to compare the final length of the sequences (field lengthGene) with the original length of sequences (field lengthSource).</dd>
-      </dl><dl><dt>
-          
-          <code><a href="plot_primers.html">plot_primers()</a></code> 
-        </dt>
-        <dd>Create a Bubble Plot showing number of sequences and average/range length for each primer</dd>
-      </dl><dl><dt>
-          
           <code><a href="species200.html">species200</a></code> 
         </dt>
         <dd>Example dataset of 200 species names</dd>
       </dl></div>
-  </main></div>
+  </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
+    </nav></aside></div>
 
 
     <footer><div class="pkgdown-footer-left">
