@@ -327,21 +327,6 @@ extractSelectionTab <- function(feature_nodes, accn) {
 #'
 extractRecordsTab <- function(feature_nodes, taxonomic_table) {
 
-  # if no taxonomic table is provided (download_ncbi with accession numbers)
-  # then create a dummy table
-  if (is.null(taxonomic_table)) {
-    taxonomic_table <- data.frame(queryName = NA,
-                                  taxid = "DUMMYTAXID",
-                                  rank = NA,
-                                  scientificName = NA,
-                                  phylum = NA,
-                                  class = NA,
-                                  order = NA,
-                                  family = NA,
-                                  genus = NA,
-                                  species = NA)
-  }
-
   listed_tab <- purrr::map(feature_nodes, function(feat) {
 
     # Extract the GBInterval_accession values
@@ -375,35 +360,22 @@ extractRecordsTab <- function(feature_nodes, taxonomic_table) {
     id <- grep("taxon:", stringr::str_split_1(source_data$db_xref, "\\|"), value = TRUE) %>%
       stringr::str_remove(., "taxon:")
 
-    # if the taxonomic table was obtained using the download_ncbi_genes function,
+    # if no taxonomic table is provided (download_ncbi with accession numbers)
+    # then create a dummy table
+    if (is.null(taxonomic_table)) {
+      taxonomic_table <- get_ncbi_taxonomy(id, ask = FALSE)
+    }
+
+    # if the taxonomic table was obtained using the download_ncbi function,
     # then it may be corresponding to multiple species and thus not work in the
     # following if path. The taxonomic table must then be filtered
-    if (nrow(taxonomic_table) > 1) {
-
-      taxonomic_table <- taxonomic_table %>% dplyr::filter(., .data$taxid == id)
-
-    }
+    taxonomic_table <- taxonomic_table %>% dplyr::filter(., .data$taxid == id)
 
     # when the record recovered from the NCBI corresponds to a lower taxonomic
-    #rank than those retrieved with get_ncbi_taxonomy (e.g. subspecies excluded
+    # rank than those retrieved with get_ncbi_taxonomy (e.g. subspecies excluded
     # by the selection process), skip the recovery of this record
     if (nrow(taxonomic_table) == 0) {
-
-      return(NULL)
-
-    }
-
-    # CONSIDERING THE ABOVE STEP, THE NEXT SHOULD BE REMOVED
-
-    # if the taxid in the node is different from the taxid of the species searched
-    # for example when we've found a subspecies, substitute the taxid in db_xref
-    # with the one from the species
-
-    if (id != taxonomic_table$taxid) {
-
-      source_data$db_xref <- source_data$db_xref %>%
-        stringr::str_replace("taxon:[0-9]*", paste0("taxon:", taxonomic_table$taxid))
-
+        return(NULL)
     }
 
     # Complex strings processing:

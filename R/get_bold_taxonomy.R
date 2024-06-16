@@ -132,7 +132,7 @@ get_bold_taxonomy <- function(ids, group = 1, descend = TRUE, api_rate = 0.06, a
 
         downstream
 
-      }, message = "Searching downstream taxonomies") %>% purrr::compact() %>% do.call(rbind, .)
+      }, message = "Searching downstream taxonomies", seed=NULL) %>% purrr::compact() %>% do.call(rbind, .)
 
     }
 
