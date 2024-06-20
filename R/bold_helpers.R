@@ -12,6 +12,9 @@
 #'
 bold_record_counter <- function(bold_tax, api_rate) {
 
+  # set visible binding to variable
+  name <- records <- NULL
+
   taxa <- unique(sort(bold_tax$taxon)) %>% split(., ceiling(seq_along(.) / 1))
 
   # use bold_stats to count the number of records corresponding to each taxon
@@ -43,7 +46,7 @@ bold_record_counter <- function(bold_tax, api_rate) {
   }, message = "Counting number of records per taxa on BOLD", seed = NULL) %>% purrr::compact() %>% do.call(rbind, .)
 
   final_stats <- stats %>% dplyr::filter(., !(.data$parentname %in% .data$name)) %>%
-    dplyr::select(., .data$name, .data$records)
+    dplyr::select(., name, records)
 
   if (all(final_stats$records == 0)) {
 
