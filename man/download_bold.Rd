@@ -9,24 +9,45 @@ download_bold(bold_tax, rate = 100, api_rate = NULL, ask = TRUE, prefix = NULL)
 \arguments{
 \item{bold_tax}{a data.frame, as returned from the get_bold_taxonomy function.}
 
-\item{rate}{numeric, the number of taxonomic names for grouping. These will be
-queried at the same time.}
+\item{rate}{`integer` The number of records to be downloaded at a time. It
+can be lowered for unstable internet connections. However, due to the
+structure of the bold package, it is not possible to download a specific
+number of records when a species is represented by more than `rate` records.
+This function only groups species whose sum of records is inferior to rate.
+Defaults to `100`.}
 
-\item{api_rate}{numeric, the timing rate at which to send requests. In this
-function, it defaults to NULL and is always set to 1, one request per second,
-due to the incompatibility of the bold functions with the future parallelizing
-framework.}
+\item{api_rate}{`integer` The API rate with which to iterate each separate
+request. Must be a number between 3 and 10 which will translate in a rate
+of `1 / api_rate` seconds.}
 
-\item{ask}{logical, defaults to TRUE. If disabled the selection process will
-be skipped and all feature keys from each accession number will be retrieved.}
+\item{ask}{`logical` Should the function ask the user whether to filter the
+final output for taxonomic ranks. Default `TRUE`.}
 
-\item{prefix}{character, defaults to NULL. defaults to NULL. Character string
-that will be used to create numbered custom ids for each record in ascending
-order.}
+\item{prefix}{`character` A character string that will be used to create
+numbered custom ids for each record in ascending order. The prefix will
+compose the recordID field in the final object. Default to `NULL`, using
+the internal recordID generator that will use the accession number for NCBI
+records and the processID for BOLD records, avoiding duplicates by adding
+`_1`, `_2` etc.}
 }
 \value{
-a refdb tibble data.frame, including the DNA sequence as a field.
+`data.frame` A refdb data frame, including the DNA sequence as a
+  field.
 }
 \description{
-A short description...
+This function searches for BOLD records corresponding to the species found in
+the argument `bold_tax`, i.e. the output from the function `get_bold_taxonomy`.
+
+For a thorough explanation of the function usage and capabilities, see the
+'Introduction to the barcodeMineR package' vignette:
+\code{vignette("Introduction to the barcodeMineR package", package = "barcodeMineR")}
+}
+\examples{
+tax <- get_bold_taxonomy("Polymastia invaginata")
+
+download_bold(tax, ask = FALSE)
+
+}
+\seealso{
+[download_ncbi()]
 }

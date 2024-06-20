@@ -8,6 +8,10 @@
 #'
 #' @keywords internal
 #'
+#' @description
+#' This function, although used internally, is exported in order to be able to
+#' be called by `ncbi_limit_handler` inside its future::future function.
+#'
 connection_handler <- function(fun, attempts = 5) {
 
   lock <- 0
@@ -71,6 +75,7 @@ connection_handler <- function(fun, attempts = 5) {
 #' @return The result of the function provided with the fun parameter.
 #'
 #' @keywords internal
+#' @noRd
 #'
 #' @description
 #' This function allows to run another function as a future (future::future()) object. If the current future plan is "sequential" (as in every 'normal' condition of NON-parallelization), each element of the list/vector at the elements parameter.
@@ -166,7 +171,9 @@ ncbi_limit_handler <- function(data, api_rate = 3, fun, message = "LoremIpsum", 
 #' @param attempts the current number of attempts as computed by connection_handler
 #'
 #' @return a number defining the correct attempts value
+#'
 #' @keywords internal
+#' @noRd
 #'
 attempts_handler <- function(input, attempts) {
 

@@ -1,26 +1,39 @@
 #' Load sequences and corresponding records as a refdb object
 #'
-#' @param records character string with path (or file name if in the working
-#' directory) leading to strictly "tsv file" with records information. It can also
-#' correspond to a data.frame, provided that it has the fields included in the
-#' example data 'barcodeMineR::example_record'.
-#' @param sequences character string with path (or file name if in the working
-#' directory) leading to fasta file with sequences corresponding to each record.
-#' It can also correspond to a "DNAStringSet" object, as the one in the example data
-#' 'barcodeMineR::example_sequences'. The name of each sequence from the DNAStringSet
-#' object must correspond to the corresponding "sourceID|markerCode".
-#' @param prefix defaults to NULL. Character string that will be used to create
-#' numbered custom ids for each record in ascending order.
+#' @param records `data.frame` or `character` A character string with path (or
+#'   file name if in the working directory) leading to strictly "tsv file" with
+#'   records information. It can also correspond to a data frame, provided that
+#'   it has the fields included in the example data 'barcodeMineR::example_record'.
+#' @param sequences `DNAStringSet` or `character` A character string with path
+#'   (or file name if in the working directory) leading to fasta file with
+#'   sequences corresponding to each record. It can also correspond to a
+#'   "DNAStringSet" object, as the one in the example data
+#'   `barcodeMineR::example_sequences`. The name of each sequence from the
+#'   DNAStringSet object must correspond to the concatenation of the fields
+#'   `sourceID` and `markerCode`, separated by a pipe `|`.
+#' @param prefix `character` A character string that will be used to create
+#'   numbered custom ids for each record in ascending order. The prefix will
+#'   compose the recordID field in the final object. Default to `NULL`, using
+#'   the information extracted from the field `sourceID`.
 #'
-#' @return (refdb-class) a refdb object as those created with the download_*
-#' functions.
+#' @return `data.frame` A refdb data frame, including the DNA sequence as a
+#'   field.
+#'
 #' @export
 #'
-#' @examples \dontrun{
-#' myBO <- loadBarcodeOre("path/to/table.tsv", "path/to/sequences.fasta")
+#' @description
+#' This function allows the user to load a custom refdb-formatted data frame
+#' object with additional records and sequences obtained from private analyses.
+#' The objects can be loaded from both files (tsv and fasta) or loaded objects
+#' (data.frame and DNAStringSet).
 #'
-#' myBO <- loadBarcodeOre(example_record, example_sequence)
+#' @examples \dontrun{
+#' # load from tsv and fasta files
+#' loadBarcodeOre("path/to/table.tsv", "path/to/sequences.fasta")
 #' }
+#'
+#' # load from data.frame and DNAStringSet loaded objects
+#' loadBarcodeOre(example_record, example_sequence)
 #'
 loadBarcodeOre <- function(records, sequences, prefix = NULL) {
 

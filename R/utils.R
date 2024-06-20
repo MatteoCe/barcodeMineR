@@ -6,6 +6,8 @@
 #' @return A filtered data.frame.
 #'
 #' @keywords internal
+#' @noRd
+#'
 #' @importFrom rlang .data
 #'
 #' @description
@@ -81,6 +83,7 @@ ask_user <- function(df, field, ask = TRUE) {
 #' @return A vector of the type: "accession number|gene or product name"
 #'
 #' @keywords internal
+#' @noRd
 #'
 #' @description
 #' It will take the tab with the basin info from each accession number (CDS and/or rRNA name, and coordinates of the sequence) and output a character vector with the accNum and the feature name (gene or product) separated by a pipe.
@@ -177,6 +180,7 @@ select_accessions <- function(selection_tab, ask = TRUE) {
 #' @param hits_x_iteration The number of ids to fetch each execution time.
 #'
 #' @keywords internal
+#' @noRd
 #'
 #' @return A list with two values: the retstart parameter and the retmax. The last one is calculated based on the total number of ids in the web_history object and the starting position.
 #'
@@ -213,6 +217,7 @@ web_history_parameter <- function(split, hits, hits_x_iteration) {
 #' @return a numeric vector with each retstart position for a particular
 #'
 #' @keywords internal
+#' @noRd
 #'
 web_history_splitter <- function(counts, rate) {
 
@@ -236,6 +241,7 @@ web_history_splitter <- function(counts, rate) {
 #' @return A number, defining the correct api rate.
 #'
 #' @keywords internal
+#' @noRd
 #'
 set_ncbi_rate <- function(api_rate) {
 
@@ -275,6 +281,7 @@ set_ncbi_rate <- function(api_rate) {
 #' @param ids The character wtring with a taxonomic name or a taxid.
 #'
 #' @keywords internal
+#' @noRd
 #'
 #' @return A condition, either TRUE or FALSE.
 #'
@@ -296,15 +303,17 @@ set_id_type <- function(ids) {
 
 #' Get lower taxonomic level from input
 #'
-#' @param tax
+#' @param tax the taxonomic level to start from
+#' @param upper (FALSE) should the function search the upper level?
 #'
 #' @keywords internal
+#' @noRd
 #'
 #' @return character vector
 #'
-get_lower_tax_rank <- function(tax) {
+get_lower_tax_rank <- function(tax, upper = FALSE) {
 
-  if (tax == "species") {
+  if (tax == "subspecies" & !upper) {
 
     return(NULL)
 
@@ -357,14 +366,26 @@ get_lower_tax_rank <- function(tax) {
                           'family',
                           'subfamily',
                           'genus',
-                          'species')
+                          'species',
+                          'subspecies')
 
-  pos <- grep(paste0("\\b", tax,"\\b"), tax_ranks)
-  val_tax <- tax_ranks[pos + 1]
+  pos <- grep(paste0("^", tax,"$"), tax_ranks)
+
+  if (upper) {
+    val_tax <- tax_ranks[pos - 1]
+  } else {
+    val_tax <- tax_ranks[pos + 1]
+  }
 
   while (!(val_tax %in% accepted_tax_ranks)) {
 
-    pos <- pos + 1
+    if (upper) {
+      pos <- pos - 1
+
+    } else {
+      pos <- pos + 1
+
+    }
 
     val_tax <- tax_ranks[pos]
 
@@ -381,6 +402,7 @@ get_lower_tax_rank <- function(tax) {
 #' @return DNAStringSet
 #'
 #' @keywords internal
+#' @noRd
 #'
 textToDNAStringSet <- function(sequences) {
 

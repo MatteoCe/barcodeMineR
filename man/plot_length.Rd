@@ -2,9 +2,7 @@
 % Please edit documentation in R/plot_family.R
 \name{plot_length}
 \alias{plot_length}
-\title{Create a barplot using the function geom_density_ridges from ggplot2, to compare
-the final length of the sequences (field lengthGene) with the original length
-of sequences (field lengthSource).}
+\title{Show the length reduction for the downloaded sequences as a Bar plot}
 \usage{
 plot_length(
   refdb,
@@ -16,35 +14,43 @@ plot_length(
 )
 }
 \arguments{
-\item{refdb}{(refdb) a refdb object.}
+\item{refdb}{`data.frame` A data frame object, as those recovered by the
+`download_ncbi`, `download_bold` and `loadBarcodeOre` functions.}
 
-\item{limit}{(numeric) the length in "base pairs" with which the sequences
+\item{limit}{`integer` The length in bp (base pairs) with which the sequences
 longer than it will be grouped and reported as the last bar on the x axis.}
 
-\item{breaks}{(numeric) the length range in "base pairs" of the x axis.}
+\item{breaks}{`integer` The length range in bp of the x axis.}
 
-\item{level}{(character) a character vector indicating which taxonomic level
-the facet_wrap function from ggplot2 should refer to. It should be one of
-"phylum", "class", "order", "family" and "genus".}
+\item{level}{`character` A character vector indicating which taxonomic level
+the `facet_wrap` function from ggplot2 should refer to. It should be one of
+"phylum", "class", "order", "family" and "genus". Defaults to `NULL`, thus
+avoiding the `facet_wrap`.}
 
-\item{select}{(character) this parameter allows to pre-filter the refdb
-object based on a taxonomic name, which must be present in the records table
-of the object.}
+\item{select}{`character` This parameter allows to pre-filter the data frame
+object (provided to the argument `refdb`) based on a taxonomic name, which
+must be present in the records table of the object.}
 
-\item{scaling}{(logical) defaults to TRUE, it reports the height of the bars
-according to the sequence count in the refdb object, thus, if used with the
-level parameter, the heigth of bars in different wraps can be compared.}
+\item{scaling}{`logical` It modifies the height of the bars according to the
+sequence count in the refdb object, thus, if used with the `level`
+parameter, the heigth of bars in different wraps can be compared. Defaults
+to `TRUE`.}
 }
 \value{
-a geom_density_ridges ggplot2 plot.
+`ggplot` A Bar plot, which can be assigned and further modified using
+  the package `ggplot2` and `ggridges`.
 }
 \description{
-Create a barplot using the function geom_density_ridges from ggplot2, to compare
-the final length of the sequences (field lengthGene) with the original length
-of sequences (field lengthSource).
+This function will plot the distribution of the length (field `lengthGene`)
+of the sequences found in the data frame object provided to the `refdb`
+argument, with the corresponding length of the original sequence (field
+`lengthSource`, the entire fasta associated to the reference sequence on
+the online database) on another "ridge", using the `ggridges` package.
 }
 \examples{
-\dontrun{
-(lengthPlot <- plot_length(refdb))
-}
+tax <- get_ncbi_taxonomy("Dissostichus mawsoni")
+rec <- download_ncbi(tax, ask = FALSE)
+
+plot_length(rec)
+
 }

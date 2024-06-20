@@ -48,5 +48,5 @@
 #' @format ## `species200`
 #' A character vector of 207 species from the Ross Sea (Antarctica).
 #'
-#' @source generated manually, consult data_raw directory for details
+#' @source generated manually, consult `data_raw` directory for details
 "species200"

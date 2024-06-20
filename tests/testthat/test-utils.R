@@ -51,15 +51,23 @@ test_that("select_accession returns all values if parameter ask is disabled", {
 
 test_that("get_lower_tax_rank gives a character vector and return NULL with 'species'", {
 
-  expect_null(get_lower_tax_rank("species"))
+  expect_null(get_lower_tax_rank("subspecies"))
 
   expect_true(is(get_lower_tax_rank("genus"), "character"))
 
+  expect_equal(get_lower_tax_rank("species"), "subspecies")
   expect_equal(get_lower_tax_rank("genus"), "species")
   expect_equal(get_lower_tax_rank("subfamily"), "genus")
   expect_equal(get_lower_tax_rank("family"), "subfamily")
   expect_equal(get_lower_tax_rank("order"), "family")
   expect_equal(get_lower_tax_rank("class"), "order")
+
+  expect_equal(get_lower_tax_rank("subspecies", upper = TRUE), "species")
+  expect_equal(get_lower_tax_rank("species", upper = TRUE), "genus")
+  expect_equal(get_lower_tax_rank("genus", upper = TRUE), "subfamily")
+  expect_equal(get_lower_tax_rank("subfamily", upper = TRUE), "family")
+  expect_equal(get_lower_tax_rank("family", upper = TRUE), "order")
+  expect_equal(get_lower_tax_rank("order", upper = TRUE), "class")
 
 })
 

@@ -1,35 +1,38 @@
-#' Get taxonomic classification of the BOLD taxonomy database for a list of taxa.
+#' Get taxonomic classification of the BOLD taxonomy database for a list of taxa
 #'
-#' @param ids character vector of species names
-#' @param api_rate the rate with which to perform the function on each element.
-#' For the BOLD api it can be higher, thus it will be defined by the number of
-#' workers available in the chosen future framework, unless specified otherwise
-#' @param descend logical. If set to TRUE (default), use the taxize package to
-#' retrieve lower level taxonomies.
-#' @param group grouping factor for ids names. Defaults to 10.
-#' @param ask should the function ask the user whether to filter the final
-#' output for taxonomic ranks. Default to TRUE.
+#' @param ids `character` A character string of species names.
+#' @param api_rate `integer` The API rate with which to iterate each separate
+#'   request. If left to default `NULL`, it will be set to one request every 16
+#'   seconds approximately. Use caution when overriding the default.
+#' @param descend `logical` Use the taxize package to retrieve lower level
+#'   taxonomies. Default `TRUE`.
+#' @inheritParams get_ncbi_taxonomy
 #'
-#' @return a data.frame with taxid from the taxonomy database of the BOLD
-#' website and the corresponding species name(s) retrieved
-#'
+#' @return `data.frame` A data.frame object with the searched taxa, the taxid
+#'   and the rank.
 #'
 #' @export
 #' @importFrom methods is
 #' @importFrom rlang .data
 #'
 #' @description
-#' Due to the functioning of the bold package, random number generation might
-#' set warning messages when this function is performed in multisession plan.
-#' For this reason, the seed parameter in the future::future function called
-#' internally is set to NULL, in order to suppress these warnings.
+#' The taxonomy functions are used to define exactly which records will be
+#' retrieved by the download functions. More precisely, only records that
+#' include the taxid/scientificName, retrieved using the taxonomy functions,
+#' as the lowest taxonomic identification will be downloaded.
 #'
+#' For more details see the 'Searching taxonomy' vignette:
+#' \code{vignette("Searching taxonomy", package = "barcodeMineR")}
 #'
-#' @examples \dontrun{
-#' (x <- c("Achelia assimilis", "Alcyonium antarcticum"))
-#' get_bold_taxonomy(x)
-#' }
-get_bold_taxonomy <- function(ids, group = 1, descend = TRUE, api_rate = 0.06, ask = TRUE) {
+#' @seealso [get_ncbi_taxonomy()]
+#'
+#' @examples
+#' get_bold_taxonomy("Achelia assimilis", descend = FALSE)
+#'
+get_bold_taxonomy <- function(ids, api_rate = NULL, ask = TRUE, descend = TRUE) {
+
+  # set grouping factor for ids names
+  rate <- 1
 
   # set visible binding to variable
   taxon <- tax_rank <- input <- NULL
@@ -43,11 +46,11 @@ get_bold_taxonomy <- function(ids, group = 1, descend = TRUE, api_rate = 0.06, a
   # set the api rate equal to the number of workers available
   if (is.null(api_rate)) {
 
-    api_rate <- future::nbrOfWorkers()
+    api_rate <- 0.06
 
   }
 
-  ids <- unique(sort(ids)) %>% split(., ceiling(seq_along(.) / group))
+  ids <- unique(sort(ids)) %>% split(., ceiling(seq_along(.) / rate))
 
   # search taxa or taxid in the NCBI
   taxa_list <- ncbi_limit_handler(ids, api_rate = api_rate, function(id) {
@@ -78,16 +81,18 @@ get_bold_taxonomy <- function(ids, group = 1, descend = TRUE, api_rate = 0.06, a
     do.call(rbind, .) %>%
     dplyr::filter(!is.na(.data$taxid))
 
-  # get downstream taxonomic names to the species level (including intermediate
+  # get downstream taxonomic names to the subspecies level (including intermediate
   # levels)
-  if (!all(unique(taxonomies$rank) == "species") & descend) {
+  if (!all(unique(taxonomies$rank) == "subspecies") & descend) {
 
-    nonspecies <- taxonomies[taxonomies$rank != "species",] %>% dplyr::select(c("taxon", "taxid", "rank"))
+    nonspecies <- taxonomies[taxonomies$rank != "subspecies",] %>% dplyr::select(c("taxon", "taxid", "rank"))
 
     # add a lock for when a higher taxonomic name has no children
     nonspecies$lock <- 0
 
     while (any(nonspecies$lock == 0)) {
+
+      nonspecies_done <- nonspecies[nonspecies$lock == 1, ]
 
       taxids <- unique(sort(nonspecies[nonspecies$lock == 0, "taxid"])) %>% split(., ceiling(seq_along(.) / 1))
 
@@ -95,13 +100,47 @@ get_bold_taxonomy <- function(ids, group = 1, descend = TRUE, api_rate = 0.06, a
 
         downto <- nonspecies[nonspecies$taxid == taxids[[id]], "rank"] %>% get_lower_tax_rank()
 
+        if (downto == "subspecies") {
+
+          check_subspecies <- bold::bold_tax_id2(taxids[[id]], dataTypes = "stats") %>% t()
+
+          if (length(check_subspecies[rownames(check_subspecies) %in% "publicsubspecies", ]) == 0) {
+
+            downstream <- nonspecies[nonspecies$taxid == taxids[[id]], ]
+            colnames(downstream) <- c("taxon", "taxid", "rank", "lock")
+            downstream$lock <- 1
+
+            return(downstream)
+
+          }
+
+        }
+
         downstream <- suppressMessages(taxize::bold_downstream(taxids[[id]], downto = downto))
 
-        while (all(downto != "species" & all(dim(downstream) %in% 0))) {
+        while (all(downto != "subspecies" & all(dim(downstream) %in% 0))) {
 
             downto <- get_lower_tax_rank(downto)
 
             downstream <- suppressMessages(taxize::bold_downstream(taxids[[id]], downto = downto))
+
+        }
+
+        if (all(downto == "subspecies" & all(dim(downstream) %in% 0))) {
+
+          downstream <- suppressMessages(taxize::bold_downstream(taxids[[id]], downto = downto, intermediate = TRUE))
+
+          if (is(downstream, "data.frame")) {
+
+          } else {
+
+            downstream <- downstream$intermediate[[1]]
+            downstream$rank <- "subspecies"
+
+            check_subspecies <- bold::bold_tax_id2(downstream$id, dataTypes = "stats") %>% dplyr::filter(., .data$publicrecords > 0)
+            downstream <- dplyr::filter(downstream, id %in% check_subspecies$input)
+
+          }
 
         }
 
@@ -122,17 +161,17 @@ get_bold_taxonomy <- function(ids, group = 1, descend = TRUE, api_rate = 0.06, a
 
           downstream <- rbind(parent, downstream)
 
-          if ("species" %in% unique(downstream$rank)) {
+          if ("subspecies" %in% unique(downstream$rank)) {
 
-            downstream[downstream$rank == "species", ]$lock <- 1
+            downstream[downstream$rank == "subspecies", ]$lock <- 1
 
           }
 
         }
 
-        downstream
+        downstream %>% dplyr::filter(., !(.data$lock == 0 & .data$taxid %in% taxids))
 
-      }, message = "Searching downstream taxonomies", seed=NULL) %>% purrr::compact() %>% do.call(rbind, .)
+      }, message = "Searching downstream taxonomies", seed=NULL) %>% purrr::compact() %>% do.call(rbind, .) %>% rbind(., nonspecies_done)
 
     }
 
@@ -144,6 +183,9 @@ get_bold_taxonomy <- function(ids, group = 1, descend = TRUE, api_rate = 0.06, a
     taxonomies <- rbind(taxonomies, taxonomies_add) %>% unique()
 
   }
+
+  # reset row numbers
+  rownames(taxonomies) <- seq(1, nrow(taxonomies))
 
   # ask user to filter if there are multiple ranks
   if ((length(unique(taxonomies$rank)) > 1) && (ask == TRUE)) {

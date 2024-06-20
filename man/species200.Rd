@@ -9,7 +9,7 @@
 A character vector of 207 species from the Ross Sea (Antarctica).
 }
 \source{
-generated manually, consult data_raw directory for details
+generated manually, consult `data_raw` directory for details
 }
 \usage{
 species200

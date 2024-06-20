@@ -7,6 +7,8 @@
 #' @return character the same as parameter name, but including the correct mined record
 #'
 #' @keywords internal
+#' @noRd
+#'
 #' @importFrom rlang .data
 #'
 #' @description
@@ -171,6 +173,8 @@ cleanMinedFromGenBankRecords <- function(records, sequences, accn) {
 #' @return a refdb object
 #'
 #' @keywords internal
+#' @noRd
+#'
 #' @importFrom rlang .data
 #'
 boldDuplicateCheck <- function(refdb) {
@@ -251,6 +255,8 @@ boldDuplicateCheck <- function(refdb) {
 #' @return a refdb object
 #'
 #' @keywords internal
+#' @noRd
+#'
 #' @importFrom rlang .data
 #'
 ncbiDuplicateCheck <- function(refdb) {

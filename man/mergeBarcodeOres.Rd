@@ -2,31 +2,40 @@
 % Please edit documentation in R/mergeBarcodeOres.R
 \name{mergeBarcodeOres}
 \alias{mergeBarcodeOres}
-\title{Merge multiple refdb objects to create a single one.}
+\title{Merge multiple refdb objects to create a single one}
 \usage{
 mergeBarcodeOres(..., resolve.conflicts = TRUE)
 }
 \arguments{
-\item{...}{Any number of refdb objects.}
+\item{...}{`data.frame` Any number of refdb-formatted data frames, as those
+obtained with `download_ncbi`, `download_bold` and `loadBarcodeOre`.}
 
-\item{resolve.conflicts}{(default = TRUE) If set to FALSE, the script will
-merge refdb objects from different sources without any quality control steps.
-If left to default settings, it is used to perform a basic quality control step
-required if the refdb objects were obtained from a pipeline analysis that
-searched the same species in both the NCBI and BOLD databases. Records from
-both databases.}
+\item{resolve.conflicts}{`logical` If set to FALSE, the script will merge
+the refdb objects from different sources (BOLD, NCBI and custom) without
+any quality control steps. Otherwise, it searches for "mining duplicates",
+records that appear in both sources due to internal mining, and returns
+only the original record. Defaults to `TRUE`.}
 }
 \value{
-A refdb object, including the records and sequences from all refdb
-objects provided as arguments.
+`data.frame` A refdb object, including the records and sequences from
+  all refdb objects provided as arguments.
 }
 \description{
-Merge multiple refdb objects to create a single one.
+This function merges the output of multiple data frames obtained using the
+`download_bold` and `download_ncbi` functions or from private data obtained
+with the function `loadBarcodeOre`. It resolves conflicts originated from
+internal mining performed by the online database, which would result in
+duplicates in the final object. This operation can be avoided using the
+argument `resolve.conflicts`.
 }
 \examples{
-\dontrun{
-(totBO <- mergeBarcodeOres(ncbiBO, boldBO, customBO, resolve.conflicts = TRUE))
+# search and download Maldane sarsi records:
+tax_ncbi <- get_ncbi_taxonomy("Maldane sarsi", ask = FALSE)
+tax_bold <- get_bold_taxonomy("Maldane sarsi", ask = FALSE)
+rec_ncbi <- download_ncbi(tax_ncbi, ask = FALSE)
+rec_bold <- download_bold(tax_bold, ask = FALSE)
 
-}
+# merge all results into one
+mergeBarcodeOres(rec_ncbi, rec_bold)
 
 }

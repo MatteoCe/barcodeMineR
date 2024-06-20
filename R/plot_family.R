@@ -1,31 +1,43 @@
-#' Create a Bubble Plot showing number of sequences and average/range length for each primer
+#' Show the primers' names as a Bubble plot
 #'
-#' @param refdb (refdb) a refdb object.
-#' @param level (character) a character vector indicating which taxonomic level
-#' the x axis should refer to. It should be one of "phylum", "class", "order",
-#' "family" and "genus".
-#' @param select (character) this parameter allows to pre-filter the refdb
-#' object based on a taxonomic name, which must be present in the records table
-#' of the object.
-#' @param size_range (integer vector) this allows to change the size of bubbles.
-#' @param measure (character) either "range" or "average" (default). In the
-#' first case, the range of length in the sequences of the records filtered for
-#' each combination of primer and taxonomic name will be shown. The average
-#' length will be shown otherwise.
-#' @param tax.fct.levels (character) a vector of taxonomic names that allows to
-#' re-order the x axis based on a custom order.
-#' @param prim.fct.levels (character) a vector of primers' names that allows to
-#' re-order the y axis based on a custom order.
+#' @param refdb `data.frame` A data frame object, as those recovered by the
+#'   `download_ncbi`, `download_bold` and `loadBarcodeOre` functions.
+#' @param level `character` A character string indicating which taxonomic level
+#'   the x axis should refer to. It should be one of "phylum", "class", "order",
+#'   "family" and "genus". Defaults to `phylum`.
+#' @param select `character` this parameter allows to pre-filter the refdb
+#'   object based on a taxonomic name. Defaults to `NULL`.
+#' @param size_range `integer` This allows to change the size of bubbles. A
+#'   vector of length two should be supplied. Defaults to `NULL`, which
+#'   translates into `c(2, 30)`.
+#' @param measure `character` Either `"range"` or `"average"`. In the first
+#'   case, the range of length in the sequences of the records filtered for
+#'   each combination of primer and taxonomic name will be shown. The average
+#'   length will be shown otherwise. Defaults to `"average"`.
+#' @param tax.fct.levels `character` A vector of taxonomic names that allows to
+#'   re-order the x axis based on a custom order.
+#' @param prim.fct.levels `character` A vector of primers' names that allows to
+#'   re-order the y axis based on a custom order.
 #'
-#' @return A Bubble plot, as a 'ggplot2' plot object, which can be saved and
-#' modified.
+#' @return `ggplot` A Bubble plot, which can be assigned and further modified
+#'   using the package `ggplot2`.
 #'
 #' @export
 #' @importFrom rlang .data
 #'
-#' @examples \dontrun{
-#' (BubPlot <- plot_primers(total_ore))
-#' }
+#' @description
+#' This function will plot any primer name present in the object provided to the
+#' `refdb` argument in the x axis, showing the number of records as size of
+#' circles, while the color intensity of the circle is given by the length
+#' `"average"` or `"range"` of the sequences amplified using that primer. This
+#' function was inspired and modified by the code presented in the paper by
+#' Gwiazdowski et al. (2015) https://doi.org/10.1371/journal.pone.0125635.
+#'
+#' @examples
+#' rec <- loadBarcodeOre(example_record, example_sequence)
+#'
+#' plot_primers(rec)
+#'
 plot_primers <- function(refdb, level = "phylum", select = NULL, size_range = NULL, measure = "average", tax.fct.levels = NULL, prim.fct.levels = NULL) {
 
   if (!(measure %in% c("average", "range")) | (length(measure) > 1)) {
@@ -186,31 +198,43 @@ plot_primers <- function(refdb, level = "phylum", select = NULL, size_range = NU
 # set global variables from usage of dlpyr
 utils::globalVariables(c("n", "directionPrimers", "PCR_primers"))
 
-#' Create a barplot using the function geom_density_ridges from ggplot2, to compare
-#' the final length of the sequences (field lengthGene) with the original length
-#' of sequences (field lengthSource).
+#' Show the length reduction for the downloaded sequences as a Bar plot
 #'
-#' @param refdb (refdb) a refdb object.
-#' @param limit (numeric) the length in "base pairs" with which the sequences
-#' longer than it will be grouped and reported as the last bar on the x axis.
-#' @param breaks (numeric) the length range in "base pairs" of the x axis.
-#' @param level (character) a character vector indicating which taxonomic level
-#' the facet_wrap function from ggplot2 should refer to. It should be one of
-#' "phylum", "class", "order", "family" and "genus".
-#' @param select (character) this parameter allows to pre-filter the refdb
-#' object based on a taxonomic name, which must be present in the records table
-#' of the object.
-#' @param scaling (logical) defaults to TRUE, it reports the height of the bars
-#' according to the sequence count in the refdb object, thus, if used with the
-#' level parameter, the heigth of bars in different wraps can be compared.
+#' @param refdb `data.frame` A data frame object, as those recovered by the
+#'   `download_ncbi`, `download_bold` and `loadBarcodeOre` functions.
+#' @param limit `integer` The length in bp (base pairs) with which the sequences
+#'   longer than it will be grouped and reported as the last bar on the x axis.
+#' @param breaks `integer` The length range in bp of the x axis.
+#' @param level `character` A character vector indicating which taxonomic level
+#'   the `facet_wrap` function from ggplot2 should refer to. It should be one of
+#'   "phylum", "class", "order", "family" and "genus". Defaults to `NULL`, thus
+#'   avoiding the `facet_wrap`.
+#' @param select `character` This parameter allows to pre-filter the data frame
+#'   object (provided to the argument `refdb`) based on a taxonomic name, which
+#'   must be present in the records table of the object.
+#' @param scaling `logical` It modifies the height of the bars according to the
+#'   sequence count in the refdb object, thus, if used with the `level`
+#'   parameter, the heigth of bars in different wraps can be compared. Defaults
+#'   to `TRUE`.
 #'
-#' @return a geom_density_ridges ggplot2 plot.
+#' @return `ggplot` A Bar plot, which can be assigned and further modified using
+#'   the package `ggplot2` and `ggridges`.
 #'
 #' @export
 #'
-#' @examples \dontrun{
-#' (lengthPlot <- plot_length(refdb))
-#' }
+#' @description
+#' This function will plot the distribution of the length (field `lengthGene`)
+#' of the sequences found in the data frame object provided to the `refdb`
+#' argument, with the corresponding length of the original sequence (field
+#' `lengthSource`, the entire fasta associated to the reference sequence on
+#' the online database) on another "ridge", using the `ggridges` package.
+#'
+#' @examples
+#' tax <- get_ncbi_taxonomy("Dissostichus mawsoni")
+#' rec <- download_ncbi(tax, ask = FALSE)
+#'
+#' plot_length(rec)
+#'
 plot_length <- function(refdb, limit = 1000, breaks = 50, level = NULL, select = NULL, scaling = TRUE) {
 
   # set visible binding to variable

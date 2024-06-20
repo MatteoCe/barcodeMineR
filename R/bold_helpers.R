@@ -6,48 +6,68 @@
 #' @return data.frame with taxa represented by at least 1 record on bold
 #'
 #' @keywords internal
-#' @importFrom rlang .data
+#' @noRd
 #'
+#' @importFrom rlang .data
 #'
 bold_record_counter <- function(bold_tax, api_rate) {
 
-  purrr::map(unique(bold_tax$rank), function(rank_sel) {
+  taxa <- unique(sort(bold_tax$taxon)) %>% split(., ceiling(seq_along(.) / 1))
 
-    bold_tax_sel <- dplyr::filter(bold_tax, rank == rank_sel)
+  # use bold_stats to count the number of records corresponding to each taxon
+  stats <- ncbi_limit_handler(taxa, api_rate = api_rate, function(id) {
 
-    taxa <- unique(sort(bold_tax_sel$taxon)) %>% split(., ceiling(seq_along(.) / 10))
+    idStats <- bold::bold_stats(taxa[[id]], dataTypes = "drill_down", simplify = TRUE)
 
-    # use bold_stats to count the number of records corresponding to each taxon
-    bold_count <- ncbi_limit_handler(taxa, api_rate = api_rate, function(id) {
+    rank <- bold_tax[bold_tax$taxon == taxa[[id]], "rank"]
 
-      idStats <- bold::bold_stats(taxon = taxa[[id]])
+    if (rank == "order") {
+      stop("The function 'download_bold' does not support downloading taxa higher than the family level.\nProvide lower taxonomic levels with 'get_bold_taxonomy'")
+    }
 
-      if (all(idStats[[rank_sel]]$drill_down$entity$records == 0)) {
+    if (is.null(idStats$drill_down[[rank]]$records)) {
+      return(NULL)
+    }
 
-        return(NULL)
+    upper_rank <- get_lower_tax_rank(rank, upper = TRUE)
 
-      }
+    if (upper_rank == "subfamily") {
+      upper_rank <- "family"
+    }
 
-      idStats[[rank_sel]]$drill_down$entity %>% dplyr::filter(.data$records != 0)
+    data.frame(
+      name = taxa[[id]],
+      parentname = idStats$drill_down[[upper_rank]]$name[!(idStats$drill_down[[upper_rank]]$name %in% "Others")],
+      records = sum(idStats$drill_down[[rank]]$records))
 
-    }, message = "Counting number of records per taxa on BOLD", seed = NULL) %>% purrr::compact() %>% do.call(rbind, .)
+  }, message = "Counting number of records per taxa on BOLD", seed = NULL) %>% purrr::compact() %>% do.call(rbind, .)
 
-  }) %>% do.call(rbind, .)
+  final_stats <- stats %>% dplyr::filter(., !(.data$parentname %in% .data$name)) %>%
+    dplyr::select(., .data$name, .data$records)
+
+  if (all(final_stats$records == 0)) {
+
+    return(NULL)
+
+  }
+
+  final_stats %>% dplyr::filter(.data$records != 0)
 
 }
 
 #' Group taxonomic names by maximum cumulative value
 #'
 #' @param bold_count data.frame output of the bold_record_counter function
-#' @param bold_tax data.frame output of the get_bold_taxonomy function
 #' @param rate maximum number of records to group
 #'
 #' @return a list of character vectors
 #'
 #' @keywords internal
+#' @noRd
+#'
 #' @importFrom rlang .data
 #'
-bold_record_grouper <- function(bold_count, bold_tax, rate) {
+bold_record_grouper <- function(bold_count, rate) {
 
   # set visible binding to variable
   name <- NULL
@@ -55,31 +75,25 @@ bold_record_grouper <- function(bold_count, bold_tax, rate) {
   groups <- list()
   counter <- 0
 
-  for (rank in unique(bold_tax$rank)) {
+  while (nrow(bold_count) > 0) {
 
-    bold_count_sel <- bold_count[bold_count$name %in% bold_tax[bold_tax$rank == rank, "taxon"], ]
+    counter <- counter + 1
 
-    while (nrow(bold_count_sel) > 0) {
+    group <- bold_count %>% dplyr::filter(cumsum(.data$records) < rate)
 
-      counter <- counter + 1
+    # if no record is filtered, but bold_counts still has rows, the first
+    # record will be filtered as it will correspond to records > rate
+    if (nrow(group) == 0) {
 
-      group <- bold_count_sel %>% dplyr::filter(cumsum(.data$records) < rate)
-
-      # if no record is filtered, but bold_counts still has rows, the first
-      # record will be filtered as it will correspond to records > rate
-      if (nrow(group) == 0) {
-
-        group <- bold_count_sel[1, ]
-
-      }
-
-      group <- group %>% dplyr::select(name) %>% c(., recursive = TRUE) %>% unname()
-
-      groups[[counter]] <- group
-
-      bold_count_sel <- bold_count_sel %>% dplyr::filter(!(.data$name %in% group))
+      group <- bold_count[1, ]
 
     }
+
+    group <- group %>% dplyr::select(name) %>% c(., recursive = TRUE) %>% unname()
+
+    groups[[counter]] <- group
+
+    bold_count <- bold_count %>% dplyr::filter(!(.data$name %in% group))
 
   }
 
@@ -91,14 +105,15 @@ bold_record_grouper <- function(bold_count, bold_tax, rate) {
 #'
 #' @param taxon_group taxonomic names
 #' @param bold_count data.frame output of bold_record_grouper
-#' @param bold_tax data.frame output of get_bold_taxonomy
 #'
 #' @return a data.frame
 #'
 #' @keywords internal
+#' @noRd
+#'
 #' @importFrom rlang .data
 #'
-bold_fetcher <- function(taxon_group, bold_count, bold_tax) {
+bold_fetcher <- function(taxon_group, bold_count) {
 
   records_number <- bold_count[bold_count$name %in% taxon_group, "records"] %>% sum()
 
@@ -150,33 +165,7 @@ bold_fetcher <- function(taxon_group, bold_count, bold_tax) {
 
   }
 
-  # filter records to include only those corresponding to the searched taxonomic
-  # name, not downstream taxonomy records
-  purrr::map(unique(bold_tax[bold_tax$taxon %in% taxon_group, "rank"]), function(rank) {
-
-    lower_ranks <- NULL
-
-    rank_sel <- rank
-
-    while (rank_sel != "species") {
-
-      rank_sel <- get_lower_tax_rank(rank_sel)
-      lower_ranks <- c(lower_ranks, paste0(rank_sel, "_name"))
-
-    }
-
-    rank_sel <- paste0(rank, "_name")
-
-    idRecords_sel <- idRecords %>% dplyr::filter(.data[[rank_sel]] %in% bold_tax[bold_tax$rank == rank, ]$taxon) %>%
-      dplyr::filter(dplyr::if_all(dplyr::all_of(lower_ranks), is.na))
-
-    if (nrow(idRecords_sel) == 0) {
-      return(NULL)
-    } else {
-      idRecords_sel
-    }
-
-  }) %>% purrr::compact() %>% do.call(rbind, .)
+  idRecords
 
 }
 
@@ -188,6 +177,7 @@ bold_fetcher <- function(taxon_group, bold_count, bold_tax) {
 #' @return data.frame a records_tab with selected columns
 #'
 #' @keywords internal
+#' @noRd
 #'
 #' @description
 #' This function is very similar to extractRecordsTab, thus allowing to extract
@@ -202,6 +192,39 @@ extractRecordsTabBOLD <- function(bold_records, bold_tax) {
   # set progressbar
   p <- progressr::progressor(steps = nrow(bold_records))
   message <- "Formatting BOLD records..."
+
+  # filter records to include only those corresponding to the searched taxonomic
+  # name, not downstream taxonomy records
+  bold_records <- purrr::map(seq(1, nrow(bold_tax)), function(row) {
+
+    lower_ranks <- NULL
+
+    rank_sel <- rank <- bold_tax[row, "rank"]
+
+    while (rank_sel != "subspecies") {
+
+      rank_sel <- get_lower_tax_rank(rank_sel)
+      lower_ranks <- c(lower_ranks, paste0(rank_sel, "_name"))
+
+    }
+
+    rank_sel <- paste0(rank, "_name")
+
+    idRecords_sel <- bold_records %>% dplyr::filter(.data[[rank_sel]] %in% bold_tax[row, "taxon"]) %>%
+      dplyr::filter(dplyr::if_all(dplyr::all_of(lower_ranks), is.na))
+
+    if (nrow(idRecords_sel) == 0) {
+      return(NULL)
+    } else {
+      idRecords_sel
+    }
+
+  }) %>% purrr::compact() %>% do.call(rbind, .)
+
+  # if no records remain, stop and message it
+  if (length(bold_records) == 0) {
+    return(NULL)
+  }
 
   # if some records have been retrieved searching a higher taxon, this will search
   # iteratively on all upstream taxonomies until finding the taxonomy in bold_tax.

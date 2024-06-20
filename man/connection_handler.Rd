@@ -15,6 +15,7 @@ connection_handler(fun, attempts = 5)
 The result of the function provided.
 }
 \description{
-Repeat failing functions and manage errors.
+This function, although used internally, is exported in order to be able to
+be called by `ncbi_limit_handler` inside its future::future function.
 }
 \keyword{internal}

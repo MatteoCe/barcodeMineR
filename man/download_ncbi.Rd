@@ -17,42 +17,63 @@ download_ncbi(
 )
 }
 \arguments{
-\item{ncbi_tax}{a data.frame, as returned from the get_ncbi_taxonomy function.}
+\item{ncbi_tax}{`data.frame` A data frame, as returned from the
+`get_ncbi_taxonomy()` function.}
 
-\item{ncbi_ids}{a character vector including ncbi accession numbers.}
+\item{ncbi_ids}{`character` A character vector with NCBI accession numbers.}
 
-\item{rate_xml}{the number of xml to be downloaded at a time. Defaults to
-200, but can be lowered for bad internet connections.}
+\item{rate_xml}{`integer` The number of xml objects to be downloaded at a
+time. It can be lowered for unstable internet connections. Defaults to
+`200`.}
 
-\item{rate_fasta}{the number of fasta sequences to be downloaded at a time.
-Same as rate_xml, but defaults to 100. Many fasta can correspond to
-mitogenomes and chromosomes, which may lead to an error if downloaded in
-great numbers. Can be increased if needed.}
+\item{rate_fasta}{`integer` The number of fasta sequences to be downloaded
+at a time. Many fasta can correspond to mitogenomes and chromosomes, which
+may lead to an errors if downloaded in great numbers. Defaults to `100`.}
 
-\item{default.filter}{logical, whether to filter the records excluding whole
-genome shotgun sequences and transcribed shotgun assembly. Defaults to TRUE.}
+\item{default.filter}{`logical` Whether to filter the records excluding whole
+genome shotgun sequences and transcribed shotgun assembly. Defaults to
+`TRUE`.}
 
-\item{filter}{an additional query filter in the form of a/multiple string/s
-to add to every searched taxid. This will allow any user to specifically
-filter every search with a custom query. Multiple strings should be provided
-in the form of a character vector of single query filters (see description
-for details).}
+\item{filter}{`character` an additional query filter in the form of
+a/multiple string/s to add to every searched taxid. This will allow any
+user to specifically filter every search with a custom query. Multiple
+strings should be provided in the form of a character vector of single
+query filters (see description for details). Defaults to `NULL`.}
 
-\item{api_rate}{the time rate adopted for each request sent to the NCBI.
-Defaults to NULL, which will let the function check whether the key parameter
-is also NULL or not. In the former case, the api rate will be set to a
-request every 1/3 seconds, otherwise every 1/10 seconds. Works only in a
-multisession future plan. Check the "Description" for more information.}
+\item{api_rate}{`integer` The API rate with which to iterate each separate
+request. Must be a number between 3 and 10 which will translate in a rate
+of `1 / api_rate` seconds.}
 
-\item{ask}{defaults to TRUE. If disabled the selection process will be
-skipped and all feature keys from each accession number will be retrieved.}
+\item{ask}{`logical` Should the function ask the user whether to filter the
+final output for taxonomic ranks. Default `TRUE`.}
 
-\item{prefix}{defaults to NULL. Character string that will be used to create
-numbered custom ids for each record in ascending order.}
+\item{prefix}{`character` A character string that will be used to create
+numbered custom ids for each record in ascending order. The prefix will
+compose the recordID field in the final object. Default to `NULL`, using
+the internal recordID generator that will use the accession number for NCBI
+records and the processID for BOLD records, avoiding duplicates by adding
+`_1`, `_2` etc.}
 }
 \value{
-a refdb tibble data.frame, including the DNA sequence as a field.
+`data.frame` A refdb data frame, including the DNA sequence as a
+  field.
 }
 \description{
-A short description...
+This function searches for NCBI records corresponding to the species found in
+the argument `ncbi_tax`, i.e. the output from the function `get_ncbi_taxonomy`.
+
+It can also search for accession numbers and return the same type of object.
+
+For a thorough explanation of the function usage and capabilities, see the
+'Introduction to the barcodeMineR package' vignette:
+\code{vignette("Introduction to the barcodeMineR package", package = "barcodeMineR")}
+}
+\examples{
+tax <- get_ncbi_taxonomy("Polymastia invaginata")
+
+download_ncbi(tax, ask = FALSE)
+
+}
+\seealso{
+[download_bold()]
 }

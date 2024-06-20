@@ -7,6 +7,7 @@
 #' @return a list of "DNAStringSet" objects corresponding to the DNA sequences trimmed as indicated in the relative location qualifiers in the selection tab.
 #'
 #' @keywords internal
+#' @noRd
 #'
 #' @description
 #' To be used in a vectorized loop (like lapply) for all "accession number|marker code" chosen in the selection process. This function will select the correct sequences from the total obtained in select_ncbi_genes.R or download_ncbi_genes.R and, if necessary, cut the correct region of the sequence corresponding to the chosen CDS or rRNA. It is also used inside the "select_bold_genes" function. In this case, this script will simply select and extract the "accn" previously selected from the whole sequences gathered at the beginning of the selection script and remove gaps, if present.
@@ -285,6 +286,7 @@ buildSequences <- function(accn, DNAString, selection_tab) {
 #' @return a data.frame, with information updated based on the additional information from the "built" sequences.
 #'
 #' @keywords internal
+#' @noRd
 #'
 #' @description
 #' To be used after buildSequences as it calculates the final length of each marker. It only extracts the info of each chose accession number and marker combination and adds the gene_name and final length of each sequence. There is a difference depending on the origin of the records, whether they come from a search on BOLD records or NCBI records. In the former, the information obtained from the fetching of the sample data may not be unequivocally selected using the sourceID, especially for those cases where the sourceID is the same for different sequences (16S and COI CDS coming from same source sequence on the NCBI). In this case, records must be selected by sourceID and markerCode altogether as it is already available in the records table. Instead, for the NCBI the records can only be selected by sourceID, and, considering the rest of the information is unique, possible duplicate rows of the selected data.frame can be removed to only have a dataframe with a single row.
@@ -365,7 +367,9 @@ buildRecord <- function(accn, records, sequences) {
 #' @param prefix the prefix to use in case custom IDs are chosen by the user instead of the original processID/accession numbers
 #'
 #' @return a refdb data.frame
+#'
 #' @keywords internal
+#' @noRd
 #'
 buildBarcodeOre <- function(records, prefix = NULL) {
 

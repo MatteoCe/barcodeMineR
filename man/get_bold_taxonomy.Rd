@@ -2,38 +2,40 @@
 % Please edit documentation in R/get_bold_taxonomy.R
 \name{get_bold_taxonomy}
 \alias{get_bold_taxonomy}
-\title{Get taxonomic classification of the BOLD taxonomy database for a list of taxa.}
+\title{Get taxonomic classification of the BOLD taxonomy database for a list of taxa}
 \usage{
-get_bold_taxonomy(ids, group = 1, descend = TRUE, api_rate = 0.06, ask = TRUE)
+get_bold_taxonomy(ids, api_rate = NULL, ask = TRUE, descend = TRUE)
 }
 \arguments{
-\item{ids}{character vector of species names}
+\item{ids}{`character` A character string of species names.}
 
-\item{group}{grouping factor for ids names. Defaults to 10.}
+\item{api_rate}{`integer` The API rate with which to iterate each separate
+request. If left to default `NULL`, it will be set to one request every 16
+seconds approximately. Use caution when overriding the default.}
 
-\item{descend}{logical. If set to TRUE (default), use the taxize package to
-retrieve lower level taxonomies.}
+\item{ask}{`logical` Should the function ask the user whether to filter the
+final output for taxonomic ranks. Default `TRUE`.}
 
-\item{api_rate}{the rate with which to perform the function on each element.
-For the BOLD api it can be higher, thus it will be defined by the number of
-workers available in the chosen future framework, unless specified otherwise}
-
-\item{ask}{should the function ask the user whether to filter the final
-output for taxonomic ranks. Default to TRUE.}
+\item{descend}{`logical` Use the taxize package to retrieve lower level
+taxonomies. Default `TRUE`.}
 }
 \value{
-a data.frame with taxid from the taxonomy database of the BOLD
-website and the corresponding species name(s) retrieved
+`data.frame` A data.frame object with the searched taxa, the taxid
+  and the rank.
 }
 \description{
-Due to the functioning of the bold package, random number generation might
-set warning messages when this function is performed in multisession plan.
-For this reason, the seed parameter in the future::future function called
-internally is set to NULL, in order to suppress these warnings.
+The taxonomy functions are used to define exactly which records will be
+retrieved by the download functions. More precisely, only records that
+include the taxid/scientificName, retrieved using the taxonomy functions,
+as the lowest taxonomic identification will be downloaded.
+
+For more details see the 'Searching taxonomy' vignette:
+\code{vignette("Searching taxonomy", package = "barcodeMineR")}
 }
 \examples{
-\dontrun{
-(x <- c("Achelia assimilis", "Alcyonium antarcticum"))
-get_bold_taxonomy(x)
+get_bold_taxonomy("Achelia assimilis", descend = FALSE)
+
 }
+\seealso{
+[get_ncbi_taxonomy()]
 }

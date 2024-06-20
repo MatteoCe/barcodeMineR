@@ -2,7 +2,7 @@
 % Please edit documentation in R/plot_family.R
 \name{plot_primers}
 \alias{plot_primers}
-\title{Create a Bubble Plot showing number of sequences and average/range length for each primer}
+\title{Show the primers' names as a Bubble plot}
 \usage{
 plot_primers(
   refdb,
@@ -15,38 +15,46 @@ plot_primers(
 )
 }
 \arguments{
-\item{refdb}{(refdb) a refdb object.}
+\item{refdb}{`data.frame` A data frame object, as those recovered by the
+`download_ncbi`, `download_bold` and `loadBarcodeOre` functions.}
 
-\item{level}{(character) a character vector indicating which taxonomic level
+\item{level}{`character` A character string indicating which taxonomic level
 the x axis should refer to. It should be one of "phylum", "class", "order",
-"family" and "genus".}
+"family" and "genus". Defaults to `phylum`.}
 
-\item{select}{(character) this parameter allows to pre-filter the refdb
-object based on a taxonomic name, which must be present in the records table
-of the object.}
+\item{select}{`character` this parameter allows to pre-filter the refdb
+object based on a taxonomic name. Defaults to `NULL`.}
 
-\item{size_range}{(integer vector) this allows to change the size of bubbles.}
+\item{size_range}{`integer` This allows to change the size of bubbles. A
+vector of length two should be supplied. Defaults to `NULL`, which
+translates into `c(2, 30)`.}
 
-\item{measure}{(character) either "range" or "average" (default). In the
-first case, the range of length in the sequences of the records filtered for
+\item{measure}{`character` Either `"range"` or `"average"`. In the first
+case, the range of length in the sequences of the records filtered for
 each combination of primer and taxonomic name will be shown. The average
-length will be shown otherwise.}
+length will be shown otherwise. Defaults to `"average"`.}
 
-\item{tax.fct.levels}{(character) a vector of taxonomic names that allows to
+\item{tax.fct.levels}{`character` A vector of taxonomic names that allows to
 re-order the x axis based on a custom order.}
 
-\item{prim.fct.levels}{(character) a vector of primers' names that allows to
+\item{prim.fct.levels}{`character` A vector of primers' names that allows to
 re-order the y axis based on a custom order.}
 }
 \value{
-A Bubble plot, as a 'ggplot2' plot object, which can be saved and
-modified.
+`ggplot` A Bubble plot, which can be assigned and further modified
+  using the package `ggplot2`.
 }
 \description{
-Create a Bubble Plot showing number of sequences and average/range length for each primer
+This function will plot any primer name present in the object provided to the
+`refdb` argument in the x axis, showing the number of records as size of
+circles, while the color intensity of the circle is given by the length
+`"average"` or `"range"` of the sequences amplified using that primer. This
+function was inspired and modified by the code presented in the paper by
+Gwiazdowski et al. (2015) https://doi.org/10.1371/journal.pone.0125635.
 }
 \examples{
-\dontrun{
-(BubPlot <- plot_primers(total_ore))
-}
+rec <- loadBarcodeOre(example_record, example_sequence)
+
+plot_primers(rec)
+
 }

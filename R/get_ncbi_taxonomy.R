@@ -1,52 +1,40 @@
 #' Get taxonomic classification of the NCBI taxonomy database for a list of taxa
-#' or taxid.
+#' or taxids
 #'
-#' @param ids Character string of species names or taxid from the NCBI.
-#' @param rate the number of maximum ids to show in the esearch list object.
-#' @param api_rate The rate with which to perform the function on each element.
-#' Must be a number between 3 and 10 which will translate in a rate of
-#' '1 / api_rate' seconds.
-#' @param ask Should the function ask the user whether to filter the final
-#' output for taxonomic ranks. Default to TRUE.
+#' @param ids `character` A character string of species names or taxid from the
+#'   NCBI.
+#' @param api_rate `integer` The API rate with which to iterate each separate
+#'   request. Must be a number between 3 and 10 which will translate in a rate
+#'   of `1 / api_rate` seconds.
+#' @param ask `logical` Should the function ask the user whether to filter the
+#'   final output for taxonomic ranks. Default `TRUE`.
 #'
-#' @return A data.frame object with the searched taxonomic classification.
+#' @return `data.frame` A data.frame object with the searched taxonomic
+#'   classification.
 #'
 #' @export
 #' @importFrom rlang .data
 #'
 #' @description
-#' This function is the first step of the pipeline. It allows to download the
-#' taxonomic classification of either taxonomic names or taxid from the NCBI.
-#' A character vector of either type must be supplied to the ids parameter.
-#' The api_rate parameter can be left NULL, as default, allowing the function
-#' to automatically detect the best option related to the current future plan
-#' and the NCBI http requests limit. In fact, if key is also left NULL, the
-#' standard https requests limit will be adopted (3 requests in any 1 second
-#' window), whereas if the NCBI API key is provided, up to 10 requests per
-#' second will be performed. This speed up the recovery of data from the NCBI,
-#' especially for time-consuming requests.
+#' The taxonomy functions are used to define exactly which records will be
+#' retrieved by the download functions. More precisely, only records that
+#' include the taxid/scientificName, retrieved using the taxonomy functions,
+#' as the lowest taxonomic identification will be downloaded.
 #'
-#' The future plan framework allows to send requests every 1 / api_rate seconds,
-#' thus ensuring that no more that 'api_rate' requests will be sent. However,
-#' due to fluctuations in the internet connection, still more than that number
-#' of requests will arrive to the NCBI server, causing errors. The function can
-#' handle up to 5 consecutive errors per request, but too many errors might
-#' block the whole process. Apart from reducing the number of taxonomic names
-#' or taxid searched, the api_rate parameter can be modified in order to slow
-#' down the requests sent per second. It overrides the automatic selection of
-#' the optimal parameter (either 3 or 10) and accepts one decimal degree number
-#' between 1.0 and 10.0, so if the internet connection is particularly bad, it
-#' can be set to 2.5/2.0, for example, in order to slow the number of requests
-#' per second and reduce the possibility of errors.
+#' For more details see the 'Searching taxonomy' vignette:
+#' \code{vignette("Searching taxonomy", package = "barcodeMineR")}
 #'
+#' @seealso [get_bold_taxonomy()]
 #'
-#' @examples \dontrun{
+#' @examples
 #' get_ncbi_taxonomy("Polymastia invaginata")
 #'
 #' get_ncbi_taxonomy("283554")
 #'
-#' }
-get_ncbi_taxonomy <- function(ids, rate = 200, api_rate = NULL, ask = TRUE) {
+get_ncbi_taxonomy <- function(ids, api_rate = NULL, ask = TRUE) {
+
+  # set the number of maximum ids to show in the esearch list object
+  rate <- 200
 
   # check api limit can be adopted based on presence or not of an ncbi API key
   api_rate <- set_ncbi_rate(api_rate)
@@ -132,50 +120,5 @@ get_ncbi_taxonomy <- function(ids, rate = 200, api_rate = NULL, ask = TRUE) {
   }
 
   clean_taxonomies
-
-}
-
-#' Collapse query names that corresponds to the same taxonomy on the ncbi.
-#'
-#' @param taxonomy_df the ncbi taxonomy table as obtained in get_ncbi_taxonomy.
-#'
-#' @return a taxonomy table with duplicates collapsed.
-#'
-#' @keywords internal
-#' @importFrom rlang .data
-#'
-#' @description
-#' Sometimes it may happen that different taxonomic names correspond to only one name on the ncbi. This will collapse the rows with different query names into a single one with "name1|name2" in the field "QueryName".
-#'
-clean_taxonomy <- function(taxonomy_df) {
-
-  taxids <- unique(sort(taxonomy_df$taxid))
-
-  purrr::map(taxids, function(id) {
-
-    # extract the taxonomic table info corresponding to the species that is processed now
-    single_tax <- taxonomy_df %>% dplyr::filter(., .data$taxid == id)
-
-    # if multiple queryName species correspond to the same taxonomy in the NCBI tax database
-    # then the input species if modified in order to contain a collapsed string
-    # with both names.
-    if (nrow(single_tax) > 1) {
-
-      # collapse input species
-      coll_input <- paste(single_tax$queryName, collapse = "|")
-
-      # filter duplicate of rest columns
-      rem_dup_tab <-  single_tax %>% dplyr::select(., -.data$queryName) %>% unique()
-
-      # bind input collapsed and table with removed duplicates
-      single_tax <- single_tax %>% dplyr::mutate(., queryName = coll_input) %>%
-        dplyr::select(.data$queryName) %>% dplyr::bind_cols(., rem_dup_tab) %>% unique()
-
-    }
-
-    single_tax
-
-  }) %>% do.call(rbind, .)
-
 
 }

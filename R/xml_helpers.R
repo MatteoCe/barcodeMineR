@@ -5,6 +5,8 @@
 #' @return a new xml object without the original root.
 #'
 #' @keywords internal
+#' @noRd
+#'
 XML_root <- function(xml) {
 
   new_xml <- XML::newXMLDoc()
@@ -28,6 +30,7 @@ XML_root <- function(xml) {
 #' @return An xml of 'XMLNodeSet' class.
 #'
 #' @keywords internal
+#' @noRd
 #'
 #' @description
 #' Supported feature keys are "source", "CDS" and "rRNA".
@@ -68,6 +71,7 @@ XML_extract_nodes <- function(featureKey, xml) {
 #' @return An xml of 'XMLNodeSet' class.
 #'
 #' @keywords internal
+#' @noRd
 #'
 #' @description
 #' Similar function to XML_extract_nodes, but works on an NCBI taxonomy xml.
@@ -94,6 +98,7 @@ XML_Taxon_extract_nodes <- function(xml) {
 #' @return Either a string text with the accession number (path = 'accession') or the location definition (path = 'location'), or a named list with the qualifiers extracted from GBFeature of the NCBI xml object.
 #'
 #' @keywords internal
+#' @noRd
 #'
 #' @description
 #' This function will extract different data from an xml file obtained from the NCBI.
@@ -182,6 +187,7 @@ XML_extract <- function(xml, path, quals = NULL) {
 #' @return A named list
 #'
 #' @keywords internal
+#' @noRd
 #'
 #' @description
 #' Works similarly to XML_extract. A named list with taxid, taxonomic rank, scientific
@@ -248,6 +254,7 @@ extractTaxonomyTab <- function(feature_nodes) {
 #' @return A data.frame counting the number of CDS and rRNA features.
 #'
 #' @keywords internal
+#' @noRd
 #'
 #' @description
 #' This function process a list of feature XML objects in order to create the selection tab, the table that will later allow to choose which CDS and rRNA to keep from all of the accession numbers gathered. It works on a lapply function to iteratively extract data.frame-like objects for each CDS and rRNA.
@@ -320,6 +327,8 @@ extractSelectionTab <- function(feature_nodes, accn) {
 #' @return A data.frame with source data from each xml source features, thus the metadata reported for each corresponding accession number.
 #'
 #' @keywords internal
+#' @noRd
+#'
 #' @importFrom rlang .data
 #'
 #' @description

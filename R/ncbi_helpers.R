@@ -1,3 +1,50 @@
+#' Collapse query names that corresponds to the same taxonomy on the ncbi.
+#'
+#' @param taxonomy_df the ncbi taxonomy table as obtained in get_ncbi_taxonomy.
+#'
+#' @return a taxonomy table with duplicates collapsed.
+#'
+#' @keywords internal
+#' @noRd
+#'
+#' @importFrom rlang .data
+#'
+#' @description
+#' Sometimes it may happen that different taxonomic names correspond to only one name on the ncbi. This will collapse the rows with different query names into a single one with "name1|name2" in the field "QueryName".
+#'
+clean_taxonomy <- function(taxonomy_df) {
+
+  taxids <- unique(sort(taxonomy_df$taxid))
+
+  purrr::map(taxids, function(id) {
+
+    # extract the taxonomic table info corresponding to the species that is processed now
+    single_tax <- taxonomy_df %>% dplyr::filter(., .data$taxid == id)
+
+    # if multiple queryName species correspond to the same taxonomy in the NCBI tax database
+    # then the input species if modified in order to contain a collapsed string
+    # with both names.
+    if (nrow(single_tax) > 1) {
+
+      # collapse input species
+      coll_input <- paste(single_tax$queryName, collapse = "|")
+
+      # filter duplicate of rest columns
+      rem_dup_tab <-  single_tax %>% dplyr::select(., -.data$queryName) %>% unique()
+
+      # bind input collapsed and table with removed duplicates
+      single_tax <- single_tax %>% dplyr::mutate(., queryName = coll_input) %>%
+        dplyr::select(.data$queryName) %>% dplyr::bind_cols(., rem_dup_tab) %>% unique()
+
+    }
+
+    single_tax
+
+  }) %>% do.call(rbind, .)
+
+
+}
+
 #' Search a taxon or taxid in the NCBI 'taxonomy' or 'nucleotide' databases
 #'
 #' @param id A taxon or taxid.
@@ -13,6 +60,7 @@
 #' will be used by the 'fetcher' functions to retrieve xml or fasta objects.
 #'
 #' @keywords internal
+#' @noRd
 #'
 #' @description
 #' This internal function will return an esearch/list object that will be used
@@ -21,10 +69,6 @@
 #' this reason is usually run inside the functions reported in "requests_handlers.R"
 #' like connection_handler() and ncbi_limit_handler().
 #'
-#' @examples \dontrun{
-#' ncbi_searcher("Thouarella", db = "taxonomy")
-#' ncbi_searcher("283554", db = "nucleotide")
-#' }
 ncbi_searcher <- function(id, db = "taxonomy", retmax = 200, default.filter = TRUE, filter = NULL) {
 
   if (db == "taxonomy") {
@@ -87,6 +131,7 @@ ncbi_searcher <- function(id, db = "taxonomy", retmax = 200, default.filter = TR
 #' @return a list with character vectors of ncbi IDs to be used by the function postAndCheck for creating web_history objects.
 #'
 #' @keywords internal
+#' @noRd
 #' @importFrom rlang .data
 #'
 #' @description
@@ -176,6 +221,7 @@ ncbi_id_extract <- function(search_list, db = "nucleotide", rate_xml, api_rate =
 #' @return Both 'taxonomy' and 'nucleotide' db searches will return an xml object of 'XMLInternalDocument/XMLAbstractDocument' class. This object should be processed with the functions at 'xml_helpers.R' to extract the wanted data.
 #'
 #' @keywords internal
+#' @noRd
 #'
 #' @description
 #' A web_history object is used to download xml objects from the NCBI database. The parameters retstart and rate are changed internally to download all ids from the web_history object, usually identifying 20 ids at a time.
@@ -221,6 +267,7 @@ ncbi_xml_fetcher <- function(searchWebHist = NULL, ids = NULL, db = "taxonomy", 
 #' @param rate The final numeric position of the ids included in the web_history object and that will be fetched.
 #'
 #' @keywords internal
+#' @noRd
 #'
 #' @return A character string as fasta sequence/s.
 #'
@@ -263,6 +310,7 @@ ncbi_fasta_fetcher <- function(searchWebHist = NULL, ids = NULL, retstart, rate)
 #'
 #'
 #' @keywords internal
+#' @noRd
 #'
 postAndCheck_OLD <- function(names) {
 
