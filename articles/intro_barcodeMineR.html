@@ -175,8 +175,8 @@ species:</p>
 <code class="sourceCode R"><span><span class="co"># search taxonomic information for a species on BOLD</span></span>
 <span><span class="va">tax</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_bold_taxonomy.html">get_bold_taxonomy</a></span><span class="op">(</span><span class="st">"Dissostichus mawsoni"</span><span class="op">)</span></span>
 <span><span class="va">tax</span></span></code></pre></div>
-<pre><code><span><span class="co">##              queryName taxid                taxon    rank</span></span>
-<span><span class="co">## 1 Dissostichus mawsoni 77420 Dissostichus mawsoni species</span></span></code></pre>
+<pre><code><span><span class="co">##              queryName taxid                taxon    rank records</span></span>
+<span><span class="co">## 1 Dissostichus mawsoni 77420 Dissostichus mawsoni species      21</span></span></code></pre>
 <p>The output is slightly different from the output of <a href="https://matteoce.github.io/barcodeMineR/reference/get_ncbi_taxonomy.html">get_ncbi_taxonomy</a>,
 however, it serves the same role. In fact, it can then be used to
 download all <em>Dissostichus mawsoni</em> records from the BOLD
