@@ -126,7 +126,7 @@ cleanMinedFromGenBankRecords <- function(records, sequences, accn) {
         # NCBI info
         filt_rec_t <- filt_mined %>% dplyr::filter(.data$accn == ac | .data$accn == paste0(ac, ".1")) %>%
           dplyr::select(-.data$accn, -.data$id) %>%
-          dplyr::bind_rows(.data, filt_original) %>%
+          dplyr::bind_rows(., filt_original) %>%
           dplyr::select(-.data$DNA_seq, -.data$note) %>%
           t()
 

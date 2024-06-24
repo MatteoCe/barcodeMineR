@@ -33,13 +33,13 @@ rec_NCBI <- download_ncbi(tax, ask = FALSE)
 
 Now we have the final _refdb_ formatted data frame including all DNA barcodes available at the NCBI for the species _Dissostichus mawsoni_.
 
-```{r, echo = FALSE, eval = TRUE}
+```{r, echo = FALSE}
 rec_NCBI
 ```
 
 This data frame includes `r nrow(rec_NCBI)` records (rows). However, if we were to search for all _Dissostichus mawsoni_ records on the NCBI nucleotide database, using the same default filters called inside the _barcodeMineR_ functions, we will notice that there are less accession numbers than the number of records obtained by the [download_ncbi](https://matteoce.github.io/barcodeMineR/reference/download_ncbi.html) function:
 
-```{r, eval = TRUE}
+```{r}
 # the default filters exclude whole genome shotgun sequences and transcribed 
 # shotgun assembly products
 rentrez::entrez_search(db="nucleotide", term="(((txid36200[ORGN] NOT wgs[Keyword]) NOT tsa[Keyword]) AND biomol_genomic[PROP]) AND (cds[Feature key] OR rrna[Feature key])")
@@ -50,7 +50,7 @@ to _Dissostichus mawsoni_, thus, for example, for the accession number 'LC138011
 
 In case you want to choose which marker to keep in the final tibble, set the _ask_ argument to TRUE (default), and, when asked, choose which marker to download data for:
 
-```{r, echo = TRUE, eval = FALSE}
+```{r}
 rec_NCBI <- download_ncbi(tax)
 ```
 
@@ -74,7 +74,7 @@ rec_BOLD
 
 We have retrieved `r nrow(rec_BOLD)` records from the BOLD database, corresponding to `r length(unique(rec_BOLD$recordID))` different process-IDs. BOLD hosts other markers, but the vast majority of records correspond to Cytochrome c oxidase I sequences.
 
-Searching species names, or taxa in general, using the [taxonomy functions](https://matteoce.github.io/barcodeMineR/reference/index.html#taxonomy) follows a set of rules and rational that is described in the vignette [Searching taxonomy](https://matteoce.github.io/barcodeMineR/articles/taxonomy_barcodeMineR.html)
+Searching species names, or taxa in general, using the [taxonomy functions](https://matteoce.github.io/barcodeMineR/reference/index.html#taxonomy) follows a set of rules that is described in the vignette "[Searching taxonomy](https://matteoce.github.io/barcodeMineR/articles/taxonomy_barcodeMineR.html)".
 
 ## Merging data from different repositories
 
@@ -90,7 +90,7 @@ As we can see from the printed messages, some records were actually mined versio
 total
 ```
 
-This is it, now we have all barcodes available on the major online repositories for the species _Dissostichus mawsoni_. 
+This is it, now we have all DNA barcodes available on the major online repositories for the species _Dissostichus mawsoni_. 
 
 In case we want to add additional, private sequences to the mined results, we can use the function [loadBarcodeOre](https://matteoce.github.io/barcodeMineR/reference/loadBarcodeOre.html) and specify either the paths to a tsv file and a fasta file including our new sequences, or to a data frame and a _DNAStringSet_ object with the same, to output a _refdb_ data frame formatted as those we merged earlier. 
 

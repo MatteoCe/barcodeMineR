@@ -20,7 +20,7 @@ knitr::opts_chunk$set(
 
 The time required to mine DNA barcodes from the NCBI nucleotide database depends on how many species/taxa are searched and how many records correspond to each taxa. Due to the structure of the __barcodeMineR__ functions, and its consequent usage, different approaches can be adopted to speed up the procedures, with varying effects.
 
-Although the rationale and functioning behind each method is described below, including the [fine tuning](https://matteoce.github.io/barcodeMineR/articles/api_rate_barcodeMineR.html#tuning-the-functions-arguments) of the functions' arguments, it is suggested to follow the functions' default parameters, and, at the same time, adopt all of the approaches here described, which do not only speed up the recovery of DNA barcodes, but also reduce excessive blocking from the servers.
+Although the rationale and functioning behind each method is described below, including the [tuning](https://matteoce.github.io/barcodeMineR/articles/api_rate_barcodeMineR.html#tuning-the-functions-arguments) of the functions' arguments, it is suggested to follow the functions' default parameters, and, at the same time, adopt all of the approaches here described, which do not only speed up the recovery of DNA barcodes, but also reduce excessive blocking from the servers.
 
 ## API rate limit
 
@@ -28,13 +28,13 @@ The NCBI servers allows up to only three requests per second from a single user.
 
 For example, if we have a vector of 100 species, we can expect a theoretical execution time for the [get_ncbi_taxonomy](https://matteoce.github.io/barcodeMineR/reference/get_ncbi_taxonomy.html) function of `r paste(round((1/3)*200, 2), "seconds")`:
 
-```{r, echo = FALSE, eval = TRUE}
+```{r, echo = FALSE}
 library(barcodeMineR)
 t0 <- Sys.time()
 tax <- get_ncbi_taxonomy(species200[1:100], ask = FALSE)
 t1 <- Sys.time()
 ```
-```{r, echo = TRUE, eval = FALSE}
+```{r, eval = FALSE}
 library(barcodeMineR)
 
 # extract example dataset with 200 species from the Ross Sea (Antarctica, Southern Ocean)
@@ -43,21 +43,21 @@ specs <- barcodeMineR::species200
 tax <- get_ncbi_taxonomy(specs[1:100], ask = FALSE)
 ```
 
-And, during the rendering of this vignettes, it executed in `r x <- difftime(t1, t0); if (units(x) == "mins") {paste(round(as.numeric(x), 2), "minutes")} else {paste(round(as.numeric(x), 0), "seconds")}`.
+However, during the rendering of this vignettes, it executed in `r x <- difftime(t1, t0); if (units(x) == "mins") {paste(round(as.numeric(x), 2), "minutes")} else {paste(round(as.numeric(x), 0), "seconds")}`.
 
-This api rate, which is the default for the _ncbi_ functions of the _barcodeMineR_ package, is, however, highly subjected to changes in the speed of the internet connections, and might delay some requests at certain times, leading to an accumulation of four requests in a window of one second of time. 
+This API rate value, which is the default for the _ncbi_ functions of the _barcodeMineR_ package, is, however, highly subjected to changes in the speed of the internet connections, and might delay some requests at certain times, leading to an accumulation of four requests in a window of one second of time. 
 
 In order to avoid this, a higher download rate can be adopted if the user decides to register a [NCBI account](https://account.ncbi.nlm.nih.gov/). Using an API key, the user can send up to 10 requests per second to the NCBI. 
 
 This can be done "externally", in respect to the _barcodeMineR_ functions, following the [rentrez documentation](https://cran.r-project.org/web/packages/rentrez/vignettes/rentrez_tutorial.html#rate-limiting-and-api-keys), specifically with this function:
 
-```{r, echo = TRUE, eval = FALSE}
+```{r, eval = FALSE}
 set_entrez_key("ABCD123")
 
 ```
 
 By setting an NCBI account, the user assures that requests that don't take much time can be executed even faster, and avoid excessive blocking when the internet connection is particularly unreliable. Including an NCBI API key approximately halves the execution time of the [get_ncbi_taxonomy](https://matteoce.github.io/barcodeMineR/reference/get_ncbi_taxonomy.html), when querying multiple species at once.
-```{r, echo = FALSE, eval = TRUE}
+```{r, echo = FALSE}
 library(barcodeMineR)
 # please its my api rate key, don't use it, I'll find a way to hide it, I swear, but in the meantime, have some frigging heart
 rentrez::set_entrez_key("411436812fa3336220505547704885e63f07")
@@ -66,7 +66,7 @@ tax <- get_ncbi_taxonomy(species200[1:100], ask = FALSE)
 t1 <- Sys.time()
 ```
 
-The above command is executed, during the rendering of this vignette, in `r x <- difftime(t1, t0); if (units(x) == "mins") {paste(round(as.numeric(x), 2), "minutes")} else {paste(round(as.numeric(x), 0), "seconds")}`.
+The _get_ncbi_taxonomy_ command previously executed takes about `r x <- difftime(t1, t0); if (units(x) == "mins") {paste(round(as.numeric(x), 2), "minutes")} else {paste(round(as.numeric(x), 0), "seconds")}` when run with an API_key.
 
 All ncbi functions of the _barcodeMineR_ package would benefit from the inclusion of an API key, which increases speed of fast requests and reliability at long execution times.
 
@@ -75,7 +75,7 @@ All ncbi functions of the _barcodeMineR_ package would benefit from the inclusio
 One of the main advantages of the __barcodeMineR__ package consists in the capacity to adopt the asynchronous parallelizing framework of the [future](https://github.com/HenrikBengtsson/future) package to speed up the download of records from the NCBI repository.
 
 The execution time of the [download_ncbi](https://matteoce.github.io/barcodeMineR/reference/download_ncbi.html) function depends on how many records correspond to each single species/taxa on the NCBI nucleotide database.
-```{r, echo = FALSE, eval = TRUE}
+```{r, echo = FALSE}
 tax <- get_ncbi_taxonomy("Euphausia superba")
 
 t0 <- Sys.time()
@@ -84,25 +84,25 @@ t1 <- Sys.time()
 ```
 
 For example, if we wanted to search for all records corresponding to the Antarctic krill species _Euphausia superba_, we could expect to download `r nrow(recs)` records, after an execution time of approximately `r x <- difftime(t1, t0); if (units(x) == "mins") {paste(round(as.numeric(x), 2), "minutes")} else {paste(round(as.numeric(x), 0), "seconds")}`, for the function _download_ncbi_.
-```{r, echo = TRUE, eval = FALSE}
+```{r, eval = FALSE}
 tax <- get_ncbi_taxonomy("Euphausia superba")
 
 # the execution time refers to the function below only
 recs <- download_ncbi(tax, ask = FALSE)
 ```
 
-In this context, the asynchronous parallelizing framework of the [future](https://future.futureverse.org/) package comes in handy. In synthesis, each request is sent as a background process, which will not block the current R session to send another request at a specified time, provided that there are enough "workers" (cores) available. This means that, using the _future_ framework, we can send a request every 1/3 of a second (or 1/10, if we set the NCBI API key), independently from the completion of the previous request.
+In this context, the asynchronous parallelizing framework of the [future](https://future.futureverse.org/) package comes in handy. In synthesis, each request is sent as a background process, which will not block the current R session to send another request at a specified time, provided that there are enough "workers" (cores) available to send another request. This means that, using the _future_ framework, we can send a request every 1/3 of a second (or 1/10, if we set the NCBI API key), independently from the completion of the previous request.
 
 We can setup the _future_ framework using its [functions](https://future.futureverse.org/articles/future-1-overview.html). Here, we're setting up the "multisession" plan using all available cores from our machine:
 
-```{r, echo = TRUE, eval = FALSE}
+```{r, eval = FALSE}
 future::plan("multisession")
 
 ```
 
 You can specify the number of cores using the _workers_ argument, and check how many cores are available using the following command:
 
-```{r, echo = TRUE, eval = TRUE}
+```{r}
 future::availableCores()
 
 ```
@@ -110,7 +110,9 @@ future::availableCores()
 We can revert to the "normal", sequential framework when we're done with our work using the _barcodeMineR_ package, supplying "sequential" to the same command. Remember to do this before proceeding with other, unrelated work, in case you're not interested in using the same asynchronous framework. If you're unsure of which plan the current R session is set to, use the same command without arguments.
 
 This plan ("multisession") works on all OSes, on both Rstudio or the command line. It will significantly speed up the recovery of records from the NCBI, especially for the _download_ncbi_ function, but can also improve the speed of _get_ncbi_taxonomy_ (see [this section](https://matteoce.github.io/barcodeMineR/articles/api_rate_barcodeMineR.html#tuning-the-functions-arguments) for more details).
-```{r, echo = FALSE, eval = TRUE}
+
+However, it must be kept in mind that using multiple cores comes at a "computational price", meaning that it result efficient only when searching species with a significant amount of records on the NCBI (or when searching more species at once). See the *tips* for more details.
+```{r, echo = FALSE}
 future::plan("multisession")
 tax <- get_ncbi_taxonomy("Euphausia superba")
 
@@ -120,7 +122,7 @@ t1 <- Sys.time()
 future::plan("sequential")
 ```
 
-Now, the entire process of downloading _Euphausia superba_ records will take sensibly less time than in "sequential" _future_ plan, providing the final results after `r x <- difftime(t1, t0); if (units(x) == "mins") {paste(round(as.numeric(x), 2), "minutes")} else {paste(round(as.numeric(x), 0), "seconds")}`.
+Now, the entire process of downloading _Euphausia superba_ records will take sensibly less time than in "sequential" _future_ plan, providing the final results after only `r x <- difftime(t1, t0); if (units(x) == "mins") {paste(round(as.numeric(x), 2), "minutes")} else {paste(round(as.numeric(x), 0), "seconds")}`, when executed with 8 cores in "multisession".
 
 ### Tips
 
@@ -128,7 +130,7 @@ Now, the entire process of downloading _Euphausia superba_ records will take sen
 
 When downloading large numbers of records from BOLD or the NCBI databases, it is suggested to include a progress bar. Again, here we're relying on another beautiful package, the [progressr](https://github.com/HenrikBengtsson/progressr) package. As for the _future_ package, we don't need to supply specific arguments to the _barcodeMineR_ functions to activate it, but we can do it "externally":
 
-```{r, echo = TRUE, eval = FALSE}
+```{r, eval = FALSE}
 progressr::handlers(global=TRUE)
 progressr::handlers("progress")
 
@@ -141,7 +143,8 @@ Now, a progress bar will appear while downloading records, and different message
 Adopting the future asynchronous framework can significantly improve the execution of the _download_ncbi_ function, but can also improve the speed of _get_ncbi_taxonomy_, when the "multisession" plan is set with two to four workers (cores). In fact, setting up a "future", a background process, takes the _future_ package some time, and, for requests that do not take much time it is suggested to not include too many workers in a "multisession" plan, as they would not significantly improve the speed.
 
 Below, the execution time of the function _get_ncbi_taxonomy_, at different _future_ plans is shown, revealing how most of the improvement is observed after including the NCBI API key:
-```{r, echo = FALSE, eval = TRUE, message = FALSE}
+
+```{r, echo = FALSE, message = FALSE}
 test <- structure(list(number = c(5, 10, 50, 100, 200, 5, 10, 50, 100, 
 200, 5, 10, 50, 100, 200, 5, 10, 50, 100, 200, 5, 10, 50, 100, 
 200, 5, 10, 50, 100, 200, 5, 10, 50, 100, 200, 5, 10, 50, 100, 
@@ -201,13 +204,101 @@ ggplot2::ggplot(test, ggplot2::aes(x = as.factor(number),
   ggplot2::theme_minimal()
 
 ```
+
+* Multisession and _download_ncbi_:
+
+Using an asynchronous framework for the _download_ncbi_ function significantly improves speed, however, this is true only for searches that recover a significant amount of records. In the plot below, when searching approximately up to 10 or slightly more species on the NCBI nucleotide database, using the asynchronous framework does not improve speed, on the contrary, it slows down the process. However, the gain in speed becomes evident when downloading records corresponding to more than 50 species.
+
+Moreover, it is important to mention that, using an API key with the _download_ncbi_ function does not significantly improves speed in any mode as much as the _multisession_ plan does. However, it is suggested to include the key, if possible, as it reduces the risks of blocking and slightly improves speed.
+```{r, echo = FALSE, message = FALSE}
+test <- structure(list(number = c(5, 10, 50, 100, 200, 5, 10, 50, 100, 
+200, 5, 10, 50, 100, 200, 5, 10, 50, 100, 200, 5, 10, 50, 100, 
+200, 5, 10, 50, 100, 200, 5, 10, 50, 100, 200, 5, 10, 50, 100, 
+200, 5, 10, 50, 100, 200, 5, 10, 50, 100, 200), session = structure(c(1L, 
+1L, 1L, 1L, 1L, 2L, 2L, 2L, 2L, 2L, 3L, 3L, 3L, 3L, 3L, 4L, 4L, 
+4L, 4L, 4L, 5L, 5L, 5L, 5L, 5L, 1L, 1L, 1L, 1L, 1L, 2L, 2L, 2L, 
+2L, 2L, 3L, 3L, 3L, 3L, 3L, 4L, 4L, 4L, 4L, 4L, 5L, 5L, 5L, 5L, 
+5L), levels = c("sequential", "multisession_2", "multisession_4", 
+"multisession_6", "multisession_8"), class = "factor"), rate_rec = c(200, 
+200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 
+200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 
+200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 
+200, 200, 200, 200, 200, 200, 200, 200, 200, 200), rate_seq = c(200, 
+200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 
+200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 
+200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 
+200, 200, 200, 200, 200, 200, 200, 200, 200, 200), API_key = structure(c(1L, 
+1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 
+1L, 1L, 1L, 1L, 1L, 1L, 1L, 1L, 2L, 2L, 2L, 2L, 2L, 2L, 2L, 2L, 
+2L, 2L, 2L, 2L, 2L, 2L, 2L, 2L, 2L, 2L, 2L, 2L, 2L, 2L, 2L, 2L, 
+2L), levels = c("absent", "key"), class = "factor"), length = c(6.02199935913086, 
+9.79889106750488, 50.0152592658997, 89.4637715816498, 199.659111976624, 
+12.772869348526, 16.4799489974976, 36.544154882431, 53.0826985836029, 
+108.839764595032, 15.592386007309, 20.9399440288544, 31.6717112064362, 
+44.0298383235931, 84.4979958534241, 20.8237600326538, 24.2498998641968, 
+35.9096856117249, 44.0364534854889, 78.1092700958252, 24.167542219162, 
+29.5366613864899, 39.8727188110352, 45.1744360923767, 68.0416190624237, 
+4.93061494827271, 7.14503622055054, 43.6998560428619, 77.2423412799835, 
+173.57067990303, 13.2604224681854, 12.7847862243652, 28.5174896717072, 
+47.7071964740753, 95.4001746177673, 14.8792400360107, 17.2526125907898, 
+27.0289266109467, 37.4051306247711, 70.1022131443024, 18.4142625331879, 
+21.9917073249817, 31.4800536632538, 35.0680017471313, 70.4148924350739, 
+23.6359314918518, 31.2185351848602, 35.8536653518677, 39.601006269455, 
+72.6556153297424), lines = c("sequential|absent", "sequential|absent", 
+"sequential|absent", "sequential|absent", "sequential|absent", 
+"multisession_2|absent", "multisession_2|absent", "multisession_2|absent", 
+"multisession_2|absent", "multisession_2|absent", "multisession_4|absent", 
+"multisession_4|absent", "multisession_4|absent", "multisession_4|absent", 
+"multisession_4|absent", "multisession_6|absent", "multisession_6|absent", 
+"multisession_6|absent", "multisession_6|absent", "multisession_6|absent", 
+"multisession_8|absent", "multisession_8|absent", "multisession_8|absent", 
+"multisession_8|absent", "multisession_8|absent", "sequential|key", 
+"sequential|key", "sequential|key", "sequential|key", "sequential|key", 
+"multisession_2|key", "multisession_2|key", "multisession_2|key", 
+"multisession_2|key", "multisession_2|key", "multisession_4|key", 
+"multisession_4|key", "multisession_4|key", "multisession_4|key", 
+"multisession_4|key", "multisession_6|key", "multisession_6|key", 
+"multisession_6|key", "multisession_6|key", "multisession_6|key", 
+"multisession_8|key", "multisession_8|key", "multisession_8|key", 
+"multisession_8|key", "multisession_8|key")), out.attrs = list(
+    dim = c(number = 5L, session = 5L, rate_rec = 4L, rate_seq = 4L, 
+    API_key = 2L), dimnames = list(number = c("number=  5", "number= 10", 
+    "number= 50", "number=100", "number=200"), session = c("session=sequential", 
+    "session=multisession_2", "session=multisession_4", "session=multisession_6", 
+    "session=multisession_8"), rate_rec = c("rate_rec= 10", "rate_rec= 50", 
+    "rate_rec=100", "rate_rec=200"), rate_seq = c("rate_seq= 10", 
+    "rate_seq= 50", "rate_seq=100", "rate_seq=200"), API_key = c("API_key=absent", 
+    "API_key=key"))), row.names = c(376L, 377L, 378L, 379L, 380L, 
+381L, 382L, 383L, 384L, 385L, 386L, 387L, 388L, 389L, 390L, 391L, 
+392L, 393L, 394L, 395L, 396L, 397L, 398L, 399L, 400L, 776L, 777L, 
+778L, 779L, 780L, 781L, 782L, 783L, 784L, 785L, 786L, 787L, 788L, 
+789L, 790L, 791L, 792L, 793L, 794L, 795L, 796L, 797L, 798L, 799L, 
+800L), class = "data.frame")
+test$lines <- paste(test$session, 
+                    test$API_key, 
+                    sep = "|")
+
+ggplot2::ggplot(test, ggplot2::aes(x = as.factor(number), 
+                                   y = length, 
+                                   group = lines, 
+                                   color = session)) +
+  ggplot2::geom_line(ggplot2::aes(linetype = API_key, 
+                                  alpha = API_key), 
+                     linewidth = 1.1) + 
+  ggplot2::scale_linetype_manual(values = c("dashed", "solid")) + 
+  ggplot2::scale_color_manual(values = c("#0055A4", "#FFD700", "#E66B00", "#CD0000", "#660000")) +
+  ggplot2::scale_alpha_manual(values = c(.4, 1)) + 
+  ggplot2::xlab("Number of Species searched") + ggplot2::ylab("Execution time (seconds)") + 
+  ggplot2::theme_minimal()
+```
+
 ## Why can't I speed up the BOLD functions?
 
 BOLD servers maintenance [does not support an API rate limit](https://github.com/ropensci/bold/issues/76#issuecomment-789909664), like the NCBI does, and, for this reason, a certain number of requests sent in a particular window of time may result in a temporary blocking by the BOLD servers. The factors the mostly influence the occurrence of this inconvenience are two:
 
 * Number of requests:
 
-The bold functions have default settings that try to avoid sending too many requests at a time. For example, the default _api_rate_ argument setting of [get_bold_taxonomy](https://matteoce.github.io/barcodeMineR/reference/get_bold_taxonomy.html) allows to search a specific taxon every 1/0.06 seconds, meaning that the maximum number of requests is set to 250 per hour. Although it can be considered pretty low, this comes from recent testing (May 2024) that detected frequent blocking when querying the BOLD taxonomy database when surpassing this limit. This only applies to taxa that do not include children, thus only for species. When searching higher level taxa leaving the _descend_ argument to TRUE (default), by relying on the usage of the package [taxize](https://github.com/ropensci/taxize), the limit might be more easily surpassed when many children are included.
+The _get_bold_taxonomy_ and _download_bold_ functions have default settings that try to avoid sending too many requests at a time. For example, the default _api_rate_ argument setting of [get_bold_taxonomy](https://matteoce.github.io/barcodeMineR/reference/get_bold_taxonomy.html) allows to search a specific taxon every 1/0.06 seconds, meaning that the maximum number of requests is set to 250 per hour. Although it can be considered pretty low, this comes from recent testing (May 2024) that detected frequent blocking when querying the BOLD taxonomy database when surpassing this limit. This only applies to taxa that do not include children, thus only for species. When searching higher level taxa leaving the _descend_ argument to TRUE (default), by relying on the usage of the package [taxize](https://github.com/ropensci/taxize), the limit might be more easily surpassed when many children taxa are present.
 
 * Size of requested data:
 
@@ -220,7 +311,4 @@ Different arguments can be tuned to improve speed and/or reliability of requests
 * The __api_rate__ argument allows to override the default settings of the NCBI requests rate. The future plan framework allows to send requests every 1 / __api_rate__ seconds, thus ensuring that no more that 'api_rate' requests will be sent in a window framework of 1 second. However, due to fluctuations in the internet connection, still more than __api_rate__ number of requests might arrive to the NCBI servers, causing errors. The function can handle up to 5 consecutive errors per request, but too many errors might block the whole process. The __api_rate__ parameter can be modified in order to slow down the requests sent per second. It overrides the automatic selection of the optimal parameter (either 3 or 10) and accepts one decimal degree number between 1.0 and 10.0, so if the internet connection is particularly bad, it can be set between 2.5 and 2.0, for example, in order to slow the number of requests per second and reduce the possibility of errors.
 
 * The __rate__ argument of the [get_ncbi_taxonomy](https://matteoce.github.io/barcodeMineR/reference/get_ncbi_taxonomy.html) and [download_bold](https://matteoce.github.io/barcodeMineR/reference/download_bold.html) and the arguments __rate_xml__ and __rate_fasta__ for the [download_ncbi](https://matteoce.github.io/barcodeMineR/reference/download_ncbi.html) function allow to set the number of taxa/species that will be queried with each request and has impacts on the memory usage of the package. Although decreasing or increasing their value does not significantly impact the speed, it is worth mentioning that, in case of low memory availability, reducing the amount of xml or fasta sequences downloaded at a time may improve the performance. Nonetheless, it is better to keep the values to default settings, which have been tested on different settings.
-
-
-
 

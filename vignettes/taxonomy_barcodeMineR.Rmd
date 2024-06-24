@@ -22,15 +22,15 @@ As mentioned in the [introductory vignette](https://matteoce.github.io/barcodeMi
 
 ## How do the taxonomy functions work
 
-The [taxonomy functions](https://matteoce.github.io/barcodeMineR/reference/index.html#taxonomy) are used to define exactly which records will be retrieved by the [download functions](https://matteoce.github.io/barcodeMineR/reference/index.html#download). More precisely, only records that include the taxid/scientificName, retrieved using the taxonomy functions, as the lowest taxonomic identification will be downloaded.
+The [taxonomy functions](https://matteoce.github.io/barcodeMineR/reference/index.html#taxonomy) are used to define exactly which records will be retrieved by the [download functions](https://matteoce.github.io/barcodeMineR/reference/index.html#download). More precisely, only records that include the taxid/scientificName, retrieved using the taxonomy functions, as the lowest taxonomic identification, will be downloaded.
 
-Although the basic usage of the two functions [get_ncbi_taxonomy](https://matteoce.github.io/barcodeMineR/reference/get_ncbi_taxonomy.html) and [get_bold_taxonomy](https://matteoce.github.io/barcodeMineR/reference/get_bold_taxonomy.html) is very similar, they slightly differ when it comes to downloading unclassified records. Below, a thorough explanation of the two function is described:
+Although the basic usage of the two functions [get_ncbi_taxonomy](https://matteoce.github.io/barcodeMineR/reference/get_ncbi_taxonomy.html) and [get_bold_taxonomy](https://matteoce.github.io/barcodeMineR/reference/get_bold_taxonomy.html) is very similar, they slightly differ when it comes to downloading unclassified records. Below, you can find a thorough explanation of the two functions' usage.
 
 ### NCBI taxonomy
 
 For example, the following object, obtained using the _get_ncbi_taxonomy_ function, will retrieve all NCBI records corresponding to the species _Maldane sarsi_, excluding records identified as a subspecies:
 
-```{r, echo = FALSE, eval = TRUE}
+```{r, include = FALSE}
 library(barcodeMineR)
 tax_maldane <- structure(list(queryName = "Maldane sarsi", taxid = "273041", 
     rank = "species", scientificName = "Maldane sarsi", phylum = "Annelida", 
@@ -40,49 +40,52 @@ tax_maldane <- structure(list(queryName = "Maldane sarsi", taxid = "273041",
 
 ```
 
-```{r, echo = TRUE, eval = TRUE}
+```{r}
 tax_maldane
 maldane_rec <- download_ncbi(tax_maldane, ask = FALSE)
 
 nrow(maldane_rec)
 ```
 
-However, in case we were interested in all records identified as _Maldane sarsi_, including its children taxonomy, then we would need to include all species and subspecies in the taxonomy data frame. In order to do this, running _get_ncbi_taxonomy_ with the _ask_ argument set to TRUE (default) will prompt the user to choose which children taxonomic names to retrieve, if they were found by the function:
+However, in case we were interested in all records identified as _Maldane sarsi_, including its children taxonomy, then we would need to include all species and subspecies in the taxonomy data frame. This is done by default, when searching a species, if the _ask_ argument is set to FALSE:
 
-```{r, echo = TRUE, eval = FALSE}
-tax_maldane <- get_ncbi_taxonomy("Maldane sarsi")
-```
-```{r, echo = FALSE, eval = TRUE}
+```{r}
 tax_maldane <- get_ncbi_taxonomy("Maldane sarsi", ask = FALSE)
 
+# the taxonomy table now includes both species and subspecies:
+tax_maldane
 ```
+
+Otherwise, the function will prompt the user to choose which taxonomic rank to include in the final output.
 
 Running the _download_ncbi_ function will search all the records with `r stringr::str_replace_all(stringr::str_c(sort(tax_maldane$scientificName), collapse = "_ and _"), pattern = "^|$", "_")` as the lowest taxonomic identification.
 
-```{r, echo = TRUE, eval = TRUE}
-# the taxonomy table now includes both species and subspecies:
-tax_maldane
-
+```{r}
 maldane_rec <- download_ncbi(tax_maldane, ask = FALSE)
 
 # the output now include two more records
 nrow(maldane_rec)
 ```
 
-This applies to all taxonomic levels. For example, imagine you're interested in all _Maldane sarsi_ records on the NCBI. In order to gather as much sequences as possible, we might also include all those records identified only at the genus level, in case they include highly similar sequences that we could use in our analyses. To do this, we could search for _unclassified Maldane_ and retain all species and subspecies:
+This applies to all taxonomic levels. For example, imagine you're interested in all _Maldane sarsi_ records on the NCBI. In order to gather as much sequences as possible, we might also include all those records identified only at the genus level, in case they include highly similar sequences that we could use in our analyses. To do this, we could search for _"unclassified Maldane"_ and retain all species and subspecies:
 
-```{r, echo = TRUE, eval = TRUE}
-# leaving the ask argument to FALSE will retain all 
+```{r, include = FALSE}
 additional_tax <- get_ncbi_taxonomy("unclassified Maldane", ask = FALSE)
-
-# filter out the "unclassified Maldane" which has no rank
 additional_tax <- dplyr::filter(additional_tax, rank %in% c("species", "subspecies"))
 
+```
+```{r, eval = FALSE}
+additional_tax <- get_ncbi_taxonomy("unclassified Maldane")
+```
+```{r}
+# after selecting only the ranks "species" and "subspecies" this is the final 
+# output:
+additional_tax
 ```
 
 We could merge the two taxonomic tables and thus search all records corresponding to `r paste(stringr::str_replace_all(stringr::str_c(sort(tax_maldane$scientificName), collapse = "_, _"), pattern = "^|$", "_"), "plus", stringr::str_replace_all(stringr::str_c(sort(additional_tax$scientificName), collapse = "_ and _"), pattern = "^|$", "_"))`:
 
-```{r, echo = TRUE, eval = TRUE}
+```{r}
 final_tax <- rbind(tax_maldane, additional_tax)
 
 download_ncbi(final_tax, ask = FALSE)
@@ -90,7 +93,7 @@ download_ncbi(final_tax, ask = FALSE)
 
 In order to be sure to include all _Maldane sarsi_ records, we could simply search the genus _Maldane_ and actively select the species/subspecies we're interested in. In this case, the base function _grep_ might come in handy:
 
-```{r, echo = TRUE, eval = TRUE}
+```{r}
 tax_maldane <- get_ncbi_taxonomy("Maldane", ask = FALSE)
 
 # actively filter all records including the strings "Maldane" and "sarsi" in the
@@ -102,7 +105,7 @@ tax_maldane_all
 
 By merging this data frame with the one including all _unclassified Maldane_ we can be confident to download most of the available _Maldane sarsi_ records from the NCBI:
 
-```{r, echo = TRUE, eval = TRUE}
+```{r}
 all_maldane <- rbind(tax_maldane_all, additional_tax)
 
 ncbi_maldane <- download_ncbi(all_maldane, ask = FALSE)
@@ -111,34 +114,56 @@ ncbi_maldane
 
 ### BOLD taxonomy
 
-The basic usage of [get_bold_taxonomy](https://matteoce.github.io/barcodeMineR/reference/get_bold_taxonomy.html) follows the same methodology. In order to obtain all _Maldane sarsi_ records, we first need to get the corresponding taxonomy data frame:
+The basic usage of [get_bold_taxonomy](https://matteoce.github.io/barcodeMineR/reference/get_bold_taxonomy.html) follows the same mechanism. In order to obtain all _Clione antarctica_ records, we first need to get the corresponding taxonomy data frame:
 
-```{r, echo = TRUE, eval = TRUE}
-tax_maldane <- get_bold_taxonomy("Maldane sarsi")
-
-download_bold(tax_maldane, ask = FALSE)
+```{r, include = FALSE}
+tax_clione <- structure(list(queryName = "Clione antarctica", taxid = 650223L, 
+    taxon = "Clione antarctica", rank = "species", records = 9L), row.names = c(NA, 
+-1L), errors = structure(list(), names = character(0)), params = list(
+    fuzzy = FALSE, tax_division = NULL, tax_rank = NULL), class = "data.frame")
+```
+```{r}
+# this taxonomy table will retrieve all "Clione antarctica" records 
+tax_clione
+rec_clione <- download_bold(tax_clione, ask = FALSE)
+nrow(rec_clione)
 ```
 
-The main difference between the NCBI taxonomy function and _get_bold_taxonomy_ actually relates to the subsequent recovery of records. In fact, the BOLD database does not include an "unclassified taxon" rank that includes all records identified to that taxonomic level, but with no species name. However, the publication of records on the BOLD database does not require necessarily an identification at the species level, meaning that searching higher level taxonomies would result in the download of all records belonging to that taxon, independently from the presence of an identification at lower taxonomic levels.
+However, this will exclude all descending taxonomic levels, in this case any subspecies of _Clione antarctica_. The function _get_bold_taxonomy_ automatically searches for downstream taxonomies, thanks to the default setting of the _descend_ argument.
 
-In order to follow the same principle of the NCBI function, however, searching a higher level taxa with _get_bold_taxonomy_ will result in the download of only those records identified up to that taxon. In the lines below, the _descend_ argument is set to FALSE, in order to avoid the internal children taxa searching method using the package [taxize](https://github.com/ropensci/taxize), resulting in including only the taxon _Maldane_ in the final taxonomy data frame.
+```{r, eval = TRUE}
+tax_clione_anta <- get_bold_taxonomy("Clione antarctica", descend = TRUE)
 
-```{r, echo = TRUE, eval = TRUE}
-bold_tax_maldane <- get_bold_taxonomy("Maldane", descend = FALSE, ask = FALSE)
-
-maldane_bold <- download_bold(bold_tax_maldane, ask = FALSE)
-
-maldane_bold
+rec_clione <- download_bold(tax_clione_anta, ask = FALSE)
+nrow(rec_clione)
 ```
 
-The `r nrow(maldane_bold)` records are only identified up to the genus _Maldane_, thus, if we wanted to recover all records potentially belonging to the _Maldane sarsi_ species we would have to merge the two taxonomy data frames and search all unidentified _Maldane_ records together with those identified as _Maldane sarsi_. Ideally, this would be the simplest approach:
+However, this can be overridden by setting that argument to FALSE. The _descend_ argument has been introduced to allow the user to avoid the internal children taxa searching method implementing the package [taxize](https://github.com/ropensci/taxize), which may result unstable when searching long vectors. See the *Tips* section of this vignette for more information on this matter.
 
-```{r, echo = TRUE, eval = TRUE}
-bold_tax_maldane <- get_bold_taxonomy(c("Maldane", "Maldane sarsi"), descend = FALSE, ask = FALSE)
+The main difference between the NCBI taxonomy function and _get_bold_taxonomy_ actually relates to the subsequent recovery of records. In fact, the BOLD database does not include an "unclassified taxon" rank that includes all records identified to that taxonomic level, but with no species name. However, the publication of records on the BOLD database does not require necessarily an identification at the species level, meaning that searching higher level taxonomies would result in the download of all records identified up to that taxon only.
 
-maldane_bold <- download_bold(bold_tax_maldane, ask = FALSE)
+To increase the recovery of records potentially related to _Clione antarctica_, we can also search for the genus _Clione_ and download all the records identified up to the genus level:
 
-maldane_bold
+```{r}
+tax_clione <- get_bold_taxonomy("Clione", descend = FALSE)
+
+rec_clione <- download_bold(tax_clione, ask = FALSE)
+rec_clione
 ```
 
-As in the above section, serching all taxa for _Maldane_ and then filtering only those including the strings "Maldane" and "sarsi" using _grep_ would increase our chances to include records with identification qualifiers like "cf.", however, for long vectors including many different taxa this might result in frequent blocking by the BOLD servers, as explained in the vignette topic [Why can't I speed up the BOLD functions?](https://matteoce.github.io/barcodeMineR/#Why-can't-I-speed-up-the-BOLD-functions?).
+The `r nrow(rec_clione)` records are only identified up to the genus _Clione_, thus, if we wanted to recover all records potentially belonging to the _Clione antarctica_ species we would have to search for all unidentified _Clione_ records together with those identified as _Clione antarctica_. Ideally, this would be the simplest approach:
+
+```{r}
+final_tax <- get_bold_taxonomy(c("Clione", "Clione antarctica"), descend = FALSE, ask = FALSE)
+
+rec_clione <- download_bold(final_tax, ask = FALSE)
+rec_clione
+```
+
+As in the above section, searching all taxa for _Clione_ and then filtering only those including the strings "Clione" and "antarctica" using _grep_ would increase our chances to include records with identification qualifiers like "cf.".
+
+#### Tips
+
+* Searching long vectors
+
+Be careful when searching long vectors including many different taxa. This might result in frequent blocking by the BOLD servers, as explained in the vignette topic [Why can't I speed up the BOLD functions?](https://matteoce.github.io/barcodeMineR/articles/api_rate_barcodeMineR.html#Why-can't-I-speed-up-the-BOLD-functions?). However, when the number of taxa to be searched remains under an approximate limit of 250 per hour, the mining operations using the BOLD functions of the package can be sped up by setting the _api_rate_ argument to 1 (thus 1 request per second).
