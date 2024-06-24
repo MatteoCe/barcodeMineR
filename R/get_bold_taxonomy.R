@@ -190,15 +190,15 @@ get_bold_taxonomy <- function(ids, api_rate = NULL, ask = TRUE, descend = TRUE) 
   # ask user to filter if there are multiple ranks
   if ((length(unique(taxonomies$rank)) > 1) && (ask == TRUE)) {
 
-    filt_taxonomies <- ask_user(taxonomies, "rank", ask = ask)
-
-    return(filt_taxonomies)
-
-  } else {
-
-    return(taxonomies)
+    taxonomies <- ask_user(taxonomies, "rank", ask = ask)
 
   }
+
+  # use bold_stats to count the number of records corresponding to each taxon
+  bold_count <- bold_record_counter(taxonomies, api_rate)
+
+  # full join the two tables
+  dplyr::full_join(taxonomies, bold_count, by = "taxon")
 
 }
 

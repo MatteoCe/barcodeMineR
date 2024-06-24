@@ -14,6 +14,9 @@
 #'
 clean_taxonomy <- function(taxonomy_df) {
 
+  # set binding visible variables
+  queryName <- NULL
+
   taxids <- unique(sort(taxonomy_df$taxid))
 
   purrr::map(taxids, function(id) {
@@ -30,11 +33,11 @@ clean_taxonomy <- function(taxonomy_df) {
       coll_input <- paste(single_tax$queryName, collapse = "|")
 
       # filter duplicate of rest columns
-      rem_dup_tab <-  single_tax %>% dplyr::select(., -.data$queryName) %>% unique()
+      rem_dup_tab <-  single_tax %>% dplyr::select(., -queryName) %>% unique()
 
       # bind input collapsed and table with removed duplicates
       single_tax <- single_tax %>% dplyr::mutate(., queryName = coll_input) %>%
-        dplyr::select(.data$queryName) %>% dplyr::bind_cols(., rem_dup_tab) %>% unique()
+        dplyr::select(queryName) %>% dplyr::bind_cols(., rem_dup_tab) %>% unique()
 
     }
 

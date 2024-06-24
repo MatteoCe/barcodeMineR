@@ -1246,6 +1246,7 @@ test_getTaxonomy <- structure(list(number = c(5, 10, 50, 100, 200, 5, 10, 50, 10
                                                                                                                                                      "rate= 50", "rate=100", "rate=200"), API_key = c("API_key=absent",
                                                                                                                                                                                                       "API_key=key"))), row.names = c(NA, -250L), class = "data.frame")
 
+### LOAD ALL OBJECTS AS INTERNAL DATA
 usethis::use_data(amphipoda_species_rams_checklist,
                   benthos_rossSea_gbif2020_2000sample,
                   ncbi_tax,

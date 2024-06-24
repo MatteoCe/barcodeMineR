@@ -23,30 +23,33 @@ bold_record_counter <- function(bold_tax, api_rate) {
     idStats <- bold::bold_stats(taxa[[id]], dataTypes = "drill_down", simplify = TRUE)
 
     rank <- bold_tax[bold_tax$taxon == taxa[[id]], "rank"]
+    upper_rank <- get_lower_tax_rank(rank, upper = TRUE)
 
     if (rank == "order") {
       stop("The function 'download_bold' does not support downloading taxa higher than the family level.\nProvide lower taxonomic levels with 'get_bold_taxonomy'")
     }
 
-    if (is.null(idStats$drill_down[[rank]]$records)) {
+    if (rank != "subspecies" & is.null(idStats$drill_down[[rank]]$records)) {
       return(NULL)
     }
 
-    upper_rank <- get_lower_tax_rank(rank, upper = TRUE)
+    if (rank == "subspecies" & is.null(idStats$drill_down[[rank]]$records)) {
+      rank <- upper_rank <- "species"
+    }
 
     if (upper_rank == "subfamily") {
       upper_rank <- "family"
     }
 
     data.frame(
-      name = taxa[[id]],
+      taxon = taxa[[id]],
       parentname = idStats$drill_down[[upper_rank]]$name[!(idStats$drill_down[[upper_rank]]$name %in% "Others")],
       records = sum(idStats$drill_down[[rank]]$records))
 
   }, message = "Counting number of records per taxa on BOLD", seed = NULL) %>% purrr::compact() %>% do.call(rbind, .)
 
-  final_stats <- stats %>% dplyr::filter(., !(.data$parentname %in% .data$name)) %>%
-    dplyr::select(., name, records)
+  final_stats <- stats %>% dplyr::filter(., !(.data$parentname %in% .data$taxon)) %>%
+    dplyr::select(., taxon, records)
 
   if (all(final_stats$records == 0)) {
 
@@ -60,7 +63,7 @@ bold_record_counter <- function(bold_tax, api_rate) {
 
 #' Group taxonomic names by maximum cumulative value
 #'
-#' @param bold_count data.frame output of the bold_record_counter function
+#' @param bold_tax data.frame output of the get_bold_taxonomy function
 #' @param rate maximum number of records to group
 #'
 #' @return a list of character vectors
@@ -70,10 +73,13 @@ bold_record_counter <- function(bold_tax, api_rate) {
 #'
 #' @importFrom rlang .data
 #'
-bold_record_grouper <- function(bold_count, rate) {
+bold_record_grouper <- function(bold_tax, rate) {
 
   # set visible binding to variable
   name <- NULL
+
+  # extract counts from bold_tax
+  bold_count <- bold_tax[!is.na(bold_tax$records), c("taxon", "records")]
 
   groups <- list()
   counter <- 0
@@ -92,11 +98,11 @@ bold_record_grouper <- function(bold_count, rate) {
 
     }
 
-    group <- group %>% dplyr::select(name) %>% c(., recursive = TRUE) %>% unname()
+    group <- group %>% dplyr::select(taxon) %>% c(., recursive = TRUE) %>% unname()
 
     groups[[counter]] <- group
 
-    bold_count <- bold_count %>% dplyr::filter(!(.data$name %in% group))
+    bold_count <- bold_count %>% dplyr::filter(!(.data$taxon %in% group))
 
   }
 
@@ -107,7 +113,7 @@ bold_record_grouper <- function(bold_count, rate) {
 #' Download records from the BOLD database
 #'
 #' @param taxon_group taxonomic names
-#' @param bold_count data.frame output of bold_record_grouper
+#' @param bold_tax data.frame output of get_bold_taxonomy
 #'
 #' @return a data.frame
 #'
@@ -116,9 +122,9 @@ bold_record_grouper <- function(bold_count, rate) {
 #'
 #' @importFrom rlang .data
 #'
-bold_fetcher <- function(taxon_group, bold_count) {
+bold_fetcher <- function(taxon_group, bold_tax) {
 
-  records_number <- bold_count[bold_count$name %in% taxon_group, "records"] %>% sum()
+  records_number <- bold_tax[bold_tax$taxon %in% taxon_group, "records"] %>% sum()
 
   idRecords <- bold::bold_seqspec(taxon = taxon_group,
                                   seqFasta = FALSE,

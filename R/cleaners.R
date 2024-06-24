@@ -36,6 +36,9 @@
 #'
 cleanMinedFromGenBankRecords <- function(records, sequences, accn) {
 
+  # bind visible variables
+  id <- lengthGene <- NULL
+
   mined <- records %>% dplyr::filter(.data$note == "Mined from GenBank, NCBI")
 
   if (nrow(mined) == 0) {
@@ -70,29 +73,31 @@ cleanMinedFromGenBankRecords <- function(records, sequences, accn) {
   } else {
 
     # check if the duplicates are not simply multiple markers from the same big NCBI sequence
-    areMultipleMarkers <- filt_mined[filt_mined$accn %in% duplicates, ] %>% dplyr::filter(duplicated(.data$markerCode) & duplicated(.data$accn))
+    areMultipleMarkers <- filt_mined %>% dplyr::filter(duplicated(paste(.data$markerCode, .data$accn, sep = "|")))
 
     if (nrow(areMultipleMarkers) == 0) {
       return(accn)
+    } else {
+      duplicates <- duplicates[duplicates %in% areMultipleMarkers$accn]
     }
 
     # search the accession numbers on the NCBI using the download_ncbi_records function
     # This greatly increases speed and simplify this code as well.
-    ncbi_records <- download_ncbi(ncbi_ids = paste(duplicates, "1", sep = "."))
+    ncbi_records <- download_ncbi(ncbi_ids = paste(duplicates, "1", sep = "."), ask = FALSE)
 
     wrong_accn_list <- lapply(duplicates, function(ac) {
 
       # extract original length information corresponding to that accession number
       lengthOriginal <- ncbi_records %>% dplyr::filter(.data$NCBI_ID == paste0(ac, ".1")) %>%
-        dplyr::select(.data$lengthGene) %>%
-        c(.data, recursive = TRUE) %>%
-        unname
+        dplyr::select(lengthGene) %>%
+        c(., recursive = TRUE) %>%
+        unname()
 
       # select, from the duplicates found for that accession number in the BOLD
       # retrieved records, that record including the length of the gene that exactly
       # corresponds to the original
       filt_rec <- filt_mined %>% dplyr::filter(.data$accn == ac | .data$accn == paste0(ac, ".1")) %>%
-        dplyr::filter(.data$lengthGene %in% .data$lengthOriginal)
+        dplyr::filter(.data$lengthGene %in% lengthOriginal)
 
       # check if the selected information is unique and thus unequivocal as correct
       # record to include. Return the other, incorrect, which at the end will be used
@@ -106,7 +111,7 @@ cleanMinedFromGenBankRecords <- function(records, sequences, accn) {
 
         wrong_accn <- filt_mined %>% dplyr::filter((.data$accn == ac | .data$accn == paste0(ac, ".1")),
                                                    .data$sourceID != filt_rec$sourceID) %>%
-          dplyr::select(.data$id) %>%
+          dplyr::select(id) %>%
           c(., recursive = TRUE) %>%
           unname()
 

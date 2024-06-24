@@ -50,18 +50,15 @@ download_bold <- function(bold_tax, rate = 100, api_rate = NULL, ask = TRUE, pre
     api_rate <- future::nbrOfWorkers()
   }
 
-  # use bold_stats to count the number of records corresponding to each taxon
-  bold_count <- bold_record_counter(bold_tax, api_rate)
-
   # divide the taxa based on the number of records. The rate parameter will group
   # taxa if the cumulative sum of the corresponding records do not exceed "rate".
   # Taxa corresponding to more than "rate" records will be searched alone.
-  ids_groups <- bold_record_grouper(bold_count[order(bold_count$records), ], rate)
+  ids_groups <- bold_record_grouper(bold_tax, rate)
 
   # download records
   records_tab <- ncbi_limit_handler(ids_groups, api_rate = api_rate, function(id) {
 
-    bold_fetcher(ids_groups[[id]], bold_count)
+    bold_fetcher(ids_groups[[id]], bold_tax)
 
   }, message = "Downloading BOLD records", seed = NULL) %>% purrr::compact() %>% do.call(rbind, .)
 

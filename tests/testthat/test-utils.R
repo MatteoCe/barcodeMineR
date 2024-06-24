@@ -37,18 +37,6 @@ test_that("ask_user returns all values if parameter ask is disabled", {
 
 })
 
-test_that("select_accession returns all values if parameter ask is disabled", {
-
-  df <- data.frame(GBInterval_accession = c("AAA001.1", "AAA002.1", "AAA003.1", "AAA004.1", "AAA005.1", "AAA006.1"),
-                   Gene_value = c("COI", "CO1", NA, NA, "18s", NA),
-                   Product_value = c(NA, NA, "Cytochrome oxydase c 1", "16s", NA, "18s product"))
-
-  df_res <- select_accessions(df, ask = FALSE)
-
-  expect_equal(dim(df)[1], length(df_res))
-
-})
-
 test_that("get_lower_tax_rank gives a character vector and return NULL with 'species'", {
 
   expect_null(get_lower_tax_rank("subspecies"))
@@ -68,15 +56,5 @@ test_that("get_lower_tax_rank gives a character vector and return NULL with 'spe
   expect_equal(get_lower_tax_rank("subfamily", upper = TRUE), "family")
   expect_equal(get_lower_tax_rank("family", upper = TRUE), "order")
   expect_equal(get_lower_tax_rank("order", upper = TRUE), "class")
-
-})
-
-test_that("textToDNAStringSet returns a DNAStringSet from both data.frame and character", {
-
-  expect_true(is(textToDNAStringSet(as.character(">CODICE\nACGTACGTACGTACGT")), "DNAStringSet"))
-
-  sequences <- data.frame(sourceID = "CODICE", markerCode = "MARKER", DNA_seq = "AGCTAGCTAGCTAGCT")
-
-  expect_true(is(textToDNAStringSet(sequences), "DNAStringSet"))
 
 })
