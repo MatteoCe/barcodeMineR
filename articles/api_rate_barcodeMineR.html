@@ -92,11 +92,11 @@ records correspond to each taxa. Due to the structure of the
 different approaches can be adopted to speed up the procedures, with
 varying effects.</p>
 <p>Although the rationale and functioning behind each method is
-described below, including the <a href="https://matteoce.github.io/barcodeMineR/articles/api_rate_barcodeMineR.html#tuning-the-functions-arguments">fine
-tuning</a> of the functions’ arguments, it is suggested to follow the
-functions’ default parameters, and, at the same time, adopt all of the
-approaches here described, which do not only speed up the recovery of
-DNA barcodes, but also reduce excessive blocking from the servers.</p>
+described below, including the <a href="https://matteoce.github.io/barcodeMineR/articles/api_rate_barcodeMineR.html#tuning-the-functions-arguments">tuning</a>
+of the functions’ arguments, it is suggested to follow the functions’
+default parameters, and, at the same time, adopt all of the approaches
+here described, which do not only speed up the recovery of DNA barcodes,
+but also reduce excessive blocking from the servers.</p>
 <div class="section level2">
 <h2 id="api-rate-limit">API rate limit<a class="anchor" aria-label="anchor" href="#api-rate-limit"></a>
 </h2>
@@ -115,13 +115,13 @@ function of 66.67 seconds:</p>
 <span><span class="va">specs</span> <span class="op">&lt;-</span> <span class="fu">barcodeMineR</span><span class="fu">::</span><span class="va"><a href="../reference/species200.html">species200</a></span></span>
 <span></span>
 <span><span class="va">tax</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_ncbi_taxonomy.html">get_ncbi_taxonomy</a></span><span class="op">(</span><span class="va">specs</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">100</span><span class="op">]</span>, ask <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
-<p>And, during the rendering of this vignettes, it executed in 1.54
+<p>However, during the rendering of this vignettes, it executed in 1.36
 minutes.</p>
-<p>This api rate, which is the default for the <em>ncbi</em> functions
-of the <em>barcodeMineR</em> package, is, however, highly subjected to
-changes in the speed of the internet connections, and might delay some
-requests at certain times, leading to an accumulation of four requests
-in a window of one second of time.</p>
+<p>This API rate value, which is the default for the <em>ncbi</em>
+functions of the <em>barcodeMineR</em> package, is, however, highly
+subjected to changes in the speed of the internet connections, and might
+delay some requests at certain times, leading to an accumulation of four
+requests in a window of one second of time.</p>
 <p>In order to avoid this, a higher download rate can be adopted if the
 user decides to register a <a href="https://account.ncbi.nlm.nih.gov/" class="external-link">NCBI account</a>. Using an API
 key, the user can send up to 10 requests per second to the NCBI.</p>
@@ -135,8 +135,8 @@ take much time can be executed even faster, and avoid excessive blocking
 when the internet connection is particularly unreliable. Including an
 NCBI API key approximately halves the execution time of the <a href="https://matteoce.github.io/barcodeMineR/reference/get_ncbi_taxonomy.html">get_ncbi_taxonomy</a>,
 when querying multiple species at once.</p>
-<p>The above command is executed, during the rendering of this vignette,
-in 44 seconds.</p>
+<p>The <em>get_ncbi_taxonomy</em> command previously executed takes
+about 37 seconds when run with an API_key.</p>
 <p>All ncbi functions of the <em>barcodeMineR</em> package would benefit
 from the inclusion of an API key, which increases speed of fast requests
 and reliability at long execution times.</p>
@@ -153,7 +153,7 @@ function depends on how many records correspond to each single
 species/taxa on the NCBI nucleotide database.</p>
 <p>For example, if we wanted to search for all records corresponding to
 the Antarctic krill species <em>Euphausia superba</em>, we could expect
-to download 1584 records, after an execution time of approximately 1.44
+to download 1584 records, after an execution time of approximately 1.46
 minutes, for the function <em>download_ncbi</em>.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">tax</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_ncbi_taxonomy.html">get_ncbi_taxonomy</a></span><span class="op">(</span><span class="st">"Euphausia superba"</span><span class="op">)</span></span>
@@ -164,9 +164,10 @@ minutes, for the function <em>download_ncbi</em>.</p>
 handy. In synthesis, each request is sent as a background process, which
 will not block the current R session to send another request at a
 specified time, provided that there are enough “workers” (cores)
-available. This means that, using the <em>future</em> framework, we can
-send a request every 1/3 of a second (or 1/10, if we set the NCBI API
-key), independently from the completion of the previous request.</p>
+available to send another request. This means that, using the
+<em>future</em> framework, we can send a request every 1/3 of a second
+(or 1/10, if we set the NCBI API key), independently from the completion
+of the previous request.</p>
 <p>We can setup the <em>future</em> framework using its <a href="https://future.futureverse.org/articles/future-1-overview.html" class="external-link">functions</a>.
 Here, we’re setting up the “multisession” plan using all available cores
 from our machine:</p>
@@ -190,10 +191,15 @@ command line. It will significantly speed up the recovery of records
 from the NCBI, especially for the <em>download_ncbi</em> function, but
 can also improve the speed of <em>get_ncbi_taxonomy</em> (see <a href="https://matteoce.github.io/barcodeMineR/articles/api_rate_barcodeMineR.html#tuning-the-functions-arguments">this
 section</a> for more details).</p>
+<p>However, it must be kept in mind that using multiple cores comes at a
+“computational price”, meaning that it result efficient only when
+searching species with a significant amount of records on the NCBI (or
+when searching more species at once). See the <em>tips</em> for more
+details.</p>
 <p>Now, the entire process of downloading <em>Euphausia superba</em>
 records will take sensibly less time than in “sequential”
-<em>future</em> plan, providing the final results after 1.01
-minutes.</p>
+<em>future</em> plan, providing the final results after only 58 seconds,
+when executed with 8 cores in “multisession”.</p>
 <div class="section level3">
 <h3 id="tips">Tips<a class="anchor" aria-label="anchor" href="#tips"></a>
 </h3>
@@ -227,9 +233,30 @@ not include too many workers in a “multisession” plan, as they would not
 significantly improve the speed.</p>
 <p>Below, the execution time of the function <em>get_ncbi_taxonomy</em>,
 at different <em>future</em> plans is shown, revealing how most of the
-improvement is observed after including the NCBI API key:
-<img src="api_rate_barcodeMineR_files/figure-html/unnamed-chunk-12-1.png" width="700">
-## Why can’t I speed up the BOLD functions?</p>
+improvement is observed after including the NCBI API key:</p>
+<p><img src="api_rate_barcodeMineR_files/figure-html/unnamed-chunk-12-1.png" width="700"></p>
+<ul>
+<li>Multisession and <em>download_ncbi</em>:</li>
+</ul>
+<p>Using an asynchronous framework for the <em>download_ncbi</em>
+function significantly improves speed, however, this is true only for
+searches that recover a significant amount of records. In the plot
+below, when searching approximately up to 10 or slightly more species on
+the NCBI nucleotide database, using the asynchronous framework does not
+improve speed, on the contrary, it slows down the process. However, the
+gain in speed becomes evident when downloading records corresponding to
+more than 50 species.</p>
+<p>Moreover, it is important to mention that, using an API key with the
+<em>download_ncbi</em> function does not significantly improves speed in
+any mode as much as the <em>multisession</em> plan does. However, it is
+suggested to include the key, if possible, as it reduces the risks of
+blocking and slightly improves speed.
+<img src="api_rate_barcodeMineR_files/figure-html/unnamed-chunk-13-1.png" width="700"></p>
+</div>
+</div>
+<div class="section level2">
+<h2 id="why-cant-i-speed-up-the-bold-functions">Why can’t I speed up the BOLD functions?<a class="anchor" aria-label="anchor" href="#why-cant-i-speed-up-the-bold-functions"></a>
+</h2>
 <p>BOLD servers maintenance <a href="https://github.com/ropensci/bold/issues/76#issuecomment-789909664" class="external-link">does
 not support an API rate limit</a>, like the NCBI does, and, for this
 reason, a certain number of requests sent in a particular window of time
@@ -238,9 +265,9 @@ mostly influence the occurrence of this inconvenience are two:</p>
 <ul>
 <li>Number of requests:</li>
 </ul>
-<p>The bold functions have default settings that try to avoid sending
-too many requests at a time. For example, the default <em>api_rate</em>
-argument setting of <a href="https://matteoce.github.io/barcodeMineR/reference/get_bold_taxonomy.html">get_bold_taxonomy</a>
+<p>The <em>get_bold_taxonomy</em> and <em>download_bold</em> functions
+have default settings that try to avoid sending too many requests at a
+time. For example, the default <em>api_rate</em> argument setting of <a href="https://matteoce.github.io/barcodeMineR/reference/get_bold_taxonomy.html">get_bold_taxonomy</a>
 allows to search a specific taxon every 1/0.06 seconds, meaning that the
 maximum number of requests is set to 250 per hour. Although it can be
 considered pretty low, this comes from recent testing (May 2024) that
@@ -249,7 +276,7 @@ surpassing this limit. This only applies to taxa that do not include
 children, thus only for species. When searching higher level taxa
 leaving the <em>descend</em> argument to TRUE (default), by relying on
 the usage of the package <a href="https://github.com/ropensci/taxize" class="external-link">taxize</a>, the limit might be
-more easily surpassed when many children are included.</p>
+more easily surpassed when many children taxa are present.</p>
 <ul>
 <li>Size of requested data:</li>
 </ul>
@@ -266,7 +293,6 @@ temporary blocking by the BOLD servers. When using
 <em>download_bold</em>, only search <a href="https://github.com/ropensci/bold/issues/29" class="external-link">low level
 taxonomies</a> (downward from family), as suggested by the <a href="https://github.com/ropensci/bold?tab=readme-ov-file#large-data" class="external-link">bold
 package</a>.</p>
-</div>
 </div>
 <div class="section level2">
 <h2 id="tuning-the-functions-arguments">Tuning the functions’ arguments<a class="anchor" aria-label="anchor" href="#tuning-the-functions-arguments"></a>
