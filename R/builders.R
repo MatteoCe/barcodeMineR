@@ -3,6 +3,9 @@
 #' @param accn a string in the form "accession number|marked code".
 #' @param DNAString the DNA sequences in the format "DNAStringSet"
 #' @param selection_tab the selection tab created by "extractSelectionTab"
+#' @param skip.unknown.pos skip the definition of start and end position of
+#'   sequence to extract based on ">" and "<" symbols as first and last position
+#'   of entire sequence
 #'
 #' @return a list of "DNAStringSet" objects corresponding to the DNA sequences trimmed as indicated in the relative location qualifiers in the selection tab.
 #'
@@ -12,7 +15,7 @@
 #' @description
 #' To be used in a vectorized loop (like lapply) for all "accession number|marker code" chosen in the selection process. This function will select the correct sequences from the total obtained in select_ncbi_genes.R or download_ncbi_genes.R and, if necessary, cut the correct region of the sequence corresponding to the chosen CDS or rRNA. It is also used inside the "select_bold_genes" function. In this case, this script will simply select and extract the "accn" previously selected from the whole sequences gathered at the beginning of the selection script and remove gaps, if present.
 #'
-buildSequences <- function(accn, DNAString, selection_tab) {
+buildSequences <- function(accn, DNAString, selection_tab, skip.unknown.pos = TRUE) {
 
   if (length(grep("BOLD", colnames(selection_tab)[1], value = FALSE)) == 1) {
 
@@ -103,30 +106,39 @@ buildSequences <- function(accn, DNAString, selection_tab) {
 
           # get start coord
           start <- stringr::str_replace(range, "(.+)\\.\\.(.+)", "\\1")
-
-          if (stringr::str_detect(start, "<")) {
-
-            # if the symbol "<" is present, get the first position of the whole sequence
-            start <- 1
-
-          } else {
-
-            start <- as.integer(start)
-
-          }
-
           # get end coord
           end <- stringr::str_replace(range, "(.+)\\.\\.(.+)", "\\2")
 
-          if (stringr::str_detect(end, ">")) {
+          # based on commit of 25 June 2024, skip using start and end position of
+          # entire sequence as substitutes of unknown positions. Keep the code
+          # for possible future use
+          if (!skip.unknown.pos) {
 
-            # if the symbol ">" is present, get the last position of the whole sequence
-            end <- DNAString[accession]@ranges@width
+            if (stringr::str_detect(start, "<")) {
+
+              # if the symbol "<" is present, get the first position of the whole sequence
+              start <- 1
+
+            } else {
+
+              start <- as.integer(start)
+
+            }
+
+            if (stringr::str_detect(end, ">")) {
+
+              # if the symbol ">" is present, get the last position of the whole sequence
+              end <- DNAString[accession]@ranges@width
+
+            } else {
+
+              end <- as.integer(end)
+
+            }
 
           } else {
-
-            end <- as.integer(end)
-
+            start <- as.integer(stringr::str_remove(start, "\\<"))
+            end <- as.integer(stringr::str_remove(end, "\\>"))
           }
 
           # extract subsequence
