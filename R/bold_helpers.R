@@ -13,7 +13,7 @@
 bold_record_counter <- function(bold_tax, api_rate) {
 
   # set visible binding to variable
-  name <- records <- NULL
+  name <- records <- taxon <- NULL
 
   taxa <- unique(sort(bold_tax$taxon)) %>% split(., ceiling(seq_along(.) / 1))
 
@@ -76,7 +76,7 @@ bold_record_counter <- function(bold_tax, api_rate) {
 bold_record_grouper <- function(bold_tax, rate) {
 
   # set visible binding to variable
-  name <- NULL
+  name <- taxon <- NULL
 
   # extract counts from bold_tax
   bold_count <- bold_tax[!is.na(bold_tax$records), c("taxon", "records")]

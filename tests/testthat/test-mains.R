@@ -12,7 +12,7 @@ dim2 <- nrow(rec_bold)
 dim3 <- nrow(rec_custom1)
 
 merged1 <- mergeBarcodeOres(rec_ncbi, rec_bold, resolve.conflicts = FALSE)
-merged2 <- mergeBarcodeOres(rec_ncbi, rec_bold, resolve.conflicts = TRUE)
+merged2 <- suppressMessages(mergeBarcodeOres(rec_ncbi, rec_bold, resolve.conflicts = TRUE))
 merged3 <- mergeBarcodeOres(rec_ncbi, rec_bold, rec_custom1, resolve.conflicts = FALSE)
 
 # TESTS
