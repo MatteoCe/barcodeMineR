@@ -182,6 +182,8 @@ bold_fetcher <- function(taxon_group, bold_tax) {
 #'
 #' @param bold_records data.frame the output of bold::bold_seqspec
 #' @param bold_tax data.frame the output of get_bold_taxonomy
+#' @param filter whether to filter the downloaded output for the exact
+#'   taxonomies present in the bold_tax or to include children taxonomy records
 #'
 #' @return data.frame a records_tab with selected columns
 #'
@@ -196,7 +198,7 @@ bold_fetcher <- function(taxon_group, bold_tax) {
 #' here inspected to extract solely the BOLD taxid for the specific species processed
 #' at each iteration.
 #'
-extractRecordsTabBOLD <- function(bold_records, bold_tax) {
+extractRecordsTabBOLD <- function(bold_records, bold_tax, filter = TRUE) {
 
   # set progressbar
   p <- progressr::progressor(steps = nrow(bold_records))
@@ -204,32 +206,33 @@ extractRecordsTabBOLD <- function(bold_records, bold_tax) {
 
   # filter records to include only those corresponding to the searched taxonomic
   # name, not downstream taxonomy records
-  bold_records <- purrr::map(seq(1, nrow(bold_tax)), function(row) {
+  if (filter) {
+    bold_records <- purrr::map(seq(1, nrow(bold_tax)), function(row) {
 
-    lower_ranks <- NULL
+      lower_ranks <- NULL
 
-    rank_sel <- rank <- bold_tax[row, "rank"]
+      rank_sel <- rank <- bold_tax[row, "rank"]
 
-    while (rank_sel != "subspecies") {
+      while (rank_sel != "subspecies") {
 
-      rank_sel <- get_lower_tax_rank(rank_sel)
-      lower_ranks <- c(lower_ranks, paste0(rank_sel, "_name"))
+        rank_sel <- get_lower_tax_rank(rank_sel)
+        lower_ranks <- c(lower_ranks, paste0(rank_sel, "_name"))
 
-    }
+      }
 
-    rank_sel <- paste0(rank, "_name")
+      rank_sel <- paste0(rank, "_name")
 
-    idRecords_sel <- bold_records %>% dplyr::filter(.data[[rank_sel]] %in% bold_tax[row, "taxon"]) %>%
-      dplyr::filter(dplyr::if_all(dplyr::all_of(lower_ranks), is.na))
+      idRecords_sel <- bold_records %>% dplyr::filter(.data[[rank_sel]] %in% bold_tax[row, "taxon"]) %>%
+        dplyr::filter(dplyr::if_all(dplyr::all_of(lower_ranks), is.na))
 
-    if (nrow(idRecords_sel) == 0) {
-      return(NULL)
-    } else {
-      idRecords_sel
-    }
+      if (nrow(idRecords_sel) == 0) {
+        return(NULL)
+      } else {
+        idRecords_sel
+      }
 
-  }) %>% purrr::compact() %>% do.call(rbind, .)
-
+    }) %>% purrr::compact() %>% do.call(rbind, .)
+  }
   # if no records remain, stop and message it
   if (length(bold_records) == 0) {
     return(NULL)

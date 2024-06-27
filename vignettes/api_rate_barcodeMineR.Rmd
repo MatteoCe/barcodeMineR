@@ -112,7 +112,7 @@ We can revert to the "normal", sequential framework when we're done with our wor
 
 This plan ("multisession") works on all OSes, on both Rstudio or the command line. It will significantly speed up the recovery of records from the NCBI, especially for the _download_ncbi_ function, but can also improve the speed of _get_ncbi_taxonomy_ (see [this section](https://matteoce.github.io/barcodeMineR/articles/api_rate_barcodeMineR.html#tuning-the-functions-arguments) for more details).
 
-However, it must be kept in mind that using multiple cores comes at a "computational price", meaning that it result efficient only when searching species with a significant amount of records on the NCBI (or when searching more species at once). See the *tips* for more details.
+However, it must be kept in mind that using multiple cores comes at a "computational price", meaning that it result efficient only when searching species with a significant amount of records on the NCBI (or when searching more species at once). See the *tips* at the end of this vignette for more details.
 ```{r, echo = FALSE}
 future::plan("multisession")
 tax <- get_ncbi_taxonomy("Euphausia superba")
@@ -125,7 +125,27 @@ future::plan("sequential")
 
 Now, the entire process of downloading _Euphausia superba_ records will take sensibly less time than in "sequential" _future_ plan, providing the final results after only `r x <- difftime(t1, t0); if (units(x) == "mins") {paste(round(as.numeric(x), 2), "minutes")} else {paste(round(as.numeric(x), 0), "seconds")}`, when executed with 8 cores in "multisession".
 
-### Tips
+## Why can't I speed up the BOLD functions?
+
+BOLD servers maintenance [does not support an API rate limit](https://github.com/ropensci/bold/issues/76#issuecomment-789909664), like the NCBI does, and, for this reason, a certain number of requests sent in a particular window of time may result in a temporary blocking by the BOLD servers. The factors that mostly influence the occurrence of this inconvenience are two:
+
+* Number of requests:
+
+The _get_bold_taxonomy_ and _download_bold_ functions have default settings that try to avoid sending too many requests at a time. For example, the default _api_rate_ argument setting of [get_bold_taxonomy](https://matteoce.github.io/barcodeMineR/reference/get_bold_taxonomy.html) allows to search a specific taxon every 1/0.06 seconds, meaning that the maximum number of requests is set to 250 per hour. Although it can be considered pretty low, this comes from recent testing (May 2024) that detected frequent blocking when querying the BOLD taxonomy database when surpassing this limit. This only applies to taxa that do not include children, thus only for species. When searching higher level taxa leaving the _descend_ argument to TRUE (default), by relying on the usage of the package [taxize](https://github.com/ropensci/taxize), the limit might be more easily surpassed when many children taxa are present.
+
+* Size of requested data:
+
+Differently from the _get_bold_taxonomy_ function, the [download_bold](https://matteoce.github.io/barcodeMineR/reference/download_bold.html) function has a higher limit, which mostly depends on the amount of data that is requested each time. When querying a long list of species names, the function is set to send each request every second, without frequent blocking. However, this depends on the amount of data that correspond to each taxon. If, for example, we were to search for all Arthropoda sequences on BOLD, although the _get_bold_taxonomy_ function would run smoothly, provided that the _descend_ argument is set to FALSE, the _download_bold_ would surely fail, resulting in a temporary blocking by the BOLD servers. When using _download_bold_, only search [low level taxonomies](https://github.com/ropensci/bold/issues/29) (downward from family), as suggested by the [bold package](https://github.com/ropensci/bold?tab=readme-ov-file#large-data).
+
+## Tuning the functions' arguments
+
+Different arguments can be tuned to improve speed and/or reliability of requests to the NCBI servers. These include the _rate_ of xml or fasta downloads and the _API rate_:
+
+* The __api_rate__ argument allows to override the default settings of the NCBI requests rate. The future plan framework allows to send requests every 1 / __api_rate__ seconds, thus ensuring that no more that 'api_rate' requests will be sent in a window framework of 1 second. However, due to fluctuations in the internet connection, still more than __api_rate__ number of requests might arrive to the NCBI servers, causing errors. The function can handle up to 5 consecutive errors per request, but too many errors might block the whole process. The __api_rate__ parameter can be modified in order to slow down the requests sent per second. It overrides the automatic selection of the optimal parameter (either 3 or 10) and accepts one decimal degree number between 1.0 and 10.0, so if the internet connection is particularly bad, it can be set between 2.5 and 2.0, for example, in order to slow the number of requests per second and reduce the possibility of errors.
+
+* The __rate__ argument of the [get_ncbi_taxonomy](https://matteoce.github.io/barcodeMineR/reference/get_ncbi_taxonomy.html) and [download_bold](https://matteoce.github.io/barcodeMineR/reference/download_bold.html) and the arguments __rate_xml__ and __rate_fasta__ for the [download_ncbi](https://matteoce.github.io/barcodeMineR/reference/download_ncbi.html) function allow to set the number of taxa/species that will be queried with each request and has impacts on the memory usage of the package. Although decreasing or increasing their value does not significantly impact the speed, it is worth mentioning that, in case of low memory availability, reducing the amount of xml or fasta sequences downloaded at a time may improve the performance. Nonetheless, it is better to keep the values to default settings, which have been tested on different settings.
+
+#### Tips
 
 * Progress bar
 
@@ -292,24 +312,3 @@ ggplot2::ggplot(test, ggplot2::aes(x = as.factor(number),
   ggplot2::xlab("Number of Species searched") + ggplot2::ylab("Execution time (seconds)") + 
   ggplot2::theme_minimal()
 ```
-
-## Why can't I speed up the BOLD functions?
-
-BOLD servers maintenance [does not support an API rate limit](https://github.com/ropensci/bold/issues/76#issuecomment-789909664), like the NCBI does, and, for this reason, a certain number of requests sent in a particular window of time may result in a temporary blocking by the BOLD servers. The factors the mostly influence the occurrence of this inconvenience are two:
-
-* Number of requests:
-
-The _get_bold_taxonomy_ and _download_bold_ functions have default settings that try to avoid sending too many requests at a time. For example, the default _api_rate_ argument setting of [get_bold_taxonomy](https://matteoce.github.io/barcodeMineR/reference/get_bold_taxonomy.html) allows to search a specific taxon every 1/0.06 seconds, meaning that the maximum number of requests is set to 250 per hour. Although it can be considered pretty low, this comes from recent testing (May 2024) that detected frequent blocking when querying the BOLD taxonomy database when surpassing this limit. This only applies to taxa that do not include children, thus only for species. When searching higher level taxa leaving the _descend_ argument to TRUE (default), by relying on the usage of the package [taxize](https://github.com/ropensci/taxize), the limit might be more easily surpassed when many children taxa are present.
-
-* Size of requested data:
-
-Differently from the _get_bold_taxonomy_ function, the [download_bold](https://matteoce.github.io/barcodeMineR/reference/download_bold.html) function has a higher limit, which mostly depends on the amount of data that is requested each time. When querying a long list of species names, the function is set to send each request every second, without frequent blocking. However, this depends on the amount of data that correspond to each taxon. If, for example, we were to search for all Arthropoda sequences on BOLD, although the _get_bold_taxonomy_ function would run smoothly, provided that the _descend_ argument is set to FALSE, the _download_bold_ would surely fail, resulting in a temporary blocking by the BOLD servers. When using _download_bold_, only search [low level taxonomies](https://github.com/ropensci/bold/issues/29) (downward from family), as suggested by the [bold package](https://github.com/ropensci/bold?tab=readme-ov-file#large-data).
-
-## Tuning the functions' arguments
-
-Different arguments can be tuned to improve speed and/or reliability of requests to the NCBI servers. These include the _rate_ of xml or fasta downloads and the _API rate_:
-
-* The __api_rate__ argument allows to override the default settings of the NCBI requests rate. The future plan framework allows to send requests every 1 / __api_rate__ seconds, thus ensuring that no more that 'api_rate' requests will be sent in a window framework of 1 second. However, due to fluctuations in the internet connection, still more than __api_rate__ number of requests might arrive to the NCBI servers, causing errors. The function can handle up to 5 consecutive errors per request, but too many errors might block the whole process. The __api_rate__ parameter can be modified in order to slow down the requests sent per second. It overrides the automatic selection of the optimal parameter (either 3 or 10) and accepts one decimal degree number between 1.0 and 10.0, so if the internet connection is particularly bad, it can be set between 2.5 and 2.0, for example, in order to slow the number of requests per second and reduce the possibility of errors.
-
-* The __rate__ argument of the [get_ncbi_taxonomy](https://matteoce.github.io/barcodeMineR/reference/get_ncbi_taxonomy.html) and [download_bold](https://matteoce.github.io/barcodeMineR/reference/download_bold.html) and the arguments __rate_xml__ and __rate_fasta__ for the [download_ncbi](https://matteoce.github.io/barcodeMineR/reference/download_ncbi.html) function allow to set the number of taxa/species that will be queried with each request and has impacts on the memory usage of the package. Although decreasing or increasing their value does not significantly impact the speed, it is worth mentioning that, in case of low memory availability, reducing the amount of xml or fasta sequences downloaded at a time may improve the performance. Nonetheless, it is better to keep the values to default settings, which have been tested on different settings.
-

@@ -99,7 +99,8 @@ buildSequences <- function(accn, DNAString, selection_tab, skip.unknown.pos = TR
       } else {
 
         # extracts ranges of bases to extract from whole sequence
-        bases_ranges <- unlist(stringr::str_extract_all(location, "[\\<0-9]+\\.\\.[\\>0-9]+"))
+        # old regex changed the 27 Jun 2024 ([<0-9]+\\.\\.[>0-9]+)+|([<>0-9]+)+
+        bases_ranges <- unlist(stringr::str_extract_all(location, "(([<0-9]+\\.\\.[>0-9]+)+|([<>0-9]+)+(?=[\\)|,]))+"))
 
         # create list with subsequences from whole sequence based on the range of bases extracted before
         subseqs <- sapply(bases_ranges, function(range) {
@@ -157,7 +158,8 @@ buildSequences <- function(accn, DNAString, selection_tab, skip.unknown.pos = TR
         ) {
 
           # extracts groups to operate directly on (join or complement)
-          operations_on_groups <- unlist(stringr::str_extract_all(location, "[a-z]+\\((([<0-9]+\\.\\.[>0-9]+)+,?)+([<0-9]+\\.\\.[>0-9]+)?\\)"))
+          # old regex changed the 27 Jun 2024 [a-z]+\\((([<0-9]+\\.\\.[>0-9]+)+,?)+([<0-9]+\\.\\.[>0-9]+)?\\)
+          operations_on_groups <- unlist(stringr::str_extract_all(location, "[a-z]+\\(((([<0-9]+\\.\\.[>0-9]+)|([0-9]+))+,?)+([<0-9]+\\.\\.[>0-9]+)?\\)"))
 
           processed_subseqs <- sapply(operations_on_groups, function(group_operation) {
 

@@ -4,7 +4,7 @@
 **NOTE: This is a temporary GitHub repository created for testing
 purposes.**
 
-# barcodeMineR <img src="man/figures/logo.png" align="right" height="139" alt="" />
+# barcodeMineR <img src="man/figures/barcodeMineR_logo.png" align="right" height="139" alt="" />
 
 <!-- badges: start -->
 

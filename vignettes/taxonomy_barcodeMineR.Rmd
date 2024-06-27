@@ -167,3 +167,15 @@ As in the above section, searching all taxa for _Clione_ and then filtering only
 * Searching long vectors
 
 Be careful when searching long vectors including many different taxa. This might result in frequent blocking by the BOLD servers, as explained in the vignette topic [Why can't I speed up the BOLD functions?](https://matteoce.github.io/barcodeMineR/articles/api_rate_barcodeMineR.html#why-cant-i-speed-up-the-bold-functions). However, when the number of taxa to be searched remains under an approximate limit of 250 per hour, the mining operations using the BOLD functions of the package can be sped up by setting the _api_rate_ argument to 1 (thus 1 request per second).
+
+* Overriding the default taxonomy filter of _download_bold_
+
+When the user is interested in all records belonging to many higher level taxa (genera, families or orders), using the _get_bold_taxonomy_ function may take lot of time to search for all descending taxonomic names. The low rate at which the bold functions are set is mainly due to the frequent blocking by the BOLD serves, as described in [Why can't I speed up the BOLD functions?](https://matteoce.github.io/barcodeMineR/articles/api_rate_barcodeMineR.html#why-cant-i-speed-up-the-bold-functions). One solution consists in deactivating the default filtering step adopted by the _download_bold_ function, which eliminates all records belonging to children taxonomies that are not present in the taxonomy table provided, i.e. the output of the previous _get_bold_taxonomy_. This can be achieved by setting the argument _filter_ to FALSE:
+
+```{r, eval = FALSE}
+# get taxonomic table of the genus Clione
+tax <- get_bold_taxonomy("Clione", descend = FALSE, ask = FALSE)
+
+# download all records, including those identified to species belonging to Clione
+download_bold(tax, filter = FALSE)
+```

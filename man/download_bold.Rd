@@ -4,7 +4,14 @@
 \alias{download_bold}
 \title{Download records from BOLD}
 \usage{
-download_bold(bold_tax, rate = 100, api_rate = NULL, ask = TRUE, prefix = NULL)
+download_bold(
+  bold_tax,
+  rate = 100,
+  api_rate = NULL,
+  ask = TRUE,
+  prefix = NULL,
+  filter = TRUE
+)
 }
 \arguments{
 \item{bold_tax}{a data.frame, as returned from the get_bold_taxonomy function.}
@@ -29,6 +36,10 @@ compose the recordID field in the final object. Default to `NULL`, using
 the internal recordID generator that will use the accession number for NCBI
 records and the processID for BOLD records, avoiding duplicates by adding
 `_1`, `_2` etc.}
+
+\item{filter}{`logical` Whether to filter records retaining only those
+corresponding exactly to the taxa found in the taxonomy table `bold_tax` or
+include also those corresponding to children taxonomies. Default to `TRUE`.}
 }
 \value{
 `data.frame` A refdb data frame, including the DNA sequence as a

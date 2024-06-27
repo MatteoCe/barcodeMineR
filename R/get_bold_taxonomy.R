@@ -73,7 +73,7 @@ get_bold_taxonomy <- function(ids, api_rate = NULL, ask = TRUE, descend = TRUE) 
 
     }
 
-  }, message = "Searching species on taxonomy database", seed = NULL)
+  }, message = "Searching taxa on taxonomy database", seed = NULL)
 
   # remove empty elements (no species on bold taxonomy database) and unite dataframes
   taxonomies <- taxa_list %>%

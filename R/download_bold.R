@@ -18,6 +18,9 @@
 #'   the internal recordID generator that will use the accession number for NCBI
 #'   records and the processID for BOLD records, avoiding duplicates by adding
 #'   `_1`, `_2` etc.
+#' @param filter `logical` Whether to filter records retaining only those
+#'   corresponding exactly to the taxa found in the taxonomy table `bold_tax` or
+#'   include also those corresponding to children taxonomies. Default to `TRUE`.
 #'
 #' @return `data.frame` A refdb data frame, including the DNA sequence as a
 #'   field.
@@ -39,7 +42,7 @@
 #'
 #' download_bold(tax, ask = FALSE)
 #'
-download_bold <- function(bold_tax, rate = 100, api_rate = NULL, ask = TRUE, prefix = NULL) {
+download_bold <- function(bold_tax, rate = 100, api_rate = NULL, ask = TRUE, prefix = NULL, filter = TRUE) {
 
   if (!is(future::plan(), "sequential")) {
     stop("BOLD data retrieval currently do not support parallelization")
@@ -63,7 +66,7 @@ download_bold <- function(bold_tax, rate = 100, api_rate = NULL, ask = TRUE, pre
   }, message = "Downloading BOLD records", seed = NULL) %>% purrr::compact() %>% do.call(rbind, .)
 
   # format and remove unwanted records
-  records_tab <- extractRecordsTabBOLD(records_tab, bold_tax)
+  records_tab <- extractRecordsTabBOLD(records_tab, bold_tax, filter = filter)
 
   # stop if no records are found
   if (is.null(records_tab)) {
