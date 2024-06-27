@@ -7,7 +7,7 @@ vignette(&quot;Introduction to the barcodeMineR package&quot;, package = &quot;b
 the argument `bold_tax`, i.e. the output from the function `get_bold_taxonomy`.
 For a thorough explanation of the function usage and capabilities, see the
 'Introduction to the barcodeMineR package' vignette:
-vignette(&quot;Introduction to the barcodeMineR package&quot;, package = &quot;barcodeMineR&quot;)"><meta property="og:image" content="https://matteoce.github.io/barcodeMineR/logo.png"><!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
+vignette(&quot;Introduction to the barcodeMineR package&quot;, package = &quot;barcodeMineR&quot;)"><!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
 <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
 <![endif]--></head><body>
@@ -48,7 +48,7 @@ vignette(&quot;Introduction to the barcodeMineR package&quot;, package = &quot;b
 </nav><div class="container template-reference-topic">
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
-      <img src="../logo.png" class="logo" alt=""><h1>Download records from BOLD</h1>
+      <img src="" class="logo" alt=""><h1>Download records from BOLD</h1>
       <small class="dont-index">Source: <a href="https://github.com/MatteoCe/barcodeMineR/blob/HEAD/R/download_bold.R" class="external-link"><code>R/download_bold.R</code></a></small>
       <div class="d-none name"><code>download_bold.Rd</code></div>
     </div>
@@ -63,7 +63,14 @@ the argument `bold_tax`, i.e. the output from the function `get_bold_taxonomy`.<
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">download_bold</span><span class="op">(</span><span class="va">bold_tax</span>, rate <span class="op">=</span> <span class="fl">100</span>, api_rate <span class="op">=</span> <span class="cn">NULL</span>, ask <span class="op">=</span> <span class="cn">TRUE</span>, prefix <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">download_bold</span><span class="op">(</span></span>
+<span>  <span class="va">bold_tax</span>,</span>
+<span>  rate <span class="op">=</span> <span class="fl">100</span>,</span>
+<span>  api_rate <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  ask <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  prefix <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  filter <span class="op">=</span> <span class="cn">TRUE</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -99,6 +106,12 @@ compose the recordID field in the final object. Default to `NULL`, using
 the internal recordID generator that will use the accession number for NCBI
 records and the processID for BOLD records, avoiding duplicates by adding
 `_1`, `_2` etc.</p></dd>
+
+
+<dt>filter</dt>
+<dd><p>`logical` Whether to filter records retaining only those
+corresponding exactly to the taxa found in the taxonomy table `bold_tax` or
+include also those corresponding to children taxonomies. Default to `TRUE`.</p></dd>
 
 </dl></div>
     <div class="section level2">
