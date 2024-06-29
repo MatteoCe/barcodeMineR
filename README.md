@@ -4,12 +4,13 @@
 **NOTE: This is a temporary GitHub repository created for testing
 purposes.**
 
-# barcodeMineR <img src="man/figures/barcodeMineR_logo.png" align="right" height="139" alt="" />
+# barcodeMineR <img src="man/figures/logo.png" align="right" height="139" alt="" />
 
 <!-- badges: start -->
 
 [![R-CMD-check](https://github.com/MatteoCe/barcodeMineR/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/MatteoCe/barcodeMineR/actions/workflows/R-CMD-check.yaml)
 [![test-coverage](https://github.com/MatteoCe/barcodeMineR/actions/workflows/test-coverage.yaml/badge.svg)](https://github.com/MatteoCe/barcodeMineR/actions/workflows/test-coverage.yaml)
+[![codecov](https://codecov.io/gh/MatteoCe/barcodeMineR/graph/badge.svg?token=62OUVOL8MP)](https://codecov.io/gh/MatteoCe/barcodeMineR)
 <!-- badges: end -->
 
 The goal of barcodeMineR is to facilitate the download of DNA sequences

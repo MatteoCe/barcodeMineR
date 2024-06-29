@@ -226,6 +226,8 @@ boldDuplicateCheck <- function(refdb) {
         c(., recursive = TRUE) %>%
         unname()
 
+      # warning here, sometimes other_accn has length > 1 and only the first
+      # element is used by grep. Investigate why
       if (length(grep(other_accn, refdb$recordID)) == 1) {
 
         proc <- filt_mined[filt_mined$accn == other_accn, ]$recordID

@@ -138,8 +138,14 @@ buildSequences <- function(accn, DNAString, selection_tab, skip.unknown.pos = TR
             }
 
           } else {
-            start <- as.integer(stringr::str_remove(start, "\\<"))
-            end <- as.integer(stringr::str_remove(end, "\\>"))
+
+            if (all(start == end)) {
+              end <- start <- as.integer(stringr::str_remove(start, "\\<|\\>"))
+            } else {
+              start <- as.integer(stringr::str_remove(start, "\\<"))
+              end <- as.integer(stringr::str_remove(end, "\\>"))
+            }
+
           }
 
           # extract subsequence
@@ -159,7 +165,7 @@ buildSequences <- function(accn, DNAString, selection_tab, skip.unknown.pos = TR
 
           # extracts groups to operate directly on (join or complement)
           # old regex changed the 27 Jun 2024 [a-z]+\\((([<0-9]+\\.\\.[>0-9]+)+,?)+([<0-9]+\\.\\.[>0-9]+)?\\)
-          operations_on_groups <- unlist(stringr::str_extract_all(location, "[a-z]+\\(((([<0-9]+\\.\\.[>0-9]+)|([0-9]+))+,?)+([<0-9]+\\.\\.[>0-9]+)?\\)"))
+          operations_on_groups <- unlist(stringr::str_extract_all(location, "[a-z]+\\(((([<0-9]+\\.\\.[>0-9]+)|([<>]?[0-9]+))+,?)+([<0-9]+\\.\\.[>0-9]+)?\\)"))
 
           processed_subseqs <- sapply(operations_on_groups, function(group_operation) {
 
@@ -167,7 +173,7 @@ buildSequences <- function(accn, DNAString, selection_tab, skip.unknown.pos = TR
             operation <- stringr::str_extract(group_operation, "^[a-z]+")
 
             # get ranges of bases previously extracted to operate on
-            range <- unlist(stringr::str_extract_all(group_operation, "[\\<0-9]+\\.\\.[\\>0-9]+"))
+            range <- unlist(stringr::str_extract_all(group_operation, "([\\<0-9]+\\.\\.[\\>0-9]+)|([<>]?[0-9]+)"))
 
             if (operation == "complement") {
 
