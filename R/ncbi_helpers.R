@@ -173,11 +173,15 @@ ncbi_id_extract <- function(search_list, db = "nucleotide", rate_xml, api_rate =
                                          retmax = parameter[[2]])
 
           # when the summary result is of class "esummary", it means that it refers
-          # to only one gi number, thus names(sum) will not report the gi number but
+          # to only one gi/uid number, thus names(sum) will not report the gi/uid number but
           # the name of each element of the esummary record
           if (all(class(sum) == c("esummary", "list"))) {
 
-            return(sum$gi)
+            if (db == "taxonomy") {
+              return(sum$uid)
+            } else {
+              return(sum$gi)
+            }
 
           } else if (all(class(sum) == c("esummary_list", "list"))) {
 
