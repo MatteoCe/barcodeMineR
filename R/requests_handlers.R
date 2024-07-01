@@ -149,19 +149,9 @@ ncbi_limit_handler <- function(data, api_rate = 3, fun, message = "LoremIpsum", 
 
   }
 
-  p <- progressr::progressor(steps = length(results_list))
+  future::resolve(results_list)
 
-  lapply(results_list, function(res) {
-
-    while (!future::resolved(res)) {
-      Sys.sleep(0.1)
-    }
-
-    p(message = sprintf("Extracing values from future framework"))
-
-    future::value(res)
-
-  })
+  future::value(results_list)
 
 }
 

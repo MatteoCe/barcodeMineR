@@ -257,9 +257,11 @@ ncbi_xml_fetcher <- function(searchWebHist = NULL, ids = NULL, db = "taxonomy", 
   } else if (db == "nucleotide") {
     numxml <- length(XML_extract_nodes("source", fetch))
 
-    }
+  }
 
-  if (numxml != rate) {
+  # some records may have multiple sources (EU831279.1), thus now it stops only
+  # when numxml is lower than rate
+  if (numxml < rate) {
     stop("...")
   }
 
