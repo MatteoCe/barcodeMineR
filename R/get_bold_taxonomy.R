@@ -198,7 +198,7 @@ get_bold_taxonomy <- function(ids, api_rate = NULL, ask = TRUE, descend = TRUE) 
   bold_count <- bold_record_counter(taxonomies, api_rate)
 
   # full join the two tables
-  dplyr::full_join(taxonomies, bold_count, by = "taxon")
+  dplyr::full_join(taxonomies, bold_count, by = dplyr::join_by("taxon", "taxid"))
 
 }
 

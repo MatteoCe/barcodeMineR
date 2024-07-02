@@ -23,33 +23,72 @@ bold_record_counter <- function(bold_tax, api_rate) {
     idStats <- bold::bold_stats(taxa[[id]], dataTypes = "drill_down", simplify = TRUE)
 
     rank <- bold_tax[bold_tax$taxon == taxa[[id]], "rank"]
-    upper_rank <- get_lower_tax_rank(rank, upper = TRUE)
 
-    if (rank == "order") {
-      stop("The function 'download_bold' does not support downloading taxa higher than the family level.\nProvide lower taxonomic levels with 'get_bold_taxonomy'")
+    if (length(rank) > 1) {
+
+      taxids <- bold_tax[bold_tax$taxon == taxa[[id]], "taxid"]
+
+      taxidStats <- bold::bold_tax_id2(taxids, dataTypes = "basic")
+
+      stats <- lapply(1:nrow(taxidStats), function(row) {
+
+        parent <- taxidStats[row, "parentname"]
+        rank <- taxidStats[row, "tax_rank"]
+
+        upper_rank <- get_lower_tax_rank(rank, upper = TRUE)
+
+        if (upper_rank == "subfamily") {
+          upper_rank <- "family"
+        }
+
+        rec_stats <- idStats$drill_down[[upper_rank]]
+
+        if (!(parent %in% rec_stats$name)) {
+          records <- rec_stats[rec_stats[, 1] == "Unspecified*", "records"]
+        } else {
+          records <- rec_stats[rec_stats[, 1] == parent, "records"]
+        }
+
+        data.frame(
+          taxid = taxids[row],
+          taxon = taxa[[id]],
+          parentname = parent,
+          records = records)
+
+      }) %>% do.call(rbind, .)
+
+    } else {
+
+      upper_rank <- get_lower_tax_rank(rank, upper = TRUE)
+
+      if (rank == "order") {
+        stop("The function 'download_bold' does not support downloading taxa higher than the family level.\nProvide lower taxonomic levels with 'get_bold_taxonomy'")
+      }
+
+      if (rank != "subspecies" & is.null(idStats$drill_down[[rank]]$records)) {
+        return(NULL)
+      }
+
+      if (rank == "subspecies" & is.null(idStats$drill_down[[rank]]$records)) {
+        rank <- upper_rank <- "species"
+      }
+
+      if (upper_rank == "subfamily") {
+        upper_rank <- "family"
+      }
+
+      data.frame(
+        taxid = bold_tax[bold_tax$taxon == taxa[[id]], "taxid"],
+        taxon = taxa[[id]],
+        parentname = idStats$drill_down[[upper_rank]]$name[!(idStats$drill_down[[upper_rank]]$name %in% "Others")],
+        records = sum(idStats$drill_down[[rank]]$records))
+
     }
-
-    if (rank != "subspecies" & is.null(idStats$drill_down[[rank]]$records)) {
-      return(NULL)
-    }
-
-    if (rank == "subspecies" & is.null(idStats$drill_down[[rank]]$records)) {
-      rank <- upper_rank <- "species"
-    }
-
-    if (upper_rank == "subfamily") {
-      upper_rank <- "family"
-    }
-
-    data.frame(
-      taxon = taxa[[id]],
-      parentname = idStats$drill_down[[upper_rank]]$name[!(idStats$drill_down[[upper_rank]]$name %in% "Others")],
-      records = sum(idStats$drill_down[[rank]]$records))
 
   }, message = "Counting number of records per taxa on BOLD", seed = NULL) %>% purrr::compact() %>% do.call(rbind, .)
 
   final_stats <- stats %>% dplyr::filter(., !(.data$parentname %in% .data$taxon)) %>%
-    dplyr::select(., taxon, records)
+    dplyr::select(., taxon, taxid, records)
 
   if (all(final_stats$records == 0)) {
 
@@ -79,7 +118,9 @@ bold_record_grouper <- function(bold_tax, rate) {
   name <- taxon <- NULL
 
   # extract counts from bold_tax
-  bold_count <- bold_tax[!is.na(bold_tax$records), c("taxon", "records")]
+  bold_count <- bold_tax[!is.na(bold_tax$records), c("taxon", "records")] %>%
+    dplyr::group_by(taxon) %>%
+    dplyr::summarise(records = sum(records))
 
   groups <- list()
   counter <- 0
