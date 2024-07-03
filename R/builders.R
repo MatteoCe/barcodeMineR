@@ -197,6 +197,21 @@ buildSequences <- function(accn, DNAString, selection_tab, skip.unknown.pos = TR
 
           }, USE.NAMES = TRUE)
 
+          # added filter for cases where a join operation is performed on a
+          # subsequence that has been processed while another was not. The
+          # example can be found for NC_082072.1 having two copies of "psbA"
+          # one of which (the second) has this location:
+          # join(83517..83856,complement(238..959))
+          # This will add the base ranges not processed to the new "processed_subseqs"
+          # object in order to detect the next operation to perform
+          if (!all(stringr::str_detect(names(processed_subseqs), names(subseqs)))) {
+
+            unoperated <- names(subseqs)[!stringr::str_detect(names(processed_subseqs), names(subseqs))]
+
+            processed_subseqs <- c(subseqs[unoperated], processed_subseqs)
+
+          }
+
           # now the fun part.
 
           re_processed_subseqs <- processed_subseqs

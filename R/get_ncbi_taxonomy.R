@@ -57,7 +57,7 @@ get_ncbi_taxonomy <- function(ids, api_rate = NULL, ask = TRUE) {
 
     }
 
-  }, message = "Searching species on taxonomy database")
+  }, message = "Searching taxa on taxonomy database")
 
   # if no species name is found, stop now
   if (length(purrr::compact(search_list)) == 0) {

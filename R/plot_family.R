@@ -33,6 +33,8 @@
 #' function was inspired and modified by the code presented in the paper by
 #' Gwiazdowski et al. (2015) https://doi.org/10.1371/journal.pone.0125635.
 #'
+#' @examplesIf rlang::is_installed(c("ggplot2", "ggridges"))
+#'
 #' @examples
 #' rec <- loadBarcodeOre(example_record, example_sequence)
 #'
@@ -228,6 +230,8 @@ utils::globalVariables(c("n", "directionPrimers", "PCR_primers"))
 #' argument, with the corresponding length of the original sequence (field
 #' `lengthSource`, the entire fasta associated to the reference sequence on
 #' the online database) on another "ridge", using the `ggridges` package.
+#'
+#' @examplesIf rlang::is_installed(c("ggplot2", "ggridges"))
 #'
 #' @examples
 #' tax <- get_ncbi_taxonomy("Dissostichus mawsoni")
