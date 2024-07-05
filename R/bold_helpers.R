@@ -28,20 +28,25 @@ bold_record_counter <- function(bold_tax, api_rate) {
 
       taxids <- bold_tax[bold_tax$taxon == taxa[[id]], "taxid"]
 
-      taxidStats <- bold::bold_tax_id2(taxids, dataTypes = "basic")
+      taxidStats <- bold::bold_tax_id2(taxids, dataTypes = "basic", includeTree = TRUE)
 
-      stats <- lapply(1:nrow(taxidStats), function(row) {
+      stats <- lapply(taxids, function(taxid) {
 
-        parent <- taxidStats[row, "parentname"]
-        rank <- taxidStats[row, "tax_rank"]
+        rank <- taxidStats[taxidStats$taxid == taxid, "tax_rank"]
+        parent <- taxidStats[(taxidStats$input == taxid & taxidStats$tax_rank == rank), "parentname"]
+        parent_rank <- taxidStats[(taxidStats$input == taxid & taxidStats$taxon == parent), "tax_rank"]
 
-        upper_rank <- get_lower_tax_rank(rank, upper = TRUE)
-
-        if (upper_rank == "subfamily") {
-          upper_rank <- "family"
+        if (parent_rank == "subfamily") {
+          parent <- taxidStats[(taxidStats$input == taxid & taxidStats$tax_rank == parent_rank), "parentname"]
+          parent_rank <- "family"
+        } else if (parent_rank %in% c("phylum", "class")) {
+          parent_rank <- get_lower_tax_rank(rank, upper = TRUE)
+          if (parent_rank == "subfamily") {
+            parent_rank <- "family"
+          }
         }
 
-        rec_stats <- idStats$drill_down[[upper_rank]]
+        rec_stats <- idStats$drill_down[[parent_rank]]
 
         if (!(parent %in% rec_stats$name)) {
           records <- rec_stats[rec_stats[, 1] == "Unspecified*", "records"]
@@ -50,7 +55,7 @@ bold_record_counter <- function(bold_tax, api_rate) {
         }
 
         data.frame(
-          taxid = taxids[row],
+          taxid = taxid,
           taxon = taxa[[id]],
           parentname = parent,
           records = records)
