@@ -1,75 +1,27 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url>
-    <loc>https://matteoce.github.io/barcodeMineR/404.html</loc>
-  </url>
-  <url>
-    <loc>https://matteoce.github.io/barcodeMineR/LICENSE-text.html</loc>
-  </url>
-  <url>
-    <loc>https://matteoce.github.io/barcodeMineR/LICENSE.html</loc>
-  </url>
-  <url>
-    <loc>https://matteoce.github.io/barcodeMineR/articles/api_rate_barcodeMineR.html</loc>
-  </url>
-  <url>
-    <loc>https://matteoce.github.io/barcodeMineR/articles/index.html</loc>
-  </url>
-  <url>
-    <loc>https://matteoce.github.io/barcodeMineR/articles/intro_barcodeMineR.html</loc>
-  </url>
-  <url>
-    <loc>https://matteoce.github.io/barcodeMineR/articles/taxonomy_barcodeMineR.html</loc>
-  </url>
-  <url>
-    <loc>https://matteoce.github.io/barcodeMineR/authors.html</loc>
-  </url>
-  <url>
-    <loc>https://matteoce.github.io/barcodeMineR/index.html</loc>
-  </url>
-  <url>
-    <loc>https://matteoce.github.io/barcodeMineR/reference/barcodeMineR-package.html</loc>
-  </url>
-  <url>
-    <loc>https://matteoce.github.io/barcodeMineR/reference/connection_handler.html</loc>
-  </url>
-  <url>
-    <loc>https://matteoce.github.io/barcodeMineR/reference/download_bold.html</loc>
-  </url>
-  <url>
-    <loc>https://matteoce.github.io/barcodeMineR/reference/download_ncbi.html</loc>
-  </url>
-  <url>
-    <loc>https://matteoce.github.io/barcodeMineR/reference/example_record.html</loc>
-  </url>
-  <url>
-    <loc>https://matteoce.github.io/barcodeMineR/reference/example_sequence.html</loc>
-  </url>
-  <url>
-    <loc>https://matteoce.github.io/barcodeMineR/reference/get_bold_taxonomy.html</loc>
-  </url>
-  <url>
-    <loc>https://matteoce.github.io/barcodeMineR/reference/get_ncbi_taxonomy.html</loc>
-  </url>
-  <url>
-    <loc>https://matteoce.github.io/barcodeMineR/reference/index.html</loc>
-  </url>
-  <url>
-    <loc>https://matteoce.github.io/barcodeMineR/reference/loadBarcodeOre.html</loc>
-  </url>
-  <url>
-    <loc>https://matteoce.github.io/barcodeMineR/reference/mergeBarcodeOres.html</loc>
-  </url>
-  <url>
-    <loc>https://matteoce.github.io/barcodeMineR/reference/pipe.html</loc>
-  </url>
-  <url>
-    <loc>https://matteoce.github.io/barcodeMineR/reference/plot_length.html</loc>
-  </url>
-  <url>
-    <loc>https://matteoce.github.io/barcodeMineR/reference/plot_primers.html</loc>
-  </url>
-  <url>
-    <loc>https://matteoce.github.io/barcodeMineR/reference/species200.html</loc>
-  </url>
+<urlset xmlns = 'http://www.sitemaps.org/schemas/sitemap/0.9'>
+<url><loc>https://matteoce.github.io/barcodeMineR/404.html</loc></url>
+<url><loc>https://matteoce.github.io/barcodeMineR/LICENSE-text.html</loc></url>
+<url><loc>https://matteoce.github.io/barcodeMineR/LICENSE.html</loc></url>
+<url><loc>https://matteoce.github.io/barcodeMineR/articles/api_rate_barcodeMineR.html</loc></url>
+<url><loc>https://matteoce.github.io/barcodeMineR/articles/index.html</loc></url>
+<url><loc>https://matteoce.github.io/barcodeMineR/articles/intro_barcodeMineR.html</loc></url>
+<url><loc>https://matteoce.github.io/barcodeMineR/articles/taxonomy_barcodeMineR.html</loc></url>
+<url><loc>https://matteoce.github.io/barcodeMineR/authors.html</loc></url>
+<url><loc>https://matteoce.github.io/barcodeMineR/index.html</loc></url>
+<url><loc>https://matteoce.github.io/barcodeMineR/reference/barcodeMineR-package.html</loc></url>
+<url><loc>https://matteoce.github.io/barcodeMineR/reference/connection_handler.html</loc></url>
+<url><loc>https://matteoce.github.io/barcodeMineR/reference/download_bold.html</loc></url>
+<url><loc>https://matteoce.github.io/barcodeMineR/reference/download_ncbi.html</loc></url>
+<url><loc>https://matteoce.github.io/barcodeMineR/reference/example_record.html</loc></url>
+<url><loc>https://matteoce.github.io/barcodeMineR/reference/example_sequence.html</loc></url>
+<url><loc>https://matteoce.github.io/barcodeMineR/reference/get_bold_taxonomy.html</loc></url>
+<url><loc>https://matteoce.github.io/barcodeMineR/reference/get_ncbi_taxonomy.html</loc></url>
+<url><loc>https://matteoce.github.io/barcodeMineR/reference/index.html</loc></url>
+<url><loc>https://matteoce.github.io/barcodeMineR/reference/loadBarcodeOre.html</loc></url>
+<url><loc>https://matteoce.github.io/barcodeMineR/reference/mergeBarcodeOres.html</loc></url>
+<url><loc>https://matteoce.github.io/barcodeMineR/reference/pipe.html</loc></url>
+<url><loc>https://matteoce.github.io/barcodeMineR/reference/plot_length.html</loc></url>
+<url><loc>https://matteoce.github.io/barcodeMineR/reference/plot_primers.html</loc></url>
+<url><loc>https://matteoce.github.io/barcodeMineR/reference/species200.html</loc></url>
 </urlset>
+
