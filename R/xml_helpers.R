@@ -345,6 +345,15 @@ extractRecordsTab <- function(feature_nodes, taxonomic_table) {
     pos_from <- XML_extract(feat, "location", "from")
     pos_to <- XML_extract(feat, "location", "to")
 
+    # in case multiple GBInterval qualifiers are available for the same source
+    # see HQ615872.1 for example, then multiple positions will be retrieved.
+    # remove duplicates and get entire sequence position:
+    if (any(duplicated(interval_accession))) {
+      interval_accession <- unique(interval_accession)
+      pos_from <- pos_from[1]
+      pos_to <- pos_to[length(pos_to)]
+    }
+
     # set the qualifiers to extract from the XML to get the records infos
     qualifiers <- c(
       "organism",
