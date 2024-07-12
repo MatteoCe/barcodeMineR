@@ -17,7 +17,7 @@ clean_taxonomy <- function(taxonomy_df) {
   # set binding visible variables
   queryName <- NULL
 
-  taxids <- unique(sort(taxonomy_df$taxid))
+  taxids <- unique(taxonomy_df$taxid)
 
   purrr::map(taxids, function(id) {
 
@@ -145,61 +145,56 @@ ncbi_id_extract <- function(search_list, db = "nucleotide", rate_xml, api_rate =
   if (purrr::some(search_list, is.list) &
       any(lapply(purrr::keep(search_list, is.list), function(search) {length(search)}) > 0)) {
 
-    searches <- purrr::keep(search_list, is.list) %>%
+    ids <- purrr::map(search_list, function(search) {
 
-      purrr::map(., function(search) if (length(search) > 0) {
+      if (is(search, "list")) {
+        if (length(search) > 0) {
 
-        search
+          splits <- web_history_splitter(search$count, 200)
 
-      }) %>% purrr::compact()
+          ncbi_limit_handler(splits, api_rate = api_rate, function(id) {
 
-    long_ids <- list()
+            split <- splits[id]
 
-    for (pos in 1:length(searches)) {
+            parameter <- web_history_parameter(split, search$count, 200)
 
-      search <- searches[[pos]]
+            sum <- rentrez::entrez_summary(db = db,
+                                           web_history = search$web_history,
+                                           retstart = parameter[[1]],
+                                           retmax = parameter[[2]])
 
-      splits <- web_history_splitter(search$count, 200)
+            # when the summary result is of class "esummary", it means that it refers
+            # to only one gi/uid number, thus names(sum) will not report the gi/uid number but
+            # the name of each element of the esummary record
+            if (all(class(sum) == c("esummary", "list"))) {
 
-        long_ids[[pos]] <- ncbi_limit_handler(splits, api_rate = api_rate, function(id) {
+              if (db == "taxonomy") {
+                return(sum$uid)
+              } else {
+                return(sum$gi)
+              }
 
-          split <- splits[id]
+            } else if (all(class(sum) == c("esummary_list", "list"))) {
 
-          parameter <- web_history_parameter(split, search$count, 200)
+              return(names(sum))
 
-          sum <- rentrez::entrez_summary(db = db,
-                                         web_history = search$web_history,
-                                         retstart = parameter[[1]],
-                                         retmax = parameter[[2]])
-
-          # when the summary result is of class "esummary", it means that it refers
-          # to only one gi/uid number, thus names(sum) will not report the gi/uid number but
-          # the name of each element of the esummary record
-          if (all(class(sum) == c("esummary", "list"))) {
-
-            if (db == "taxonomy") {
-              return(sum$uid)
             } else {
-              return(sum$gi)
+
+              stop("issue with esummary report in ncbi_limit_handler")
+
             }
 
-          } else if (all(class(sum) == c("esummary_list", "list"))) {
+          }, message = "Retrieving additional ids") %>% do.call(c, .)
 
-            return(names(sum))
+        } else {
+          return(NULL)
+        }
 
-          } else {
+      } else if (is(search, "character")) {
+        return(search)
+      }
 
-            stop("issue with esummary report in ncbi_limit_handler")
-
-          }
-
-        }, message = "Retrieving additional ids") %>% do.call(c, .)
-
-    }
-
-    long_ids <- do.call(c, long_ids)
-
-    ids <- c(do.call(c, purrr::keep(search_list, is.character)), long_ids)
+    }) %>% purrr::compact() %>% do.call(c, .)
 
   } else {
 
