@@ -101,7 +101,7 @@ function of 16.67 seconds:</p>
 <span><span class="va">specs</span> <span class="op">&lt;-</span> <span class="fu">barcodeMineR</span><span class="fu">::</span><span class="va"><a href="../reference/species200.html">species200</a></span></span>
 <span></span>
 <span><span class="va">tax</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_ncbi_taxonomy.html">get_ncbi_taxonomy</a></span><span class="op">(</span><span class="va">specs</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">50</span><span class="op">]</span>, ask <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
-<p>However, during the rendering of this vignettes, it executed in 46
+<p>However, during the rendering of this vignettes, it executed in 42
 seconds.</p>
 <p>This API rate value, which is the default for the <em>ncbi</em>
 functions of the <em>barcodeMineR</em> package, is, however, highly
@@ -122,7 +122,7 @@ when the internet connection is particularly unreliable. Including an
 NCBI API key approximately halves the execution time of the <a href="https://matteoce.github.io/barcodeMineR/reference/get_ncbi_taxonomy.html">get_ncbi_taxonomy</a>,
 when querying multiple species at once.</p>
 <p>The <em>get_ncbi_taxonomy</em> command previously executed takes
-about 23 seconds when run with an API_key.</p>
+about 19 seconds when run with an API_key.</p>
 <p>All ncbi functions of the <em>barcodeMineR</em> package would benefit
 from the inclusion of an API key, which increases speed of fast requests
 and reliability at long execution times.</p>
@@ -184,7 +184,7 @@ when searching more species at once). See the <em>tips</em> at the end
 of this vignette for more details.</p>
 <p>Now, the entire process of downloading <em>Euphausia superba</em>
 records will take sensibly less time than in “sequential”
-<em>future</em> plan, providing the final results after only 60 seconds,
+<em>future</em> plan, providing the final results after only 51 seconds,
 when executed with 8 cores in “multisession”.</p>
 </div>
 <div class="section level2">
