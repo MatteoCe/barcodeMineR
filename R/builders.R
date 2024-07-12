@@ -25,8 +25,8 @@ buildSequences <- function(accn, DNAString, selection_tab, skip.unknown.pos = TR
   } else {
 
     # extract gene_name and accession number from input accn
-    gene_name <- stringr::str_remove(string = accn, pattern = ".*\\|")
     accession <- stringr::str_remove(string = accn, pattern = "\\|.*")
+    gene_name <- stringr::str_remove(string = accn, pattern = paste0(stringr::str_replace(accession, "\\.", "\\\\."), "\\|"))
 
     # it is possible that a single records on the NCBI contains multiple copies
     # or "variants" of the same CDS (see https://doi.org/10.1093/mollus/eyw052)

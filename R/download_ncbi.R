@@ -180,7 +180,7 @@ download_ncbi <- function(ncbi_tax = NULL, ncbi_ids = NULL, rate_xml = 200, rate
 
       purrr::map_chr(., function(name) {
 
-        stringr::str_c(name[1], name[2], sep = "|")
+        stringr::str_c(name[1], stringr::str_flatten(name[-1], collapse = "|"), sep = "|")
 
       }) %>%
 
