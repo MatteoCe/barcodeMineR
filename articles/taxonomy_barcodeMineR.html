@@ -150,12 +150,12 @@ and subspecies:</p>
 <span><span class="co"># output:</span></span>
 <span><span class="va">additional_tax</span></span>
 <span><span class="co">#&gt;              queryName   taxid    rank        scientificName   phylum</span></span>
-<span><span class="co">#&gt; 1 unclassified Maldane 2066650 species Maldane sp. 2 GK-2017 Annelida</span></span>
-<span><span class="co">#&gt; 2 unclassified Maldane 2066661 species Maldane sp. 1 GK-2017 Annelida</span></span>
+<span><span class="co">#&gt; 1 unclassified Maldane 2066661 species Maldane sp. 1 GK-2017 Annelida</span></span>
+<span><span class="co">#&gt; 2 unclassified Maldane 2066650 species Maldane sp. 2 GK-2017 Annelida</span></span>
 <span><span class="co">#&gt; 3 unclassified Maldane  649691 species Maldane sp. CBCA-2009 Annelida</span></span>
 <span><span class="co">#&gt;        class order     family   genus               species</span></span>
-<span><span class="co">#&gt; 1 Polychaeta    NA Maldanidae Maldane Maldane sp. 2 GK-2017</span></span>
-<span><span class="co">#&gt; 2 Polychaeta    NA Maldanidae Maldane Maldane sp. 1 GK-2017</span></span>
+<span><span class="co">#&gt; 1 Polychaeta    NA Maldanidae Maldane Maldane sp. 1 GK-2017</span></span>
+<span><span class="co">#&gt; 2 Polychaeta    NA Maldanidae Maldane Maldane sp. 2 GK-2017</span></span>
 <span><span class="co">#&gt; 3 Polychaeta    NA Maldanidae Maldane Maldane sp. CBCA-2009</span></span></code></pre></div>
 <p>We could merge the two taxonomic tables and thus search all records
 corresponding to <em>Maldane sarsi</em>, <em>Maldane sarsi
@@ -206,17 +206,17 @@ species/subspecies we’re interested in. In this case, the base function
 <span></span>
 <span><span class="va">tax_maldane_all</span></span>
 <span><span class="co">#&gt;    queryName   taxid       rank            scientificName   phylum      class</span></span>
-<span><span class="co">#&gt; 2    Maldane 1931189 subspecies  Maldane sarsi antarctica Annelida Polychaeta</span></span>
-<span><span class="co">#&gt; 3    Maldane 2066649    species Maldane cf. sarsi GK-2017 Annelida Polychaeta</span></span>
-<span><span class="co">#&gt; 9    Maldane  273041    species             Maldane sarsi Annelida Polychaeta</span></span>
-<span><span class="co">#&gt; 13   Maldane  879538    species       Maldane sarsi CMC01 Annelida Polychaeta</span></span>
-<span><span class="co">#&gt; 14   Maldane  880914    species       Maldane sarsi CMC02 Annelida Polychaeta</span></span>
+<span><span class="co">#&gt; 6    Maldane 2066649    species Maldane cf. sarsi GK-2017 Annelida Polychaeta</span></span>
+<span><span class="co">#&gt; 7    Maldane 1931189 subspecies  Maldane sarsi antarctica Annelida Polychaeta</span></span>
+<span><span class="co">#&gt; 9    Maldane  880914    species       Maldane sarsi CMC02 Annelida Polychaeta</span></span>
+<span><span class="co">#&gt; 10   Maldane  879538    species       Maldane sarsi CMC01 Annelida Polychaeta</span></span>
+<span><span class="co">#&gt; 12   Maldane  273041    species             Maldane sarsi Annelida Polychaeta</span></span>
 <span><span class="co">#&gt;    order     family   genus                   species</span></span>
-<span><span class="co">#&gt; 2     NA Maldanidae Maldane             Maldane sarsi</span></span>
-<span><span class="co">#&gt; 3     NA Maldanidae Maldane Maldane cf. sarsi GK-2017</span></span>
-<span><span class="co">#&gt; 9     NA Maldanidae Maldane             Maldane sarsi</span></span>
-<span><span class="co">#&gt; 13    NA Maldanidae Maldane       Maldane sarsi CMC01</span></span>
-<span><span class="co">#&gt; 14    NA Maldanidae Maldane       Maldane sarsi CMC02</span></span></code></pre></div>
+<span><span class="co">#&gt; 6     NA Maldanidae Maldane Maldane cf. sarsi GK-2017</span></span>
+<span><span class="co">#&gt; 7     NA Maldanidae Maldane             Maldane sarsi</span></span>
+<span><span class="co">#&gt; 9     NA Maldanidae Maldane       Maldane sarsi CMC02</span></span>
+<span><span class="co">#&gt; 10    NA Maldanidae Maldane       Maldane sarsi CMC01</span></span>
+<span><span class="co">#&gt; 12    NA Maldanidae Maldane             Maldane sarsi</span></span></code></pre></div>
 <p>By merging this data frame with the one including all
 <em>unclassified Maldane</em> we can be confident to download most of
 the available <em>Maldane sarsi</em> records from the NCBI:</p>
