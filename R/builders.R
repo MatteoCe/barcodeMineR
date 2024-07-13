@@ -73,7 +73,7 @@ buildSequences <- function(accn, DNAString, selection_tab, skip.unknown.pos = TR
 
         stringr::str_detect(location, "^\\<[0-9]+$") ||
 
-        stringr::str_detect(location, "^[0-9]+\\>$") ||
+        stringr::str_detect(location, "^\\>[0-9]+$") ||
 
         # ... a site between two specific positions or ...
         stringr::str_detect(location, "[0-9]+\\^[0-9]+") ||
