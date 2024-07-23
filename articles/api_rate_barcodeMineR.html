@@ -42,6 +42,7 @@
       <ul class="navbar-nav me-auto">
 <li class="nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
 <li class="active nav-item"><a class="nav-link" href="../articles/index.html">Articles</a></li>
+<li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
       </ul>
 <ul class="navbar-nav">
 <li class="nav-item"><form class="form-inline" role="search">
@@ -69,8 +70,10 @@
 
     
     
-<p><strong>NOTE: This is a temporary GitHub repository created for
-testing purposes.</strong></p>
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/MatteoCe/barcodeMineR" class="external-link">barcodeMineR</a></span><span class="op">)</span></span></code></pre></div>
+<p><strong>NOTE: This package is still in development and awaiting for
+CRAN approval.</strong></p>
 <p>The time required to mine DNA barcodes from the NCBI nucleotide
 database depends on how many species/taxa are searched and how many
 records correspond to each taxa. Due to the structure of the
@@ -94,14 +97,14 @@ these analyses.</p>
 <p>For example, if we have a vector of 50 species, we can expect a
 theoretical execution time for the <a href="https://matteoce.github.io/barcodeMineR/reference/get_ncbi_taxonomy.html">get_ncbi_taxonomy</a>
 function of 16.67 seconds:</p>
-<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/MatteoCe/barcodeMineR" class="external-link">barcodeMineR</a></span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># extract example dataset with 200 species from the Ross Sea (Antarctica, Southern Ocean)</span></span>
 <span><span class="va">specs</span> <span class="op">&lt;-</span> <span class="fu">barcodeMineR</span><span class="fu">::</span><span class="va"><a href="../reference/species200.html">species200</a></span></span>
 <span></span>
 <span><span class="va">tax</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_ncbi_taxonomy.html">get_ncbi_taxonomy</a></span><span class="op">(</span><span class="va">specs</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">50</span><span class="op">]</span>, ask <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
-<p>However, during the rendering of this vignettes, it executed in 42
+<p>However, during the rendering of this vignettes, it executed in 43
 seconds.</p>
 <p>This API rate value, which is the default for the <em>ncbi</em>
 functions of the <em>barcodeMineR</em> package, is, however, highly
@@ -114,7 +117,7 @@ key, the user can send up to 10 requests per second to the NCBI.</p>
 <p>This can be done “externally”, in respect to the
 <em>barcodeMineR</em> functions, following the <a href="https://cran.r-project.org/web/packages/rentrez/vignettes/rentrez_tutorial.html#rate-limiting-and-api-keys" class="external-link">rentrez
 documentation</a>, specifically with this function:</p>
-<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">set_entrez_key</span><span class="op">(</span><span class="st">"ABCD123"</span><span class="op">)</span></span></code></pre></div>
 <p>By setting an NCBI account, the user assures that requests that don’t
 take much time can be executed even faster, and avoid excessive blocking
@@ -122,7 +125,7 @@ when the internet connection is particularly unreliable. Including an
 NCBI API key approximately halves the execution time of the <a href="https://matteoce.github.io/barcodeMineR/reference/get_ncbi_taxonomy.html">get_ncbi_taxonomy</a>,
 when querying multiple species at once.</p>
 <p>The <em>get_ncbi_taxonomy</em> command previously executed takes
-about 19 seconds when run with an API_key.</p>
+about half the time reported above when run with an API_key.</p>
 <p>All ncbi functions of the <em>barcodeMineR</em> package would benefit
 from the inclusion of an API key, which increases speed of fast requests
 and reliability at long execution times.</p>
@@ -132,16 +135,16 @@ and reliability at long execution times.</p>
 </h2>
 <p>One of the main advantages of the <strong>barcodeMineR</strong>
 package consists in the capacity to adopt the asynchronous parallelizing
-framework of the <a href="https://github.com/HenrikBengtsson/future" class="external-link">future</a> package to
+framework of the <a href="https://github.com/HenrikBengtsson/future" class="external-link">future package</a> to
 speed up the download of records from the NCBI repository.</p>
 <p>The execution time of the <a href="https://matteoce.github.io/barcodeMineR/reference/download_ncbi.html">download_ncbi</a>
 function depends on how many records correspond to each single
 species/taxa on the NCBI nucleotide database.</p>
 <p>For example, if we wanted to search for all records corresponding to
 the Antarctic krill species <em>Euphausia superba</em>, we could expect
-to download 1584 records, after an execution time of approximately 2.28
+to download 1584 records, after an execution time of approximately 1.75
 minutes, for the function <em>download_ncbi</em>.</p>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">tax</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_ncbi_taxonomy.html">get_ncbi_taxonomy</a></span><span class="op">(</span><span class="st">"Euphausia superba"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># the execution time refers to the function below only</span></span>
@@ -157,12 +160,12 @@ of the previous request.</p>
 <p>We can setup the <em>future</em> framework using its <a href="https://future.futureverse.org/articles/future-1-overview.html" class="external-link">functions</a>.
 Here, we’re setting up the “multisession” plan using all available cores
 from our machine:</p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">future</span><span class="fu">::</span><span class="fu"><a href="https://future.futureverse.org/reference/plan.html" class="external-link">plan</a></span><span class="op">(</span><span class="st">"multisession"</span><span class="op">)</span></span></code></pre></div>
 <p>You can specify the number of cores using the <em>workers</em>
 argument, and check how many cores are available using the following
 command:</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">future</span><span class="fu">::</span><span class="fu"><a href="https://parallelly.futureverse.org/reference/availableCores.html" class="external-link">availableCores</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">#&gt; system </span></span>
 <span><span class="co">#&gt;      4</span></span></code></pre></div>
@@ -184,7 +187,7 @@ when searching more species at once). See the <em>tips</em> at the end
 of this vignette for more details.</p>
 <p>Now, the entire process of downloading <em>Euphausia superba</em>
 records will take sensibly less time than in “sequential”
-<em>future</em> plan, providing the final results after only 47 seconds,
+<em>future</em> plan, providing the final results after only 55 seconds,
 when executed with 8 cores in “multisession”.</p>
 </div>
 <div class="section level2">
@@ -274,7 +277,7 @@ relying on another beautiful package, the <a href="https://github.com/HenrikBeng
 package. As for the <em>future</em> package, we don’t need to supply
 specific arguments to the <em>barcodeMineR</em> functions to activate
 it, but we can do it “externally”:</p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">progressr</span><span class="fu">::</span><span class="fu"><a href="https://progressr.futureverse.org/reference/handlers.html" class="external-link">handlers</a></span><span class="op">(</span>global<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span>
 <span><span class="fu">progressr</span><span class="fu">::</span><span class="fu"><a href="https://progressr.futureverse.org/reference/handlers.html" class="external-link">handlers</a></span><span class="op">(</span><span class="st">"progress"</span><span class="op">)</span></span></code></pre></div>
 <p>Now, a progress bar will appear while downloading records, and
@@ -296,7 +299,7 @@ significantly improve the speed.</p>
 <p>Below, the execution time of the function <em>get_ncbi_taxonomy</em>,
 at different <em>future</em> plans is shown, revealing how most of the
 improvement is observed after including the NCBI API key:</p>
-<p><img src="api_rate_barcodeMineR_files/figure-html/unnamed-chunk-12-1.png" width="700"></p>
+<p><img src="api_rate_barcodeMineR_files/figure-html/unnamed-chunk-11-1.png" width="700"></p>
 <ul>
 <li>Multisession and <em>download_ncbi</em>:</li>
 </ul>
@@ -313,7 +316,7 @@ more than 50 species.</p>
 any mode as much as the <em>multisession</em> plan does. However, it is
 suggested to include the key, if possible, as it reduces the risks of
 blocking and slightly improves speed.
-<img src="api_rate_barcodeMineR_files/figure-html/unnamed-chunk-13-1.png" width="700"></p>
+<img src="api_rate_barcodeMineR_files/figure-html/unnamed-chunk-12-1.png" width="700"></p>
 </div>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
@@ -323,7 +326,7 @@ blocking and slightly improves speed.
 
 
     <footer><div class="pkgdown-footer-left">
-  <p>Developed by Matteo Cecchetto.</p>
+  <p>Developed by Matteo Cecchetto, Stefano Schiaparelli.</p>
 </div>
 
 <div class="pkgdown-footer-right">

@@ -42,6 +42,7 @@
       <ul class="navbar-nav me-auto">
 <li class="nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
 <li class="active nav-item"><a class="nav-link" href="../articles/index.html">Articles</a></li>
+<li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
       </ul>
 <ul class="navbar-nav">
 <li class="nav-item"><form class="form-inline" role="search">
@@ -69,8 +70,10 @@
 
     
     
-<p><strong>NOTE: This is a temporary GitHub repository created for
-testing purposes.</strong></p>
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/MatteoCe/barcodeMineR" class="external-link">barcodeMineR</a></span><span class="op">)</span></span></code></pre></div>
+<p><strong>NOTE: This package is still in development and awaiting for
+CRAN approval.</strong></p>
 <p>As mentioned in the <a href="https://matteoce.github.io/barcodeMineR/articles/intro_barcodeMineR.html">introductory
 vignette</a>, the basic usage of the <strong>barcodeMineR</strong>
 package consists in the adoption of two types of functions that must be
@@ -99,7 +102,7 @@ two functions’ usage.</p>
 <em>get_ncbi_taxonomy</em> function, will retrieve all NCBI records
 corresponding to the species <em>Maldane sarsi</em>, excluding records
 identified as a subspecies:</p>
-<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">tax_maldane</span></span>
 <span><span class="co">#&gt;       queryName  taxid    rank scientificName   phylum      class order</span></span>
 <span><span class="co">#&gt; 1 Maldane sarsi 273041 species  Maldane sarsi Annelida Polychaeta    NA</span></span>
@@ -114,7 +117,7 @@ identified as a subspecies:</p>
 need to include all species and subspecies in the taxonomy data frame.
 This is done by default, when searching a species, if the <em>ask</em>
 argument is set to FALSE:</p>
-<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">tax_maldane</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_ncbi_taxonomy.html">get_ncbi_taxonomy</a></span><span class="op">(</span><span class="st">"Maldane sarsi"</span>, ask <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># the taxonomy table now includes both species and subspecies:</span></span>
@@ -130,7 +133,7 @@ taxonomic rank to include in the final output.</p>
 <p>Running the <em>download_ncbi</em> function will search all the
 records with <em>Maldane sarsi</em> and <em>Maldane sarsi
 antarctica</em> as the lowest taxonomic identification.</p>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">maldane_rec</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/download_ncbi.html">download_ncbi</a></span><span class="op">(</span><span class="va">tax_maldane</span>, ask <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># the output now include two more records</span></span>
@@ -143,9 +146,9 @@ records identified only at the genus level, in case they include highly
 similar sequences that we could use in our analyses. To do this, we
 could search for <em>“unclassified Maldane”</em> and retain all species
 and subspecies:</p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">additional_tax</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_ncbi_taxonomy.html">get_ncbi_taxonomy</a></span><span class="op">(</span><span class="st">"unclassified Maldane"</span><span class="op">)</span></span></code></pre></div>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">additional_tax</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_ncbi_taxonomy.html">get_ncbi_taxonomy</a></span><span class="op">(</span><span class="st">"unclassified Maldane"</span><span class="op">)</span></span></code></pre></div>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># after selecting only the ranks "species" and "subspecies" this is the final </span></span>
 <span><span class="co"># output:</span></span>
 <span><span class="va">additional_tax</span></span>
@@ -161,7 +164,7 @@ and subspecies:</p>
 corresponding to <em>Maldane sarsi</em>, <em>Maldane sarsi
 antarctica</em> plus <em>Maldane sp. 1 GK-2017</em> and <em>Maldane sp.
 2 GK-2017</em> and <em>Maldane sp. CBCA-2009</em>:</p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">final_tax</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">rbind</a></span><span class="op">(</span><span class="va">tax_maldane</span>, <span class="va">additional_tax</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="../reference/download_ncbi.html">download_ncbi</a></span><span class="op">(</span><span class="va">final_tax</span>, ask <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
@@ -197,7 +200,7 @@ antarctica</em> plus <em>Maldane sp. 1 GK-2017</em> and <em>Maldane sp.
 could simply search the genus <em>Maldane</em> and actively select the
 species/subspecies we’re interested in. In this case, the base function
 <em>grep</em> might come in handy:</p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">tax_maldane</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_ncbi_taxonomy.html">get_ncbi_taxonomy</a></span><span class="op">(</span><span class="st">"Maldane"</span>, ask <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># actively filter all records including the strings "Maldane" and "sarsi" in the</span></span>
@@ -220,7 +223,7 @@ species/subspecies we’re interested in. In this case, the base function
 <p>By merging this data frame with the one including all
 <em>unclassified Maldane</em> we can be confident to download most of
 the available <em>Maldane sarsi</em> records from the NCBI:</p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">all_maldane</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">rbind</a></span><span class="op">(</span><span class="va">tax_maldane_all</span>, <span class="va">additional_tax</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">ncbi_maldane</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/download_ncbi.html">download_ncbi</a></span><span class="op">(</span><span class="va">all_maldane</span>, ask <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
@@ -253,7 +256,7 @@ the available <em>Maldane sarsi</em> records from the NCBI:</p>
 follows the same mechanism. In order to obtain all <em>Clione
 antarctica</em> records, we first need to get the corresponding taxonomy
 data frame:</p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># this taxonomy table will retrieve all "Clione antarctica" records </span></span>
 <span><span class="va">tax_clione</span></span>
 <span><span class="co">#&gt;           queryName  taxid             taxon    rank records</span></span>
@@ -266,7 +269,7 @@ case any subspecies of <em>Clione antarctica</em>. The function
 <em>get_bold_taxonomy</em> automatically searches for downstream
 taxonomies, thanks to the default setting of the <em>descend</em>
 argument.</p>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">tax_clione_anta</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_bold_taxonomy.html">get_bold_taxonomy</a></span><span class="op">(</span><span class="st">"Clione antarctica"</span>, descend <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">rec_clione</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/download_bold.html">download_bold</a></span><span class="op">(</span><span class="va">tax_clione_anta</span>, ask <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
@@ -290,7 +293,7 @@ only.</p>
 <p>To increase the recovery of records potentially related to <em>Clione
 antarctica</em>, we can also search for the genus <em>Clione</em> and
 download all the records identified up to the genus level:</p>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">tax_clione</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_bold_taxonomy.html">get_bold_taxonomy</a></span><span class="op">(</span><span class="st">"Clione"</span>, descend <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">rec_clione</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/download_bold.html">download_bold</a></span><span class="op">(</span><span class="va">tax_clione</span>, ask <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
@@ -298,13 +301,13 @@ download all the records identified up to the genus level:</p>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 8 × 30</span></span></span>
 <span><span class="co">#&gt;   recordID    markerCode DNA_seq  phylum class order family genus species source</span></span>
 <span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;DNA&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> QHAK1223-22 COI-5P     <span style="color: #BB0000; font-weight: bold;">A</span><span style="color: #00BB00; font-weight: bold;">C</span><span style="color: #BB0000; font-weight: bold;">AA</span><span style="color: #BBBB00; font-weight: bold;">GG</span><span style="color: #BB0000; font-weight: bold;">A</span>… Mollu… Gast… Pter… Clion… Clio… <span style="color: #BB0000;">NA</span>      BOLD  </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> BHAK2663-20 COI-5P     <span style="color: #BBBB00; font-weight: bold;">G</span><span style="color: #BB0000; font-weight: bold;">A</span><span style="color: #00BB00; font-weight: bold;">C</span><span style="color: #0000BB; font-weight: bold;">T</span><span style="color: #00BB00; font-weight: bold;">C</span><span style="color: #0000BB; font-weight: bold;">TT</span>… Mollu… Gast… Pter… Clion… Clio… <span style="color: #BB0000;">NA</span>      BOLD  </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> QHAK1237-22 COI-5P     <span style="color: #BBBB00; font-weight: bold;">G</span><span style="color: #BB0000; font-weight: bold;">A</span><span style="color: #00BB00; font-weight: bold;">C</span><span style="color: #0000BB; font-weight: bold;">T</span><span style="color: #00BB00; font-weight: bold;">C</span><span style="color: #0000BB; font-weight: bold;">TT</span>… Mollu… Gast… Pter… Clion… Clio… <span style="color: #BB0000;">NA</span>      BOLD  </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span> QHAK1263-22 COI-5P     <span style="color: #BBBB00; font-weight: bold;">G</span><span style="color: #BB0000; font-weight: bold;">A</span><span style="color: #00BB00; font-weight: bold;">C</span><span style="color: #0000BB; font-weight: bold;">T</span><span style="color: #00BB00; font-weight: bold;">C</span><span style="color: #0000BB; font-weight: bold;">TT</span>… Mollu… Gast… Pter… Clion… Clio… <span style="color: #BB0000;">NA</span>      BOLD  </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">5</span> QHAK1267-22 COI-5P     <span style="color: #BBBB00; font-weight: bold;">G</span><span style="color: #BB0000; font-weight: bold;">A</span><span style="color: #00BB00; font-weight: bold;">C</span><span style="color: #0000BB; font-weight: bold;">T</span><span style="color: #00BB00; font-weight: bold;">C</span><span style="color: #0000BB; font-weight: bold;">TT</span>… Mollu… Gast… Pter… Clion… Clio… <span style="color: #BB0000;">NA</span>      BOLD  </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">6</span> QHAK1446-22 COI-5P     <span style="color: #BBBB00; font-weight: bold;">G</span><span style="color: #BB0000; font-weight: bold;">A</span><span style="color: #00BB00; font-weight: bold;">C</span><span style="color: #0000BB; font-weight: bold;">T</span><span style="color: #00BB00; font-weight: bold;">C</span><span style="color: #0000BB; font-weight: bold;">TT</span>… Mollu… Gast… Pter… Clion… Clio… <span style="color: #BB0000;">NA</span>      BOLD  </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">7</span> QHAK1466-22 COI-5P     <span style="color: #BBBB00; font-weight: bold;">G</span><span style="color: #BB0000; font-weight: bold;">A</span><span style="color: #00BB00; font-weight: bold;">C</span><span style="color: #0000BB; font-weight: bold;">T</span><span style="color: #00BB00; font-weight: bold;">C</span><span style="color: #0000BB; font-weight: bold;">TT</span>… Mollu… Gast… Pter… Clion… Clio… <span style="color: #BB0000;">NA</span>      BOLD  </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> QHAK1237-22 COI-5P     <span style="color: #BBBB00; font-weight: bold;">G</span><span style="color: #BB0000; font-weight: bold;">A</span><span style="color: #00BB00; font-weight: bold;">C</span><span style="color: #0000BB; font-weight: bold;">T</span><span style="color: #00BB00; font-weight: bold;">C</span><span style="color: #0000BB; font-weight: bold;">TT</span>… Mollu… Gast… Pter… Clion… Clio… <span style="color: #BB0000;">NA</span>      BOLD  </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> QHAK1466-22 COI-5P     <span style="color: #BBBB00; font-weight: bold;">G</span><span style="color: #BB0000; font-weight: bold;">A</span><span style="color: #00BB00; font-weight: bold;">C</span><span style="color: #0000BB; font-weight: bold;">T</span><span style="color: #00BB00; font-weight: bold;">C</span><span style="color: #0000BB; font-weight: bold;">TT</span>… Mollu… Gast… Pter… Clion… Clio… <span style="color: #BB0000;">NA</span>      BOLD  </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> QHAK1223-22 COI-5P     <span style="color: #BB0000; font-weight: bold;">A</span><span style="color: #00BB00; font-weight: bold;">C</span><span style="color: #BB0000; font-weight: bold;">AA</span><span style="color: #BBBB00; font-weight: bold;">GG</span><span style="color: #BB0000; font-weight: bold;">A</span>… Mollu… Gast… Pter… Clion… Clio… <span style="color: #BB0000;">NA</span>      BOLD  </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span> BHAK2663-20 COI-5P     <span style="color: #BBBB00; font-weight: bold;">G</span><span style="color: #BB0000; font-weight: bold;">A</span><span style="color: #00BB00; font-weight: bold;">C</span><span style="color: #0000BB; font-weight: bold;">T</span><span style="color: #00BB00; font-weight: bold;">C</span><span style="color: #0000BB; font-weight: bold;">TT</span>… Mollu… Gast… Pter… Clion… Clio… <span style="color: #BB0000;">NA</span>      BOLD  </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">5</span> QHAK1263-22 COI-5P     <span style="color: #BBBB00; font-weight: bold;">G</span><span style="color: #BB0000; font-weight: bold;">A</span><span style="color: #00BB00; font-weight: bold;">C</span><span style="color: #0000BB; font-weight: bold;">T</span><span style="color: #00BB00; font-weight: bold;">C</span><span style="color: #0000BB; font-weight: bold;">TT</span>… Mollu… Gast… Pter… Clion… Clio… <span style="color: #BB0000;">NA</span>      BOLD  </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">6</span> QHAK1267-22 COI-5P     <span style="color: #BBBB00; font-weight: bold;">G</span><span style="color: #BB0000; font-weight: bold;">A</span><span style="color: #00BB00; font-weight: bold;">C</span><span style="color: #0000BB; font-weight: bold;">T</span><span style="color: #00BB00; font-weight: bold;">C</span><span style="color: #0000BB; font-weight: bold;">TT</span>… Mollu… Gast… Pter… Clion… Clio… <span style="color: #BB0000;">NA</span>      BOLD  </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">7</span> QHAK1446-22 COI-5P     <span style="color: #BBBB00; font-weight: bold;">G</span><span style="color: #BB0000; font-weight: bold;">A</span><span style="color: #00BB00; font-weight: bold;">C</span><span style="color: #0000BB; font-weight: bold;">T</span><span style="color: #00BB00; font-weight: bold;">C</span><span style="color: #0000BB; font-weight: bold;">TT</span>… Mollu… Gast… Pter… Clion… Clio… <span style="color: #BB0000;">NA</span>      BOLD  </span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">8</span> QHAK3063-23 COI-5P     <span style="color: #BBBB00; font-weight: bold;">G</span><span style="color: #BB0000; font-weight: bold;">A</span><span style="color: #00BB00; font-weight: bold;">C</span><span style="color: #0000BB; font-weight: bold;">T</span><span style="color: #00BB00; font-weight: bold;">C</span><span style="color: #0000BB; font-weight: bold;">TT</span>… Mollu… Gast… Pter… Clion… Clio… <span style="color: #BB0000;">NA</span>      BOLD  </span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># ℹ 20 more variables: lat &lt;dbl&gt;, lon &lt;dbl&gt;, lengthGene &lt;int&gt;, sampleID &lt;chr&gt;,</span></span></span>
 <span><span class="co">#&gt; <span style="color: #949494;">#   QueryName &lt;chr&gt;, identified_by &lt;chr&gt;, taxNotes &lt;lgl&gt;, db_xref &lt;chr&gt;,</span></span></span>
@@ -318,7 +321,7 @@ thus, if we wanted to recover all records potentially belonging to the
 unidentified <em>Clione</em> records together with those identified as
 <em>Clione antarctica</em>. Ideally, this would be the simplest
 approach:</p>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">final_tax</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_bold_taxonomy.html">get_bold_taxonomy</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Clione"</span>, <span class="st">"Clione antarctica"</span><span class="op">)</span>, descend <span class="op">=</span> <span class="cn">FALSE</span>, ask <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">rec_clione</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/download_bold.html">download_bold</a></span><span class="op">(</span><span class="va">final_tax</span>, ask <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
@@ -326,23 +329,23 @@ approach:</p>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 17 × 30</span></span></span>
 <span><span class="co">#&gt;    recordID    markerCode DNA_seq phylum class order family genus species source</span></span>
 <span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;DNA&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> QHAK1223-22 COI-5P     <span style="color: #BB0000; font-weight: bold;">A</span><span style="color: #00BB00; font-weight: bold;">C</span><span style="color: #BB0000; font-weight: bold;">AA</span><span style="color: #BBBB00; font-weight: bold;">GG</span>… Mollu… Gast… Pter… Clion… Clio… <span style="color: #BB0000;">NA</span>      BOLD  </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span> BHAK2663-20 COI-5P     <span style="color: #BBBB00; font-weight: bold;">G</span><span style="color: #BB0000; font-weight: bold;">A</span><span style="color: #00BB00; font-weight: bold;">C</span><span style="color: #0000BB; font-weight: bold;">T</span><span style="color: #00BB00; font-weight: bold;">C</span><span style="color: #0000BB; font-weight: bold;">T</span>… Mollu… Gast… Pter… Clion… Clio… <span style="color: #BB0000;">NA</span>      BOLD  </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span> QHAK1237-22 COI-5P     <span style="color: #BBBB00; font-weight: bold;">G</span><span style="color: #BB0000; font-weight: bold;">A</span><span style="color: #00BB00; font-weight: bold;">C</span><span style="color: #0000BB; font-weight: bold;">T</span><span style="color: #00BB00; font-weight: bold;">C</span><span style="color: #0000BB; font-weight: bold;">T</span>… Mollu… Gast… Pter… Clion… Clio… <span style="color: #BB0000;">NA</span>      BOLD  </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span> QHAK1263-22 COI-5P     <span style="color: #BBBB00; font-weight: bold;">G</span><span style="color: #BB0000; font-weight: bold;">A</span><span style="color: #00BB00; font-weight: bold;">C</span><span style="color: #0000BB; font-weight: bold;">T</span><span style="color: #00BB00; font-weight: bold;">C</span><span style="color: #0000BB; font-weight: bold;">T</span>… Mollu… Gast… Pter… Clion… Clio… <span style="color: #BB0000;">NA</span>      BOLD  </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span> QHAK1267-22 COI-5P     <span style="color: #BBBB00; font-weight: bold;">G</span><span style="color: #BB0000; font-weight: bold;">A</span><span style="color: #00BB00; font-weight: bold;">C</span><span style="color: #0000BB; font-weight: bold;">T</span><span style="color: #00BB00; font-weight: bold;">C</span><span style="color: #0000BB; font-weight: bold;">T</span>… Mollu… Gast… Pter… Clion… Clio… <span style="color: #BB0000;">NA</span>      BOLD  </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span> QHAK1446-22 COI-5P     <span style="color: #BBBB00; font-weight: bold;">G</span><span style="color: #BB0000; font-weight: bold;">A</span><span style="color: #00BB00; font-weight: bold;">C</span><span style="color: #0000BB; font-weight: bold;">T</span><span style="color: #00BB00; font-weight: bold;">C</span><span style="color: #0000BB; font-weight: bold;">T</span>… Mollu… Gast… Pter… Clion… Clio… <span style="color: #BB0000;">NA</span>      BOLD  </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span> QHAK1466-22 COI-5P     <span style="color: #BBBB00; font-weight: bold;">G</span><span style="color: #BB0000; font-weight: bold;">A</span><span style="color: #00BB00; font-weight: bold;">C</span><span style="color: #0000BB; font-weight: bold;">T</span><span style="color: #00BB00; font-weight: bold;">C</span><span style="color: #0000BB; font-weight: bold;">T</span>… Mollu… Gast… Pter… Clion… Clio… <span style="color: #BB0000;">NA</span>      BOLD  </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> QHAK1237-22 COI-5P     <span style="color: #BBBB00; font-weight: bold;">G</span><span style="color: #BB0000; font-weight: bold;">A</span><span style="color: #00BB00; font-weight: bold;">C</span><span style="color: #0000BB; font-weight: bold;">T</span><span style="color: #00BB00; font-weight: bold;">C</span><span style="color: #0000BB; font-weight: bold;">T</span>… Mollu… Gast… Pter… Clion… Clio… <span style="color: #BB0000;">NA</span>      BOLD  </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span> QHAK1466-22 COI-5P     <span style="color: #BBBB00; font-weight: bold;">G</span><span style="color: #BB0000; font-weight: bold;">A</span><span style="color: #00BB00; font-weight: bold;">C</span><span style="color: #0000BB; font-weight: bold;">T</span><span style="color: #00BB00; font-weight: bold;">C</span><span style="color: #0000BB; font-weight: bold;">T</span>… Mollu… Gast… Pter… Clion… Clio… <span style="color: #BB0000;">NA</span>      BOLD  </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span> QHAK1223-22 COI-5P     <span style="color: #BB0000; font-weight: bold;">A</span><span style="color: #00BB00; font-weight: bold;">C</span><span style="color: #BB0000; font-weight: bold;">AA</span><span style="color: #BBBB00; font-weight: bold;">GG</span>… Mollu… Gast… Pter… Clion… Clio… <span style="color: #BB0000;">NA</span>      BOLD  </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span> BHAK2663-20 COI-5P     <span style="color: #BBBB00; font-weight: bold;">G</span><span style="color: #BB0000; font-weight: bold;">A</span><span style="color: #00BB00; font-weight: bold;">C</span><span style="color: #0000BB; font-weight: bold;">T</span><span style="color: #00BB00; font-weight: bold;">C</span><span style="color: #0000BB; font-weight: bold;">T</span>… Mollu… Gast… Pter… Clion… Clio… <span style="color: #BB0000;">NA</span>      BOLD  </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span> QHAK1263-22 COI-5P     <span style="color: #BBBB00; font-weight: bold;">G</span><span style="color: #BB0000; font-weight: bold;">A</span><span style="color: #00BB00; font-weight: bold;">C</span><span style="color: #0000BB; font-weight: bold;">T</span><span style="color: #00BB00; font-weight: bold;">C</span><span style="color: #0000BB; font-weight: bold;">T</span>… Mollu… Gast… Pter… Clion… Clio… <span style="color: #BB0000;">NA</span>      BOLD  </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span> QHAK1267-22 COI-5P     <span style="color: #BBBB00; font-weight: bold;">G</span><span style="color: #BB0000; font-weight: bold;">A</span><span style="color: #00BB00; font-weight: bold;">C</span><span style="color: #0000BB; font-weight: bold;">T</span><span style="color: #00BB00; font-weight: bold;">C</span><span style="color: #0000BB; font-weight: bold;">T</span>… Mollu… Gast… Pter… Clion… Clio… <span style="color: #BB0000;">NA</span>      BOLD  </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span> QHAK1446-22 COI-5P     <span style="color: #BBBB00; font-weight: bold;">G</span><span style="color: #BB0000; font-weight: bold;">A</span><span style="color: #00BB00; font-weight: bold;">C</span><span style="color: #0000BB; font-weight: bold;">T</span><span style="color: #00BB00; font-weight: bold;">C</span><span style="color: #0000BB; font-weight: bold;">T</span>… Mollu… Gast… Pter… Clion… Clio… <span style="color: #BB0000;">NA</span>      BOLD  </span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> QHAK3063-23 COI-5P     <span style="color: #BBBB00; font-weight: bold;">G</span><span style="color: #BB0000; font-weight: bold;">A</span><span style="color: #00BB00; font-weight: bold;">C</span><span style="color: #0000BB; font-weight: bold;">T</span><span style="color: #00BB00; font-weight: bold;">C</span><span style="color: #0000BB; font-weight: bold;">T</span>… Mollu… Gast… Pter… Clion… Clio… <span style="color: #BB0000;">NA</span>      BOLD  </span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> CAOII309-09 COI-5P     ------… Mollu… Gast… Pter… Clion… Clio… Clione… BOLD  </span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> CMARA044-09 COI-5P     ------… Mollu… Gast… Pter… Clion… Clio… Clione… BOLD  </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">11</span> GBMLG18681… COI-5P     <span style="color: #BBBB00; font-weight: bold;">G</span><span style="color: #0000BB; font-weight: bold;">T</span><span style="color: #BB0000; font-weight: bold;">A</span><span style="color: #BBBB00; font-weight: bold;">GG</span><span style="color: #00BB00; font-weight: bold;">C</span>… Mollu… Gast… Pter… Clion… Clio… Clione… BOLD  </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">12</span> GBMLG18683… COI-5P     <span style="color: #BBBB00; font-weight: bold;">G</span><span style="color: #0000BB; font-weight: bold;">T</span><span style="color: #BB0000; font-weight: bold;">A</span><span style="color: #BBBB00; font-weight: bold;">GG</span><span style="color: #00BB00; font-weight: bold;">C</span>… Mollu… Gast… Pter… Clion… Clio… Clione… BOLD  </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">13</span> CAOII308-09 COI-5P     ------… Mollu… Gast… Pter… Clion… Clio… Clione… BOLD  </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">11</span> GBMLG17117… COI-5P     <span style="color: #0000BB; font-weight: bold;">TT</span><span style="color: #BBBB00; font-weight: bold;">G</span><span style="color: #0000BB; font-weight: bold;">TTT</span>… Mollu… Gast… Pter… Clion… Clio… Clione… BOLD  </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">12</span> GBMLG18682… COI-5P     <span style="color: #BBBB00; font-weight: bold;">G</span><span style="color: #0000BB; font-weight: bold;">T</span><span style="color: #BB0000; font-weight: bold;">A</span><span style="color: #BBBB00; font-weight: bold;">GG</span><span style="color: #00BB00; font-weight: bold;">C</span>… Mollu… Gast… Pter… Clion… Clio… Clione… BOLD  </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">13</span> GBMLG18683… COI-5P     <span style="color: #BBBB00; font-weight: bold;">G</span><span style="color: #0000BB; font-weight: bold;">T</span><span style="color: #BB0000; font-weight: bold;">A</span><span style="color: #BBBB00; font-weight: bold;">GG</span><span style="color: #00BB00; font-weight: bold;">C</span>… Mollu… Gast… Pter… Clion… Clio… Clione… BOLD  </span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">14</span> CAOII310-09 COI-5P     ------… Mollu… Gast… Pter… Clion… Clio… Clione… BOLD  </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">15</span> CAOII311-09 COI-5P     ------… Mollu… Gast… Pter… Clion… Clio… Clione… BOLD  </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">16</span> GBMLG17117… COI-5P     <span style="color: #0000BB; font-weight: bold;">TT</span><span style="color: #BBBB00; font-weight: bold;">G</span><span style="color: #0000BB; font-weight: bold;">TTT</span>… Mollu… Gast… Pter… Clion… Clio… Clione… BOLD  </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">17</span> GBMLG18682… COI-5P     <span style="color: #BBBB00; font-weight: bold;">G</span><span style="color: #0000BB; font-weight: bold;">T</span><span style="color: #BB0000; font-weight: bold;">A</span><span style="color: #BBBB00; font-weight: bold;">GG</span><span style="color: #00BB00; font-weight: bold;">C</span>… Mollu… Gast… Pter… Clion… Clio… Clione… BOLD  </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">15</span> GBMLG18681… COI-5P     <span style="color: #BBBB00; font-weight: bold;">G</span><span style="color: #0000BB; font-weight: bold;">T</span><span style="color: #BB0000; font-weight: bold;">A</span><span style="color: #BBBB00; font-weight: bold;">GG</span><span style="color: #00BB00; font-weight: bold;">C</span>… Mollu… Gast… Pter… Clion… Clio… Clione… BOLD  </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">16</span> CAOII308-09 COI-5P     ------… Mollu… Gast… Pter… Clion… Clio… Clione… BOLD  </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">17</span> CAOII311-09 COI-5P     ------… Mollu… Gast… Pter… Clion… Clio… Clione… BOLD  </span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># ℹ 20 more variables: lat &lt;dbl&gt;, lon &lt;dbl&gt;, lengthGene &lt;int&gt;, sampleID &lt;chr&gt;,</span></span></span>
 <span><span class="co">#&gt; <span style="color: #949494;">#   QueryName &lt;chr&gt;, identified_by &lt;chr&gt;, taxNotes &lt;lgl&gt;, db_xref &lt;chr&gt;,</span></span></span>
 <span><span class="co">#&gt; <span style="color: #949494;">#   sourceID &lt;chr&gt;, NCBI_ID &lt;chr&gt;, institutionStoring &lt;chr&gt;,</span></span></span>
@@ -385,7 +388,7 @@ to children taxonomies that are not present in the taxonomy table
 provided, i.e. the output of the previous <em>get_bold_taxonomy</em>.
 This can be achieved by setting the argument <em>filter</em> to
 FALSE:</p>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># get taxonomic table of the genus Clione</span></span>
 <span><span class="va">tax</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_bold_taxonomy.html">get_bold_taxonomy</a></span><span class="op">(</span><span class="st">"Clione"</span>, descend <span class="op">=</span> <span class="cn">FALSE</span>, ask <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
 <span></span>
@@ -401,7 +404,7 @@ FALSE:</p>
 
 
     <footer><div class="pkgdown-footer-left">
-  <p>Developed by Matteo Cecchetto.</p>
+  <p>Developed by Matteo Cecchetto, Stefano Schiaparelli.</p>
 </div>
 
 <div class="pkgdown-footer-right">
