@@ -49,6 +49,7 @@ test_that("mergeBarcodeOres works", {
 })
 
 test_that("plot functions work", {
+  testthat::skip_if_not_installed(c("ggplot2", "ggridges"))
 
   x1 <- plot_length(rec_ncbi)
   x2 <- plot_primers(rec_ncbi)

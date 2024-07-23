@@ -15,8 +15,11 @@ knitr::opts_chunk$set(
   comment = "#>"
 )
 ```
+```{r setup}
+library(barcodeMineR)
+```
 
-**NOTE: This is a temporary GitHub repository created for testing purposes.**
+**NOTE: This package is still in development and awaiting for CRAN approval.**
 
 As mentioned in the [introductory vignette](https://matteoce.github.io/barcodeMineR/articles/intro_barcodeMineR.html), the basic usage of the __barcodeMineR__ package consists in the adoption of two types of functions that must be conducted consequently in order to recover a final _refdb_ object. However, in order to understand exactly which records will be recovered by the package, a proper understanding of the package function and rationale is needed.
 
@@ -131,7 +134,7 @@ nrow(rec_clione)
 
 However, this will exclude all descending taxonomic levels, in this case any subspecies of _Clione antarctica_. The function _get_bold_taxonomy_ automatically searches for downstream taxonomies, thanks to the default setting of the _descend_ argument.
 
-```{r, eval = TRUE}
+```{r}
 tax_clione_anta <- get_bold_taxonomy("Clione antarctica", descend = TRUE)
 
 rec_clione <- download_bold(tax_clione_anta, ask = FALSE)

@@ -15,8 +15,11 @@ knitr::opts_chunk$set(
   comment = "#>"
 )
 ```
+```{r setup}
+library(barcodeMineR)
+```
 
-**NOTE: This is a temporary GitHub repository created for testing purposes.**
+**NOTE: This package is still in development and awaiting for CRAN approval.**
 
 The time required to mine DNA barcodes from the NCBI nucleotide database depends on how many species/taxa are searched and how many records correspond to each taxa. Due to the structure of the __barcodeMineR__ functions, and its consequent usage, different approaches can be adopted to speed up the procedures, with varying effects.
 
@@ -29,7 +32,6 @@ The NCBI servers allows up to only three requests per second from a single user.
 For example, if we have a vector of 50 species, we can expect a theoretical execution time for the [get_ncbi_taxonomy](https://matteoce.github.io/barcodeMineR/reference/get_ncbi_taxonomy.html) function of `r paste(round((1/3)*50, 2), "seconds")`:
 
 ```{r, echo = FALSE}
-library(barcodeMineR)
 t0 <- Sys.time()
 tax <- get_ncbi_taxonomy(species200[1:50], ask = FALSE)
 t1 <- Sys.time()
@@ -57,23 +59,14 @@ set_entrez_key("ABCD123")
 ```
 
 By setting an NCBI account, the user assures that requests that don't take much time can be executed even faster, and avoid excessive blocking when the internet connection is particularly unreliable. Including an NCBI API key approximately halves the execution time of the [get_ncbi_taxonomy](https://matteoce.github.io/barcodeMineR/reference/get_ncbi_taxonomy.html), when querying multiple species at once.
-```{r, echo = FALSE}
-library(barcodeMineR)
-# please its my api rate key, don't use it, I'll find a way to hide it, I swear, but in the meantime, have some frigging heart
-rentrez::set_entrez_key("411436812fa3336220505547704885e63f07")
-t0 <- Sys.time()
-tax <- get_ncbi_taxonomy(species200[1:50], ask = FALSE)
-t1 <- Sys.time()
-rentrez::set_entrez_key("")
-```
 
-The _get_ncbi_taxonomy_ command previously executed takes about `r x <- difftime(t1, t0); if (units(x) == "mins") {paste(round(as.numeric(x), 2), "minutes")} else {paste(round(as.numeric(x), 0), "seconds")}` when run with an API_key.
+The _get_ncbi_taxonomy_ command previously executed takes about half the time reported above when run with an API_key.
 
 All ncbi functions of the _barcodeMineR_ package would benefit from the inclusion of an API key, which increases speed of fast requests and reliability at long execution times.
 
 ## Adopting an asynchronous framework
 
-One of the main advantages of the __barcodeMineR__ package consists in the capacity to adopt the asynchronous parallelizing framework of the [future](https://github.com/HenrikBengtsson/future) package to speed up the download of records from the NCBI repository.
+One of the main advantages of the __barcodeMineR__ package consists in the capacity to adopt the asynchronous parallelizing framework of the [future package](https://github.com/HenrikBengtsson/future) to speed up the download of records from the NCBI repository.
 
 The execution time of the [download_ncbi](https://matteoce.github.io/barcodeMineR/reference/download_ncbi.html) function depends on how many records correspond to each single species/taxa on the NCBI nucleotide database.
 ```{r, echo = FALSE}

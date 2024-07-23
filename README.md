@@ -1,8 +1,8 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-**NOTE: This is a temporary GitHub repository created for testing
-purposes.**
+**NOTE: This package is still in development and awaiting for CRAN
+approval.**
 
 # barcodeMineR <img src="man/figures/logo.png" align="right" height="139" alt="" />
 
@@ -15,28 +15,42 @@ purposes.**
 
 The goal of barcodeMineR is to facilitate the download of DNA sequences
 from the NCBI and BOLD repositories, taking advantage of the future
-asynchronous framework to speed the operations while respecting the API
-requests limits. It outputs a
+asynchronous framework of the [future
+package](https://github.com/HenrikBengtsson/future) to speed up the
+operations while respecting the API requests limits. It outputs a
 [refdb](https://github.com/fkeck/refdb?tab=readme-ov-file#refdb-a-reference-database-manager-for-r)
-object.
+object, including all CDS and/or rRNA feature corresponding to the
+searched taxa.
 
 ## Installation
 
-As the package is still in development, you can install this version of
-barcodeMineR, directly from the GitHub repository, using the
-[Bioconductor](https://www.bioconductor.org/install/) package:
+The development version
+[![](https://img.shields.io/badge/devel%20version-0.1.0-blue.svg)](https://github.com/MatteoCe/barcodeMineR)
+of this package can be installed directly from this GitHub repository,
+using the [Bioconductor](https://www.bioconductor.org/install/) package:
 
 ``` r
 BiocManager::install("MatteoCe/barcodeMineR")
 ```
 
-The installation might require the update of various packages, which may
-fail. It is not necessarily an issue, thus you may proceed nonetheless.
+The last stable version
+[![](https://www.r-pkg.org/badges/version/barcodeMineR?color=orange)](https://cran.r-project.org/package=barcodeMineR)
+is available through CRAN:
+
+``` r
+install.packages("barcodeMineR")
+```
 
 ## Getting started
 
 Take a look at the [barcodeMineR
 website](https://matteoce.github.io/barcodeMineR/) for more information!
+
+## Citation
+
+If you use this package or its code in your work, please cite:
+
+Cecchetto et al. XXX
 
 ## Issues and ‘to dos’
 
@@ -53,4 +67,18 @@ website](https://matteoce.github.io/barcodeMineR/) for more information!
 
 - Add stringr code in taxonomy functions to search for both genus and
   species names in the output in order to get also those records
-  identified as *genus* cf. *species*, for example.
+  identified as *genus* cf. *species*, for example?
+
+## Acknowledgments
+
+This package was written following the instructions and suggestions
+described in the fantastic [R Packages book](https://r-pkgs.org) by
+[Hadley Wickham](http://hadley.nz/) and [Jennifer
+Bryan](http://jennybryan.org/).
+
+The barcodeMineR package was built using the following R packages: \*
+[devtools](https://github.com/r-lib/devtools) \*
+[usethis](https://github.com/r-lib/usethis) \*
+[pkgdown](https://github.com/r-lib/pkgdown) \*
+[testthat](https://github.com/r-lib/testthat) \*
+[roxygen2](https://github.com/r-lib/roxygen2)

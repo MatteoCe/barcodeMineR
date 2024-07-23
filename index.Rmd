@@ -13,7 +13,7 @@ knitr::opts_chunk$set(
 )
 ```
 
-**NOTE: This is a temporary GitHub repository created for testing purposes.**
+**NOTE: This package is still in development and awaiting for CRAN approval.**
 
 # barcodeMineR <img src="man/figures/logo.png" align="right" height="139" alt="" />
 
@@ -33,10 +33,16 @@ In synthesis, it provides a unified framework for mining DNA Barcodes from the m
 
 ## Installation
 
-As the package is still in development, you can install this version of barcodeMineR, directly from the GitHub repository, using the [Bioconductor](https://www.bioconductor.org/install/) package:
+The development version of this package can be installed directly from this GitHub repository, using the [Bioconductor](https://www.bioconductor.org/install/) package:
 
 ``` r
 BiocManager::install("MatteoCe/barcodeMineR")
+```
+
+The last stable version is available through CRAN:
+
+``` r
+install.packages("barcodeMineR")
 ```
 
 ## Basic usage

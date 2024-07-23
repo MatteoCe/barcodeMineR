@@ -53,6 +53,8 @@ function was inspired and modified by the code presented in the paper by
 Gwiazdowski et al. (2015) https://doi.org/10.1371/journal.pone.0125635.
 }
 \examples{
+\dontshow{if (rlang::is_installed(c("ggplot2", "ggridges"))) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
+\dontshow{\}) # examplesIf}
 rec <- loadBarcodeOre(example_record, example_sequence)
 
 plot_primers(rec)

@@ -9,7 +9,17 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
-**NOTE: This is a temporary GitHub repository created for testing purposes.**
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+```{r setup}
+library(barcodeMineR)
+```
+
+**NOTE: This package is still in development and awaiting for CRAN approval.**
 
 The _barcodeMineR_ package allows to recover DNA barcodes from a vector of taxonomic names.
 The most basic usage consists in the recovery of the taxonomic information first, followed by the download of all records available. The function [get_ncbi_taxonomy](https://matteoce.github.io/barcodeMineR/reference/get_ncbi_taxonomy.html) does exactly that:
@@ -96,7 +106,7 @@ In case we want to add additional, private sequences to the mined results, we ca
 
 In order to do that, the tsv file must include the same fields (*i.e.* column names) included in the example dataset object _example_record_.
 
-```{r, echo = TRUE, eval = FALSE}
+```{r, eval = FALSE}
 # load example datasets from barcodeMineR...
 rec <- barcodeMineR::example_record
 seq <- barcodeMineR::example_sequence
@@ -108,7 +118,7 @@ seq <- "~/home/my/path/data.fasta"
 new_records <- loadBarcodeOre(rec, seq)
 new_records
 ```
-```{r, echo = FALSE, eval = TRUE}
+```{r, echo = FALSE}
 rec <- barcodeMineR::example_record
 seq <- barcodeMineR::example_sequence
 new_records <- loadBarcodeOre(rec, seq)
@@ -142,13 +152,13 @@ total_filt <- refdb_filter_seq_length(total, max_len = 658)
 
 A total of `r nrow(total_filt)` records include sequences up to 658 bp in length. However, many records results much shorter than this length:
 
-```{r, echo = TRUE, eval = TRUE, message = FALSE}
+```{r, message = FALSE}
 refdb_plot_seqlen_hist(total_filt)
 ```
 
 In fact, many records have been extracted from complete mitochondrial genomes, and this can be readily inspected by using one of the plotting functions of the _barcodeMineR_ package:
 
-```{r, echo = TRUE, eval = TRUE}
+```{r}
 plot_length(total_filt)
 ```
 
@@ -156,7 +166,7 @@ As shown, the original length of the fasta sequence of some records is much long
 
 Not much information was retrieved from each record, but we can see how many records include the primers used to amplify their sequence with another plotting function of the _barcodeMineR_ package, credit by [Gwiazdowski et al. (2015)](https://journals.plos.org/plosone/article/file?id=10.1371/journal.pone.0125635&type=printable):
 
-```{r, echo = TRUE, eval = TRUE}
+```{r}
 plot_primers(total_filt)
 ```
 
@@ -168,6 +178,24 @@ refdb_plot_map(total)
 
 Only a few records have geographical coordinates in the final merged table.
 
-This is the basic usage of the __barcodeMineR__ package. Now you can check how to speed up the recovery of records from the NCBI database by reading this [vignette](https://matteoce.github.io/barcodeMineR/articles/api_rate_barcodeMineR.html).
+## Exporting the results
 
+Once one or more _refdb_ objects has been obtained, these can be exported as any data frame. As an example, here it is shown how to export one as a TSV file, using the package _readr_:
+
+```{r, eval = FALSE}
+readr::write_delim(x = total, file = "~/my/path/to/file.tsv", delim = "\t")
+```
+
+Likewise, if this file needs to be loaded as a simple data.frame object, the same method can be applied. However, in case this object needs to be loaded as a _refdb_ data frame, then the fields set by the _barcodeMineR_ functions need to be preserved in a _yaml_ file designed specifically for its outputs. For this reason, when saving a _refdb_ object obtained with the _barcodeMineR_ functions, a _yaml_ file must be stored alongside it. This can be done using the _refdb_ package:
+
+```{r, eval = FALSE}
+# save the fields settings in a yml file format
+refdb_write_fields(total, "~/my/path/to/fields.yml")
+
+# load the tsv saved before and set the fields 
+df <- readr::read_delim(file="~/my/path/to/file.tsv", delim = "\t")
+ref <- refdb_set_fields(df, config_yaml = "~/my/path/to/fields.yml")
+```
+
+This is the basic usage of the __barcodeMineR__ package. Now you can check how to speed up the recovery of records from the NCBI database by reading this [vignette](https://matteoce.github.io/barcodeMineR/articles/api_rate_barcodeMineR.html).
 

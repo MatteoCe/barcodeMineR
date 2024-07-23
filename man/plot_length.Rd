@@ -48,6 +48,8 @@ argument, with the corresponding length of the original sequence (field
 the online database) on another "ridge", using the `ggridges` package.
 }
 \examples{
+\dontshow{if (rlang::is_installed(c("ggplot2", "ggridges"))) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
+\dontshow{\}) # examplesIf}
 tax <- get_ncbi_taxonomy("Dissostichus mawsoni")
 rec <- download_ncbi(tax, ask = FALSE)
 

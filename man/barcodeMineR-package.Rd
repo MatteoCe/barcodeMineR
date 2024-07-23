@@ -4,11 +4,11 @@
 \name{barcodeMineR-package}
 \alias{barcodeMineR}
 \alias{barcodeMineR-package}
-\title{barcodeMineR: Fast and reliable mining of DNA Barcodes from the NCBI and BOLD}
+\title{barcodeMineR: Easy Mining of DNA Barcodes from the NCBI and BOLD Repositories}
 \description{
 \if{html}{\figure{logo.png}{options: style='float: right' alt='logo' width='120'}}
 
-This package allows to query multiple taxonomic names on the NCBI and BOLD repositories and retrieve DNA barcodes and associated metadata for any wanted marker. It heavily relies on the bold and rentrez packages from the rOpenSci, and takes advantages of the parallelizing framework from the future package to speed up the retrieval of data from the NCBI, respecting their API requests limit. The final output is a tibble object modified following the formatting requirements of the refdb package, and it is cleaned from mining duplicates, differences in formats of BOLD and NCBI metadata (e.g. geographic coordinates, dates) and commonly occurring issues that derive from downloading data from those repositories. In synthesis, it provides a unified framework for mining DNA Barcodes from the main repositories, roviding clean, metadata-rich sequences in a programmatic way or interactively, depending on the wanted usage.
+A comprehensive and simplified tool to query multiple taxonomic names on the National Center for Biotechnology Information (NCBI) and the Barcode of Life Data System (BOLD) repositories, retrieving DNA barcodes and associated metadata for any wanted marker. It relies on the 'bold' and 'rentrez' packages, and takes advantage of the parallelizing framework from the 'future' package to speed up the retrieval of data from the NCBI, while respecting their API requests' rate limit. The final output is a 'tibble' object, modified following the formatting requirements of the 'refdb' package, including all CDS and/or rRNA features as distinct records with their corresponding sequence. Different quality control steps are automatically performed to deal with commonly occurring issues that derive from downloading and merging this type of data, including cleaning of mining duplicates and standardization of the different formats of BOLD and NCBI metadata (e.g. geographic coordinates, dates).
 }
 \seealso{
 Useful links:
@@ -20,7 +20,12 @@ Useful links:
 
 }
 \author{
-\strong{Maintainer}: Matteo Cecchetto \email{matteocecchetto@gmail.com} (\href{https://orcid.org/0000-0002-4505-4104}{ORCID})
+\strong{Maintainer}: Matteo Cecchetto \email{matteocecchetto@gmail.com} (\href{https://orcid.org/0000-0002-4505-4104}{ORCID}) [copyright holder]
+
+Other contributors:
+\itemize{
+  \item Stefano Schiaparelli \email{stefano.schiaparelli@unige.it} (\href{https://orcid.org/0000-0002-0137-3605}{ORCID}) [funder]
+}
 
 }
 \keyword{internal}
