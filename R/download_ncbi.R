@@ -119,7 +119,7 @@ download_ncbi <- function(ncbi_tax = NULL, ncbi_ids = NULL, rate_xml = 200, rate
     records_tab <- extractRecordsTab(featureSource_nodes, ncbi_tax)
 
     # extract all CDS and rRNA features from the whole XML object
-    feature_nodes <- XML_extract_nodes(c("CDS", "rRNA"), fetch_xml_doc)
+    feature_nodes <- XML_extract_nodes(c("CDS", "rRNA", "misc_RNA"), fetch_xml_doc)
 
     # create selection table and records table
     selection_tab <- extractSelectionTab(feature_nodes, records_tab$sourceID)

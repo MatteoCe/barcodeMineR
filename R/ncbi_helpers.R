@@ -90,10 +90,10 @@ ncbi_searcher <- function(id, db = "taxonomy", retmax = 200, default.filter = TR
 
     if (default.filter) {
 
-      default.filters <- c("NOT wgs[Keyword]",
-                           "NOT tsa[Keyword]",
-                           "AND biomol_genomic[PROP]",
-                           "AND (cds[Feature key] OR rrna[Feature key])")
+      default.filters <- c('NOT wgs[Keyword]',
+                           'NOT tsa[Keyword]',
+                           'AND biomol_genomic[PROP]',
+                           'AND (cds[Feature key] OR rrna[Feature key] OR "misc rna"[Feature key])')
 
       for (filt in default.filters) {
 

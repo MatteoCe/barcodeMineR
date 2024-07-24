@@ -38,9 +38,9 @@ XML_root <- function(xml) {
 #'
 XML_extract_nodes <- function(featureKey, xml) {
 
-  if (!all(featureKey %in% c("source", "CDS", "rRNA"))) {
+  if (!all(featureKey %in% c("source", "CDS", "rRNA", "misc_RNA"))) {
 
-    stop("Currently the function supports 'source', 'CDS' and 'rRNA' GBFeature keys only.")
+    stop("Currently the function supports 'source', 'CDS', 'rRNA' and 'misc RNA' GBFeature keys only.")
 
   }
 
