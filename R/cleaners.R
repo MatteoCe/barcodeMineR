@@ -244,6 +244,15 @@ boldDuplicateCheck <- function(refdb) {
 
       }
 
+    } else if (length(grep(sing_accn, refdb[refdb$source == "NCBI", ]$NCBI_ID)) > 0) {
+      # last chance, if no accn is found in the recordID field, it might be
+      # because the recordIDs from the NCBI have been override with the prefix
+      # argument of download_ncbi. For this reason, the accn could be found in
+      # the field NCBI_ID from the records obtained from the NCBI
+
+      proc <- filt_mined[filt_mined$accn == sing_accn, ]$recordID
+      return(proc)
+
     }
 
   })
@@ -288,8 +297,11 @@ ncbiDuplicateCheck <- function(refdb) {
       accn <- refdb[grep(pr, refdb$db_xref), ]$recordID
       return(accn)
 
-    }
+    } else if (length(grep(pr, refdb[refdb$source == "BOLD",]$sourceID)) > 0) {
 
+      accn <- refdb[grep(pr, refdb$db_xref), ]$recordID
+      return(accn)
+    }
 
   })
 
