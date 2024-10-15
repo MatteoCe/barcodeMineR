@@ -1,8 +1,8 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-**NOTE: This is a temporary GitHub repository created for testing
-purposes.**
+**NOTE: This package is still in development and awaiting for CRAN
+approval.**
 
 # barcodeMineR <img src="man/figures/logo.png" align="right" height="139" alt="" />
 
@@ -10,6 +10,7 @@ purposes.**
 
 [![R-CMD-check](https://github.com/MatteoCe/barcodeMineR/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/MatteoCe/barcodeMineR/actions/workflows/R-CMD-check.yaml)
 [![test-coverage](https://github.com/MatteoCe/barcodeMineR/actions/workflows/test-coverage.yaml/badge.svg)](https://github.com/MatteoCe/barcodeMineR/actions/workflows/test-coverage.yaml)
+[![codecov](https://codecov.io/gh/MatteoCe/barcodeMineR/graph/badge.svg?token=62OUVOL8MP)](https://app.codecov.io/gh/MatteoCe/barcodeMineR)
 <!-- badges: end -->
 
 ## The barcodeMineR package
@@ -39,12 +40,18 @@ depending on the wanted usage.
 
 ## Installation
 
-As the package is still in development, you can install this version of
-barcodeMineR, directly from the GitHub repository, using the
+The development version of this package can be installed directly from
+this GitHub repository, using the
 [Bioconductor](https://www.bioconductor.org/install/) package:
 
 ``` r
 BiocManager::install("MatteoCe/barcodeMineR")
+```
+
+The last stable version is available through CRAN:
+
+``` r
+install.packages("barcodeMineR")
 ```
 
 ## Basic usage
@@ -63,7 +70,7 @@ rec <- download_ncbi(tax, ask = FALSE)
 
 # display output:
 rec
-#> # A tibble: 189 × 30
+#> # A tibble: 192 × 30
 #>    recordID   markerCode DNA_seq  phylum class order family genus species source
 #>    <chr>      <chr>      <DNA>    <chr>  <chr> <chr> <chr>  <chr> <chr>   <chr> 
 #>  1 HM422302.1 COI        CTCTACT… Chord… Acti… Perc… Notot… Diss… Dissos… NCBI  
@@ -76,12 +83,12 @@ rec
 #>  8 KY656477.1 COI        GCCGGAA… Chord… Acti… Perc… Notot… Diss… Dissos… NCBI  
 #>  9 LC138011.1 ND1        ATGCTTT… Chord… Acti… Perc… Notot… Diss… Dissos… NCBI  
 #> 10 LC138011.1 ND2        ATGAGCC… Chord… Acti… Perc… Notot… Diss… Dissos… NCBI  
-#> # ℹ 179 more rows
+#> # ℹ 182 more rows
 #> # ℹ 20 more variables: lat <dbl>, lon <dbl>, lengthGene <int>, sampleID <chr>,
 #> #   QueryName <chr>, identified_by <chr>, taxNotes <lgl>, db_xref <chr>,
 #> #   sourceID <chr>, NCBI_ID <chr>, institutionStoring <lgl>,
 #> #   collected_by <chr>, collection_date <chr>, altitude <lgl>, depth <lgl>,
-#> #   country <chr>, directionPrimers <chr>, lengthSource <int>,
+#> #   country <lgl>, directionPrimers <chr>, lengthSource <int>,
 #> #   PCR_primers <chr>, note <chr>
 ```
 

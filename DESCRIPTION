@@ -1,8 +1,7 @@
 Package: barcodeMineR
 Type: Package
-Title: Easy Mining of DNA Barcodes from the NCBI and BOLD Repositories
+Title: Easy Mining of DNA Sequences from the NCBI and BOLD Repositories
 Version: 0.1.0
-Author: Matteo Cecchetto
 Authors@R: c(
     person(
       "Matteo", "Cecchetto", 
@@ -17,22 +16,22 @@ Authors@R: c(
       comment = c(ORCID = "0000-0002-0137-3605")
     )
   )
-Maintainer: The package maintainer <matteocecchetto@gmail.com>
+Maintainer: Matteo Cecchetto <matteocecchetto@gmail.com>
 Description: A comprehensive and simplified tool to query multiple taxonomic 
     names on the National Center for Biotechnology Information (NCBI) and the 
-    Barcode of Life Data System (BOLD) repositories, retrieving DNA barcodes 
-    and associated metadata for any wanted marker. It relies on the 'bold' and 
-    'rentrez' packages, and takes advantage of the parallelizing framework from 
-    the 'future' package to speed up the retrieval of data from the NCBI, while 
+    Barcode of Life Data System (BOLD) repositories, retrieving DNA sequences 
+    and associated metadata for any wanted marker. It relies on 'bold' and 
+    'rentrez', and takes advantage of the asynchronous framework from the
+    'future' package to speed up the retrieval of data from the NCBI, while 
     respecting their API requests' rate limit. The final output is a 'tibble' 
     object, modified following the formatting requirements of the 'refdb' 
-    package, including all CDS and/or rRNA features as distinct records with 
-    their corresponding sequence. Different quality control steps are 
-    automatically performed to deal with commonly occurring issues that derive 
-    from downloading and merging this type of data, including cleaning of 
-    mining duplicates and standardization of the different formats of BOLD and 
-    NCBI metadata (e.g. geographic coordinates, dates).
-License: GPL (>= 3) + file LICENSE
+    package, including all CDS and/or r-RNA features as distinct 
+    records with their corresponding sequence. Different quality control steps 
+    are automatically performed to deal with commonly occurring issues that 
+    derive from downloading and merging this type of data, including cleaning 
+    of mining duplicates and standardization of the different formats of BOLD 
+    and NCBI metadata (e.g. geographic coordinates, dates).
+License: GPL (>= 3)
 Encoding: UTF-8
 LazyData: true
 Suggests: 

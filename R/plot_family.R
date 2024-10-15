@@ -234,8 +234,7 @@ utils::globalVariables(c("n", "directionPrimers", "PCR_primers"))
 #' @examplesIf rlang::is_installed(c("ggplot2", "ggridges"))
 #'
 #' @examples
-#' tax <- get_ncbi_taxonomy("Dissostichus mawsoni")
-#' rec <- download_ncbi(tax, ask = FALSE)
+#' rec <- loadBarcodeOre(example_record, example_sequence)
 #'
 #' plot_length(rec)
 #'

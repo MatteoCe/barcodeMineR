@@ -117,53 +117,52 @@ ncbi_maldane
 
 ### BOLD taxonomy
 
-The basic usage of [get_bold_taxonomy](https://matteoce.github.io/barcodeMineR/reference/get_bold_taxonomy.html) follows the same mechanism. In order to obtain all _Clione antarctica_ records, we first need to get the corresponding taxonomy data frame:
+The basic usage of [get_bold_taxonomy](https://matteoce.github.io/barcodeMineR/reference/get_bold_taxonomy.html) follows the same mechanism. In order to obtain all _Clio pyramidata_ records, we first need to get the corresponding taxonomy data frame:
 
 ```{r, include = FALSE}
-tax_clione <- structure(list(queryName = "Clione antarctica", taxid = 650223L, 
-    taxon = "Clione antarctica", rank = "species", records = 9L), row.names = c(NA, 
--1L), errors = structure(list(), names = character(0)), params = list(
-    fuzzy = FALSE, tax_division = NULL, tax_rank = NULL), class = "data.frame")
+tax_clio <- structure(list(queryName = "Clio pyramidata", taxid = "202265", 
+    taxon = "Clio pyramidata", rank = "species", records = 160L), errors = structure(list(), names = character(0)), params = list(
+    fuzzy = FALSE, tax_division = NULL, tax_rank = NULL), row.names = 1L, class = "data.frame")
 ```
 ```{r}
-# this taxonomy table will retrieve all "Clione antarctica" records 
-tax_clione
-rec_clione <- download_bold(tax_clione, ask = FALSE)
-nrow(rec_clione)
+# this taxonomy table will retrieve all "Clio pyramidata" records 
+tax_clio
+rec_clio <- download_bold(tax_clio, ask = FALSE)
+nrow(rec_clio)
 ```
 
-However, this will exclude all descending taxonomic levels, in this case any subspecies of _Clione antarctica_. The function _get_bold_taxonomy_ automatically searches for downstream taxonomies, thanks to the default setting of the _descend_ argument.
+However, this will exclude all descending taxonomic levels, in this case any subspecies of _Clio pyramidata_. The function _get_bold_taxonomy_ automatically searches for downstream taxonomies, thanks to the default setting of the _descend_ argument.
 
 ```{r}
-tax_clione_anta <- get_bold_taxonomy("Clione antarctica", descend = TRUE)
+tax_clio_anta <- get_bold_taxonomy("Clio pyramidata", descend = TRUE)
 
-rec_clione <- download_bold(tax_clione_anta, ask = FALSE)
-nrow(rec_clione)
+rec_clio <- download_bold(tax_clio_anta, ask = FALSE)
+nrow(rec_clio)
 ```
 
 However, this can be overridden by setting that argument to FALSE. The _descend_ argument has been introduced to allow the user to avoid the internal children taxa searching method implementing the package [taxize](https://github.com/ropensci/taxize), which may result unstable when searching long vectors. See the *Tips* section of this vignette for more information on this matter.
 
 The main difference between the NCBI taxonomy function and _get_bold_taxonomy_ actually relates to the subsequent recovery of records. In fact, the BOLD database does not include an "unclassified taxon" rank that includes all records identified to that taxonomic level, but with no species name. However, the publication of records on the BOLD database does not require necessarily an identification at the species level, meaning that searching higher level taxonomies would result in the download of all records identified up to that taxon only.
 
-To increase the recovery of records potentially related to _Clione antarctica_, we can also search for the genus _Clione_ and download all the records identified up to the genus level:
+To increase the recovery of records potentially related to _Clio pyramidata_, we can also search for the genus _Clio_ and download all the records identified up to the genus level:
 
 ```{r}
-tax_clione <- get_bold_taxonomy("Clione", descend = FALSE)
+tax_clio <- get_bold_taxonomy("Clio", descend = FALSE)
 
-rec_clione <- download_bold(tax_clione, ask = FALSE)
-rec_clione
+rec_clio <- download_bold(tax_clio, ask = FALSE)
+rec_clio
 ```
 
-The `r nrow(rec_clione)` records are only identified up to the genus _Clione_, thus, if we wanted to recover all records potentially belonging to the _Clione antarctica_ species we would have to search for all unidentified _Clione_ records together with those identified as _Clione antarctica_. Ideally, this would be the simplest approach:
+The `r nrow(rec_clio)` records are only identified up to the genus _Clio_, thus, if we wanted to recover all records potentially belonging to the _Clio pyramidata_ species we would have to search for all unidentified _Clio_ records together with those identified as _Clio pyramidata_. Ideally, this would be the simplest approach:
 
 ```{r}
-final_tax <- get_bold_taxonomy(c("Clione", "Clione antarctica"), descend = FALSE, ask = FALSE)
+final_tax <- get_bold_taxonomy(c("Clio", "Clio pyramidata"), descend = FALSE, ask = FALSE)
 
-rec_clione <- download_bold(final_tax, ask = FALSE)
-rec_clione
+rec_clio <- download_bold(final_tax, ask = FALSE)
+rec_clio
 ```
 
-As in the above section, searching all taxa for _Clione_ and then filtering only those including the strings "Clione" and "antarctica" using _grep_ would increase our chances to include records with identification qualifiers like "cf.".
+As in the above section, searching all taxa for _Clio_ and then filtering only those including the strings "Clio" and "pyramidata" using _grep_ would increase our chances to include records with identification qualifiers like "cf.".
 
 #### Tips
 

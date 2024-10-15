@@ -51,7 +51,7 @@ This API rate value, which is the default for the _ncbi_ functions of the _barco
 
 In order to avoid this, a higher download rate can be adopted if the user decides to register a [NCBI account](https://account.ncbi.nlm.nih.gov/). Using an API key, the user can send up to 10 requests per second to the NCBI. 
 
-This can be done "externally", in respect to the _barcodeMineR_ functions, following the [rentrez documentation](https://cran.r-project.org/web/packages/rentrez/vignettes/rentrez_tutorial.html#rate-limiting-and-api-keys), specifically with this function:
+This can be done "externally", in respect to the _barcodeMineR_ functions, following the [rentrez documentation](https://CRAN.R-project.org/package=rentrez/vignettes/rentrez_tutorial.html#rate-limiting-and-api-keys), specifically with this function:
 
 ```{r, eval = FALSE}
 set_entrez_key("ABCD123")
@@ -150,7 +150,7 @@ progressr::handlers("progress")
 
 ```
 
-Now, a progress bar will appear while downloading records, and different messages will occasionally be printed to inform the user of the current status of the operation. The progress bar can be modified, according to the user's preferences, as reported in the [progressr documentation](https://cran.r-project.org/web/packages/progressr/vignettes/progressr-intro.html).
+Now, a progress bar will appear while downloading records, and different messages will occasionally be printed to inform the user of the current status of the operation. The progress bar can be modified, according to the user's preferences, as reported in the [progressr documentation](https://cran.r-project.org/package=progressr/vignettes/progressr-intro.html).
 
 * Multisession and _get_ncbi_taxonomy_:
 

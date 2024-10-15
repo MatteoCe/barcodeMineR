@@ -4,11 +4,11 @@
 \name{barcodeMineR-package}
 \alias{barcodeMineR}
 \alias{barcodeMineR-package}
-\title{barcodeMineR: Easy Mining of DNA Barcodes from the NCBI and BOLD Repositories}
+\title{barcodeMineR: Easy Mining of DNA Sequences from the NCBI and BOLD Repositories}
 \description{
 \if{html}{\figure{logo.png}{options: style='float: right' alt='logo' width='120'}}
 
-A comprehensive and simplified tool to query multiple taxonomic names on the National Center for Biotechnology Information (NCBI) and the Barcode of Life Data System (BOLD) repositories, retrieving DNA barcodes and associated metadata for any wanted marker. It relies on the 'bold' and 'rentrez' packages, and takes advantage of the parallelizing framework from the 'future' package to speed up the retrieval of data from the NCBI, while respecting their API requests' rate limit. The final output is a 'tibble' object, modified following the formatting requirements of the 'refdb' package, including all CDS and/or rRNA features as distinct records with their corresponding sequence. Different quality control steps are automatically performed to deal with commonly occurring issues that derive from downloading and merging this type of data, including cleaning of mining duplicates and standardization of the different formats of BOLD and NCBI metadata (e.g. geographic coordinates, dates).
+A comprehensive and simplified tool to query multiple taxonomic names on the National Center for Biotechnology Information (NCBI) and the Bar-code of Life Data System (BOLD) repositories, retrieving DNA sequences and associated metadata for any wanted marker. It relies on 'bold' and 'rentrez', and takes advantage of the asynchronous framework from the 'future' package to speed up the retrieval of data from the NCBI, while respecting their API requests' rate limit. The final output is a 'tibble' object, modified following the formatting requirements of the 'refdb' package, including all CDS and/or r-RNA features as distinct records with their corresponding sequence. Different quality control steps are automatically performed to deal with commonly occurring issues that derive from downloading and merging this type of data, including cleaning of mining duplicates and standardization of the different formats of BOLD and NCBI metadata (e.g. geographic coordinates, dates).
 }
 \seealso{
 Useful links:

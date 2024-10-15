@@ -10,7 +10,7 @@ approval.**
 
 [![R-CMD-check](https://github.com/MatteoCe/barcodeMineR/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/MatteoCe/barcodeMineR/actions/workflows/R-CMD-check.yaml)
 [![test-coverage](https://github.com/MatteoCe/barcodeMineR/actions/workflows/test-coverage.yaml/badge.svg)](https://github.com/MatteoCe/barcodeMineR/actions/workflows/test-coverage.yaml)
-[![codecov](https://codecov.io/gh/MatteoCe/barcodeMineR/graph/badge.svg?token=62OUVOL8MP)](https://codecov.io/gh/MatteoCe/barcodeMineR)
+[![codecov](https://codecov.io/gh/MatteoCe/barcodeMineR/graph/badge.svg?token=62OUVOL8MP)](https://app.codecov.io/gh/MatteoCe/barcodeMineR)
 <!-- badges: end -->
 
 The goal of barcodeMineR is to facilitate the download of DNA sequences
@@ -33,9 +33,9 @@ using the [Bioconductor](https://www.bioconductor.org/install/) package:
 BiocManager::install("MatteoCe/barcodeMineR")
 ```
 
-The last stable version
-[![](https://www.r-pkg.org/badges/version/barcodeMineR?color=orange)](https://cran.r-project.org/package=barcodeMineR)
-is available through CRAN:
+The last stable version \#put next line up to hashtag in single quotes
+when available# r badger::badge_cran_release(NULL, “orange”)# is
+available through CRAN:
 
 ``` r
 install.packages("barcodeMineR")
@@ -73,8 +73,8 @@ Cecchetto et al. XXX
 
 This package was written following the instructions and suggestions
 described in the fantastic [R Packages book](https://r-pkgs.org) by
-[Hadley Wickham](http://hadley.nz/) and [Jennifer
-Bryan](http://jennybryan.org/).
+[Hadley Wickham](https://hadley.nz/) and [Jennifer
+Bryan](https://jennybryan.org/).
 
 The barcodeMineR package was built using the following R packages: \*
 [devtools](https://github.com/r-lib/devtools) \*
