@@ -170,14 +170,18 @@ bold_record_grouper <- function(bold_tax, rate) {
 #'
 bold_fetcher <- function(taxon_group, bold_tax) {
 
-  records_number <- bold_tax[bold_tax$taxon %in% taxon_group, "records"] %>% sum()
-
   idRecords <- bold::bold_seqspec(taxon = taxon_group,
                                   seqFasta = FALSE,
                                   format = "tsv")
 
-  if (records_number != length(unique(sort(idRecords$processid)))) {
-    stop("The number of records from bold_stats do not correspond to those retrieved by bold_seqspec")
+  if (!all(is.na(bold_tax$records))) {
+    records_number <- bold_tax[bold_tax$taxon %in% taxon_group, "records"] %>% sum()
+
+    if (records_number != length(unique(sort(idRecords$processid)))) {
+      stop("The number of records from bold_stats do not correspond to those retrieved by bold_seqspec")
+
+    }
+
   }
 
   # some columns might have formats that do not allow to properly clean the
@@ -207,7 +211,7 @@ bold_fetcher <- function(taxon_group, bold_tax) {
 
     # check if all records do not have sequences
     if (nrow(idRecords[is.na(idRecords$nucleotides), ]) ==
-        records_number) {
+        nrow(idRecords)) {
 
       return(NULL)
 

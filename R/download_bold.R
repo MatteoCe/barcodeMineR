@@ -55,8 +55,17 @@ download_bold <- function(bold_tax, rate = 100, api_rate = NULL, ask = TRUE, pre
 
   # divide the taxa based on the number of records. The rate parameter will group
   # taxa if the cumulative sum of the corresponding records do not exceed "rate".
-  # Taxa corresponding to more than "rate" records will be searched alone.
-  ids_groups <- bold_record_grouper(bold_tax, rate)
+  # Taxa corresponding to more than "rate" records will be searched alone. If the
+  # taxonomy table has all items in the "records" field as NA, than it means it
+  # has been fabricated by the user and the bold_record_grouper function can be
+  # skipped.
+  if (all(is.na(bold_tax$records))) {
+    ids_groups <- split(unique(bold_tax$taxon), ceiling(seq_along(unique(bold_tax$taxon)) / rate))
+
+  } else {
+    ids_groups <- bold_record_grouper(bold_tax, rate)
+
+  }
 
   # download records
   records_tab <- ncbi_limit_handler(ids_groups, api_rate = api_rate, function(id) {
